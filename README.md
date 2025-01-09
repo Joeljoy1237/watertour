@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WaterTour
 
-## Getting Started
+Welcome to WaterTour, your ultimate water tourism app for houseboats, shikara rides, and more!
 
-First, run the development server:
+## Features
 
+- **Houseboat Booking**: Easily book luxurious houseboats for a memorable stay.
+- **Shikara Rides**: Enjoy serene shikara rides on beautiful lakes.
+- **Tour Packages**: Explore various tour packages tailored to your preferences.
+- **User Reviews**: Read reviews from other travelers to make informed decisions.
+
+## Installation
+
+To get started with WaterTour, follow these steps:
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/WaterTour.git
+    ```
+2. Navigate to the project directory:
+    ```bash
+    cd WaterTour
+    ```
+3. Install the dependencies:
+    ```bash
+    npm install
+    ```
+
+## Usage
+
+Start the application with the following command:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## License
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Contact
 
-## Learn More
+For any inquiries or support, please contact us at support@watertour.com.
 
-To learn more about Next.js, take a look at the following resources:
+Enjoy your water adventures with WaterTour!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
