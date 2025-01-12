@@ -12,7 +12,6 @@ const GetStarted = () => {
         src="/boat.jpg"
         alt="boat"
         fill={true}
-        objectFit="cover"
         priority
         className="z-0 relative object-bottom lg:object-bottom object-cover"
       />

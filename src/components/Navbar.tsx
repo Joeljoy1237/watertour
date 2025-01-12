@@ -63,7 +63,7 @@ const Navbar = () => {
           <Link
             key={link.key}
             href={link.href}
-            className="text-primary text-lg transition-color hover:text-[#499954] hover:font-medium hover:underline"
+            className="text-primary text-lg transition-color hover:text-[#499954] font-medium hover:font-semibold hover:underline"
           >
             {link.label}
           </Link>
@@ -74,7 +74,7 @@ const Navbar = () => {
       <div className="flex items-center gap-4">
         <SignedOut>
           <SignInButton>
-            <button className="bg-primary text-white px-5 py-2 rounded-lg shadow-md hover:bg-[#499954] transition duration-200">
+            <button className="bg-primary font-medium text-white px-5 py-2 rounded-lg shadow-md hover:bg-[#499954] transition duration-200">
               Login
             </button>
           </SignInButton>
