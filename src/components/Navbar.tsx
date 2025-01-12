@@ -28,27 +28,27 @@ const Navbar = () => {
       {/* Sidebar and Overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black bg-opacity-25"
+          className="fixed inset-0 z-30 bg-black bg-opacity-50"
           onClick={closeSidebar}
         ></div>
       )}
       <div
-        className={`lg:hidden fixed top-0 right-0 h-1/3 w-2/4 bg-white shadow-md z-40 flex flex-col items-center px-6 py-4 transform transition-transform duration-300 ${
+        className={`lg:hidden fixed top-4 right-0 h-1/3 w-3/5 bg-white shadow-lg z-40 flex flex-col items-center px-6 py-6 transform transition-transform duration-300 ease-in-out rounded-lg ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <button
-          className="self-end text-xl text-primary mb-4"
+          className="self-end text-xl text-primary mb-4 hover:text-[#499954] transition duration-200"
           onClick={closeSidebar}
         >
           ✕
         </button>
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-6 w-full text-center">
           {navLinks.map((link) => (
             <Link
               key={link.key}
               href={link.href}
-              className="text-primary text-lg hover:text-[#499954] hover:font-medium hover:underline"
+              className="text-primary text-lg font-medium hover:text-[#499954] hover:underline"
               onClick={closeSidebar}
             >
               {link.label}
