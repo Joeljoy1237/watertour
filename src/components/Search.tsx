@@ -27,33 +27,46 @@ const SearchBar: React.FC<SearchBarProps> = () => {
   };
 
   return (
-    <div className="w-3/4 mx-auto p-6 mt-7 bg-white rounded-full shadow-lg flex items-center justify-between space-x-4">
+    <div className="container m-4 mx-auto lg:gap-2 flex justify-center rounded-md w-3/4 shadow-lg bg-white h-auto p-6">
       {/* Search Name Input */}
       <div className="flex-1">
+        <h2 className="font-semibold">location</h2>
         <input
           type="text"
           placeholder="Search by name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-6 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#5EBC67] focus:border-[#5EBC67] placeholder-gray-400"
+          className=" px-9 py-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5EBC67] focus:border-[#5EBC67] placeholder-gray-400"
         />
       </div>
 
       {/* Search Date Input */}
-      <div>
+      <div className="flex-1">
+        <h2>Date</h2>
         <input
           type="date"
           value={searchDate}
           onChange={(e) => setSearchDate(e.target.value)}
-          className="px-6 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#5EBC67] focus:border-[#5EBC67] text-gray-600"
+          className=" px-9 py-3 border w-full border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5EBC67] focus:border-[#5EBC67] text-gray-600"
+        />
+      </div>
+
+      {/* Input person */}
+      <div className="flex-1">
+        <h2 className="font-semibold">Person</h2>
+        <input
+          type="text"
+          placeholder="Search by name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className=" px-9 py-3 border w-full border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5EBC67] focus:border-[#5EBC67] placeholder-gray-400"
         />
       </div>
 
       {/* Search Button */}
       <button
         onClick={handleSearch}
-        className="bg-[#5EBC67] text-white px-8 py-3 rounded-full shadow-md hover:bg-[#4A9453] transition-all duration-300 focus:outline-none"
-      >
+        className="bg-[#5EBC67] text-white mt-6  px-6 py-3 rounded-md shadow-md hover:bg-[#4A9453] transition-all duration-300 focus:outline-none">
         Search
       </button>
     </div>

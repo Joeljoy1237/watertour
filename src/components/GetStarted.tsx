@@ -9,7 +9,7 @@ const GetStarted = () => {
       {/* Image */}
 
       <Image
-        src="/boat.jpg"
+        src="/newboat.png"
         alt="boat"
         fill={true}
         priority
@@ -17,11 +17,13 @@ const GetStarted = () => {
       />
 
       {/* Content */}
-      <div className="absolute bottom-32 lg:bottom-10 right-0 w-5/6 lg:w-2/4 flex items-center justify-end pr-5 lg:pr-10 z-20">
-        <div className="text-left">
-          <h1 className="text-white lg:text-justify text-3xl lg:text-6xl font-bold mb-6 drop-shadow-lg">
-            Find the best boat for your next adventure
+      <div className="absolute h-4  top-0 lg:bottom-10 left-0 w-5 lg:w-2/4 flex items-center justify-start mt-4 sm:ml-10 md:ml-12  lg:pr-10 z-20">
+        <div className="text-left mt-48">
+          <h1 className="text-black mb-0 lg:text-justify text-3xl lg:text-4xl font-bold drop-shadow-lg">
+          The essence of<br></br>true discovery
           </h1>
+          <p>The journey of a lifetime begins with one step,<br></br>
+          Let us take you to someplace entirely different.</p>
         </div>
       </div>
     </div>
