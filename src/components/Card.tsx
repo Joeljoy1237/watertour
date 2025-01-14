@@ -78,7 +78,7 @@ const Card = (props: CardProps) => {
         {/* Price Section */}
         <div className="flex items-center justify-between">
           <span className="text-black text-xl font-semibold">{`₹${props.price.toLocaleString(
-            "en-IN"
+            "en-IN" 
           )}`}</span>
           <button className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-[#4A9453] transition">
             Book Now
