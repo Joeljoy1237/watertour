@@ -27,7 +27,7 @@ const SearchBar: React.FC<SearchBarProps> = () => {
   };
 
   return (
-    <div className="container m-4 mx-auto lg:gap-2 flex justify-center rounded-md w-3/4 shadow-lg bg-white h-auto p-6">
+    <div className="container  mx-auto lg:gap-2 sm:flex grid justify-center rounded-md w-3/4 shadow-lg bg-white h-auto p-6">
       {/* Search Name Input */}
       <div className="flex-1">
         <h2 className="font-semibold">location</h2>
