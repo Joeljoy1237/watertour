@@ -1,7 +1,11 @@
-// next.config.js
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ['images.unsplash.com'], // Add any additional domains here
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
   },
 };
