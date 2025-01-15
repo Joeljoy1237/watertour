@@ -20,7 +20,7 @@ const AboutUsPage: React.FC = () => {
       <div className="flex justify-center mb-16 md:mb-24">
         <div className="relative w-full max-w-2xl h-80 md:h-96 rounded-xl overflow-hidden shadow-2xl">
           <Image
-            src="/path/to/your/team-image.jpg" // Update with your actual image path
+            src="/team-image.jpg"
             alt="Our Team"
             layout="fill"
             objectFit="cover"
