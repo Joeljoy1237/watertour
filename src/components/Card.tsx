@@ -15,72 +15,71 @@ interface CardProps {
   imageUrl: string;
 }
 
-const Card = (props: CardProps) => {
+const Card: React.FC<CardProps> = ({ id, title, price, rating, imageUrl }) => {
   const renderStars = (rating: number) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      if (rating >= i + 1) {
+    const totalStars = 5;
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating - fullStars >= 0.5;
+
+    return Array.from({ length: totalStars }, (_, index) => {
+      if (index < fullStars) {
         // Full star
-        stars.push(
+        return (
           <FontAwesomeIcon
-            key={i}
+            id={id}
+            key={index}
             icon={faStar}
             className="text-yellow-400 w-5 h-5"
           />
         );
-      } else if (rating > i && rating < i + 1) {
+      } else if (index === fullStars && hasHalfStar) {
         // Half star
-        stars.push(
+        return (
           <FontAwesomeIcon
-            key={i}
+            id={id}
+            key={index}
             icon={faStarHalfAlt}
             className="text-yellow-400 w-5 h-5"
           />
         );
       } else {
         // Empty star
-        stars.push(
+        return (
           <FontAwesomeIcon
-            key={i}
+            id={id}
+            key={index}
             icon={faEmptyStar}
             className="text-gray-300 w-5 h-5"
           />
         );
       }
-    }
-    return stars;
+    });
   };
 
   return (
-    <div className="w-72 bg-white rounded-xl shadow-lg overflow-hidden duration-300 transform hover:scale-105">
-      {/* Image Section with Light Gradient Overlay */}
-      <div className="relative h-48">
-        <Image
-          src={props.imageUrl}
-          alt="Houseboat"
-          fill={true}
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 via-gray-100/0 to-transparent"></div>
+    <div className="bg-white rounded-xl w-auto shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+      {/* Image Section */}
+      <div className="relative w-full h-48 md:h-56">
+        <Image src={imageUrl} alt={title} fill className="object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
       </div>
 
       {/* Content Section */}
       <div className="p-5">
-        <h3 className="text-black text-lg font-bold mb-2 truncate">
-          {props.title}
-        </h3>
+        <h3 className="text-black text-lg font-bold mb-2 truncate">{title}</h3>
 
         {/* Star Rating */}
-        <div className="flex items-center mb-4">
-          {renderStars(props.rating)}
-        </div>
+        <div className="flex items-center mb-4">{renderStars(rating)}</div>
 
         {/* Price Section */}
         <div className="flex items-center justify-between">
-          <span className="text-black text-xl font-semibold">{`₹${props.price.toLocaleString(
-            "en-IN" 
-          )}`}</span>
-          <button className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-[#4A9453] transition">
+          <span className="text-black text-xl font-semibold">
+            {`₹${price.toLocaleString("en-IN")}`}
+          </span>
+          <button
+            type="button"
+            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-[#4A9453] transition"
+          >
             Book Now
           </button>
         </div>
@@ -89,9 +88,9 @@ const Card = (props: CardProps) => {
   );
 };
 
-const CardList = () => {
+const CardList: React.FC = () => {
   return (
-    <div className="flex flex-wrap gap-8 justify-center p-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-5">
       <Card
         id="1"
         title="Serenity Cruise"

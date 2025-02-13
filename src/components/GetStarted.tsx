@@ -2,29 +2,29 @@ import Image from "next/image";
 
 const GetStarted = () => {
   return (
-    <div className="relative w-full h-96 lg:h-[90vh] overflow-hidden">
-      {/* Black overlay on the image */}
-      {/* <div className="absolute inset-0 bg-black opacity-10 z-10"></div> */}
-
-      {/* Image */}
-
-      <Image
-        src="/newboat.png"
-        alt="boat"
-        fill={true}
-        priority
-        className="z-0 relative object-bottom lg:object-bottom object-cover"
-      />
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* Background Image with Gradient Overlay */}
+      <div className="absolute inset-0">
+        <Image
+          src="/newboat.webp"
+          alt="Boat sailing into the horizon"
+          fill
+          objectFit="cover"
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-60"></div>
+      </div>
 
       {/* Content */}
-      <div className="absolute h-4  top-0 lg:bottom-10 left-0 w-5 lg:w-2/4 flex items-center justify-start mt-4 sm:ml-10 md:ml-12  lg:pr-10 z-20">
-        <div className="text-left mt-48">
-          <h1 className="text-black mb-0 lg:text-justify text-3xl lg:text-4xl font-bold drop-shadow-lg">
-          The essence of<br></br>true discovery
-          </h1>
-          <p>The journey of a lifetime begins with one step,<br></br>
-          Let us take you to someplace entirely different.</p>
-        </div>
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 text-center text-white">
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-md">
+          The essence of <br /> true discovery
+        </h1>
+        <p className="text-lg md:text-2xl max-w-xl">
+          The journey of a lifetime begins with one step. <br />
+          Let us take you to someplace entirely different.
+        </p>
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ export const connectToDB = async () => {
 
   try {
     await mongoose.connect(process.env.MANGODB_URL!, {
-      dbName: "educcet",
+      dbName: "waterTour",
       writeConcern: { w: 'majority' },
     });
     isConnected = true;
