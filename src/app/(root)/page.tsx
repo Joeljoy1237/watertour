@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
       <GetStarted />
-      <Search onSearch={() => 1} />
+      <Search />
       <Card />
     </>
   );
