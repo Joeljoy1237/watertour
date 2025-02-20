@@ -110,7 +110,7 @@ const CardList: React.FC = () => {
         title="Dream Voyager"
         price={1500}
         imageUrl="/test_boat.jpg"
-        rating={2.5}
+        rating={1.5}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { FiMenu } from "react-icons/fi";
-import CustomerSidebar from "@/components/CustomerSidebar";
+import CustomerSidebar from "@/components/dashboaord/CustomerSidebar";
 
 export default function DashboardLayout({
   children,
@@ -12,25 +12,26 @@ export default function DashboardLayout({
 
   return (
     <div className="flex h-screen">
-      {/* Menu Button for Mobile View */}
-      <div className="lg:hidden fixed top-4 left-4 z-40 bg-primary text-white p-2 rounded-full shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark transition-colors duration-300">
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="focus:outline-none"
-        >
-          <FiMenu size={24} />
-        </button>
-      </div>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setSidebarOpen(true)}
+        className="lg:hidden fixed top-5 left-4 z-50 bg-primary text-white p-2 rounded-full shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark transition-all duration-300"
+      >
+        <FiMenu size={24} />
+      </button>
 
-      {/* Sidebar */}
+      {/* Sidebar Component */}
       <CustomerSidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
 
-      {/* Main content */}
-      <div className="flex flex-col flex-1">
-        {/* Content */}
+      {/* Main Content Area */}
+      <div
+        className={`flex flex-col flex-1 transition-all duration-300 ${
+          sidebarOpen ? "overflow-hidden" : ""
+        }`}
+      >
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>

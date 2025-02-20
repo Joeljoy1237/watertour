@@ -11,7 +11,7 @@ const Footer = () => {
           {/* About Section */}
           <div className="w-full md:w-1/3">
             <h3 className="text-xl font-semibold text-white mb-4">About Us</h3>
-            <p className="text-sm leading-7">
+            <p className="text-sm leading-7 hover:text-white">
               Explore the best water adventures with our premium houseboat
               booking services. Experience luxury and comfort as you glide
               through serene backwaters.
@@ -26,7 +26,10 @@ const Footer = () => {
             <ul className="space-y-3">
               {["Home", "About", "Services", "Contact"].map((link, index) => (
                 <li key={index}>
-                  <Link href={`/${link.toLowerCase()}`} passHref>
+                  <Link
+                    href={`/${link.toLowerCase()}`}
+                    className="hover:text-white"
+                  >
                     {link}
                   </Link>
                 </li>
@@ -39,13 +42,13 @@ const Footer = () => {
             <h3 className="text-xl font-semibold text-white mb-4">
               Get in Touch
             </h3>
-            <p className="text-sm mb-2">
+            <p className="text-sm mb-2 hover:text-white">
               Email:{" "}
               <Link href="mailto:contact@houseboat.com" passHref>
                 contact@houseboat.com
               </Link>
             </p>
-            <p className="text-sm mb-4">
+            <p className="text-sm mb-4 hover:text-white">
               Phone:{" "}
               <Link
                 href="tel:+919876543210"

@@ -1,6 +1,6 @@
 // app/dashboard/bookings/page.tsx
 import React from "react";
-import BookingCard from "@/components/BookingCard";
+import BookingCard from "@/components/dashboaord/BookingCard";
 
 export default function BookingsPage() {
   // Sample data for bookings

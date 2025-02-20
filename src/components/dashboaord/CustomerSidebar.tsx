@@ -36,8 +36,9 @@ const CustomerSidebar: React.FC<SidebarProps> = ({
       </div>
       <nav className="flex flex-col p-4 space-y-2">
         {menuItems.map((item) => (
-          <Link href={item.href} key={item.name} passHref>
+          <Link href={item.href} key={item.name}>
             <div
+              onClick={() => setSidebarOpen(false)}
               className={`flex items-center px-4 py-2 rounded-md cursor-pointer ${
                 pathname === item.href
                   ? "bg-primary text-white"
