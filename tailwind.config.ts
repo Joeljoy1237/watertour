@@ -9,10 +9,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#5EBC67',
+        primary: '#2ca01c',
+        secondary:'#ebebeb',
         background: "var(--background)",
         foreground: "var(--foreground)",
-      },
+      },      
     },
   },
   plugins: [],
