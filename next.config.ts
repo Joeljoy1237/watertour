@@ -1,4 +1,16 @@
 module.exports = {
+  async rewrites() {
+    return [
+      {
+        source: '/home',
+        destination: '/',
+      },
+      {
+        source: '/dashboard',
+        destination: '/dashboard/profile',
+      },
+    ];
+  },
   reactStrictMode: true,
   images: {
     remotePatterns: [

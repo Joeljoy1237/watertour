@@ -29,13 +29,7 @@ const ContactUsForm: React.FC = () => {
     <div className="relative min-h-screen">
       {/* Full Background Image */}
       <div className="absolute top-0 left-0 w-full h-full">
-        <Image
-          src="/boat.jpg"
-          alt="Boat Background"
-          layout="fill"
-          objectFit="cover"
-          className=""
-        />
+        <Image src="/boat.jpg" alt="Boat Background" fill className="" />
       </div>
 
       {/* Right Side with Form */}

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Image from "next/image";
+// import Image from "next/image";
 
 const AboutUsPage: React.FC = () => {
   return (
@@ -17,7 +17,7 @@ const AboutUsPage: React.FC = () => {
       </div>
 
       {/* Section 2: Team/Company Image */}
-      <div className="flex justify-center mb-16 md:mb-24">
+      {/* <div className="flex justify-center mb-16 md:mb-24">
         <div className="relative w-full max-w-2xl h-80 md:h-96 rounded-xl overflow-hidden shadow-2xl">
           <Image
             src="/team-image.jpg"
@@ -27,7 +27,7 @@ const AboutUsPage: React.FC = () => {
             className="rounded-xl"
           />
         </div>
-      </div>
+      </div> */}
 
       {/* Section 3: Our Values */}
       <div className="container mx-auto px-6 md:px-12 text-center mb-20">

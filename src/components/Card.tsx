@@ -6,6 +6,8 @@ import {
   faStarHalfAlt,
   faStar as faEmptyStar,
 } from "@fortawesome/free-solid-svg-icons";
+import Button from "@/components/Button";
+import Link from "next/link";
 
 interface CardProps {
   id: string;
@@ -76,12 +78,9 @@ const Card: React.FC<CardProps> = ({ id, title, price, rating, imageUrl }) => {
           <span className="text-black text-xl font-semibold">
             {`₹${price.toLocaleString("en-IN")}`}
           </span>
-          <button
-            type="button"
-            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-[#4A9453] transition"
-          >
-            Book Now
-          </button>
+          <Link href={`/book/${id}`}>
+            <Button title="Book Now" />
+          </Link>
         </div>
       </div>
     </div>

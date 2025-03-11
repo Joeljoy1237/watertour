@@ -1,5 +1,6 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import Button from "@/components/Button"; // Importing Button component
 import {
   FaMapMarkerAlt,
   FaUserFriends,
@@ -131,12 +132,7 @@ const SearchBar: React.FC = () => {
 
       {/* Search Button */}
       <div className="flex justify-center mt-8">
-        <button
-          onClick={handleSearch}
-          className="bg-[#5EBC67] text-white flex items-center justify-center w-full md:w-auto px-10 py-3 rounded-md shadow-md hover:bg-[#4A9453] transition-all duration-300 focus:outline-none"
-        >
-          Search
-        </button>
+        <Button onClick={handleSearch} title="Search" className="px-10" />
       </div>
     </div>
   );

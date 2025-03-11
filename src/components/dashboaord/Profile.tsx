@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
 
 interface ProfileData {
   name: string;
@@ -12,7 +14,7 @@ interface ProfileData {
 
 const ProfileView: React.FC = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
-
+  const router = useRouter();
   useEffect(() => {
     // Simulated API call to fetch profile data
     const fetchProfileData = async () => {
@@ -78,6 +80,13 @@ const ProfileView: React.FC = () => {
             </label>
             <p className="text-lg text-gray-800">{profile.address}</p>
           </div>
+
+          {/* Edit Button */}
+          <Button
+            title="Edit Profile"
+            type="button"
+            onClick={() => router.push("/dashboard/profile/edit")}
+          />
         </div>
       </div>
     </div>

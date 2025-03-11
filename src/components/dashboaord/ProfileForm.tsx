@@ -46,7 +46,10 @@ const ProfileForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 px-5 pt-20 lg:px-[20rem]  md:px-20"
+    >
       <div>
         <label
           htmlFor="name"
