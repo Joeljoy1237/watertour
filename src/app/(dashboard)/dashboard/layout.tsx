@@ -14,7 +14,7 @@ export default function DashboardLayout({
       <div className="flex items-center flex-row w-screen">
         <DashboardSidebar />
         <div className="flex flex-col w-full">
-          <main className="min-h-[100vh] h-auto rounded-[5px] lg:pt-[5vh] lg:pl-[19vw] pr-[1vw] pb-[1vw] w-[99.5vw] flex  bg-green-50 bg-opacity-45">
+          <main className="min-h-[100vh] h-auto rounded-[5px] lg:pt-[2vh] lg:pl-[19vw] pr-[1vw] w-[99.5vw] flex  bg-green-50 bg-opacity-45">
             <div className="w-full h-[82vh] relative overflow-auto">
               {children}
             </div>
