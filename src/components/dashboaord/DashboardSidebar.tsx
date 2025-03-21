@@ -18,7 +18,8 @@ export default function DashboardSidebar() {
       if (
         isOpen &&
         event.target instanceof HTMLElement &&
-        !event.target.closest(".sidebar")
+        !event.target.closest(".sidebar") &&
+        !event.target.closest(".menu-button")
       ) {
         setIsOpen(false);
       }
@@ -29,20 +30,13 @@ export default function DashboardSidebar() {
     };
   }, [isOpen]);
 
-  const generalMenuItems = [
-    {
-      title: "Profile",
-      link: "/dashboard/profile",
-      icon: <CgProfile />,
-    },
+  const menuItems = [
+    { title: "Profile", link: "/dashboard/profile", icon: <CgProfile /> },
     {
       title: "Bookings",
       link: "/dashboard/bookings",
       icon: <IoCheckmarkCircleSharp />,
     },
-  ];
-
-  const ownerMenuItems = [
     {
       title: "My Houseboats",
       link: "/dashboard/owner/houseboats",
@@ -61,29 +55,37 @@ export default function DashboardSidebar() {
   ];
 
   return (
-    <div className="h-screen w-full md:w-[18vw] fixed bg-white shadow-md z-0">
+    <>
       {/* Mobile Menu Button */}
       <button
-        className="md:hidden p-4 text-2xl"
-        onClick={() => setIsOpen(!isOpen)}
+        className="menu-button md:hidden fixed top-4 left-4 p-3 z-50 bg-gray-200 rounded-md"
+        onClick={() => setIsOpen(true)}
       >
-        <FiMenu />
+        <FiMenu className="text-2xl" />
       </button>
 
-      {/* Sidebar */}
+      {/* Sidebar & Overlay */}
       <div
-        className={`sidebar absolute md:relative top-0 left-0 h-screen w-[70vw] md:w-full bg-white shadow-md transform transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
+          isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        } md:hidden`}
+        onClick={() => setIsOpen(false)}
+      ></div>
+
+      <aside
+        className={`sidebar fixed top-0 left-0 h-screen w-[70vw] md:w-[18vw] bg-white shadow-lg z-40 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
-        <div className="mt-[8vh] w-full flex flex-col gap-1">
-          {generalMenuItems.map((menuItem, index) => (
+        <div className="mt-[15vh] w-full flex flex-col gap-1">
+          {menuItems.map((menuItem, index) => (
             <Link
+              key={index}
+              onClick={() => setIsOpen(false)}
+              href={menuItem.link}
               className={`flex text-gray-700 flex-row items-center gap-2 text-2xl py-2 relative w-full px-[2vw] ${
                 location === menuItem.link && "text-primary bg-green-50"
               }`}
-              key={index}
-              href={menuItem.link}
             >
               {location === menuItem.link && (
                 <div className="h-full w-2 rounded-r-[20px] absolute left-0 top-0 bg-primary"></div>
@@ -93,28 +95,15 @@ export default function DashboardSidebar() {
             </Link>
           ))}
         </div>
-        {ownerMenuItems.map((menuItem, index) => (
-          <Link
-            className={`flex text-gray-700 flex-row items-center gap-2 text-2xl py-2 relative w-full px-[2vw] ${
-              location === menuItem.link && "text-primary bg-green-50"
-            }`}
-            key={index}
-            href={menuItem.link}
-          >
-            {location === menuItem.link && (
-              <div className="h-full w-2 rounded-r-[20px] absolute left-0 top-0 bg-primary"></div>
-            )}
-            {menuItem.icon}
-            <span className="text-[1.1rem]">{menuItem.title}</span>
-          </Link>
-        ))}
-      </div>
-      <div className="absolute bottom-2 w-full px-[2vw]">
-        <button className="bg-red-100 flex items-center justify-center gap-2 py-2 font-semibold text-red-600 rounded-lg outline-none border-none w-full">
-          <FiLogOut className="text-xl" />
-          Logout
-        </button>
-      </div>
-    </div>
+
+        {/* Logout Button */}
+        <div className="absolute bottom-20 lg:bottom-2 w-full p-[2vw]">
+          <button className="bg-red-100 flex items-center justify-center gap-2 py-2 font-semibold text-red-600 rounded-lg outline-none border-none w-full">
+            <FiLogOut className="text-xl" />
+            Logout
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

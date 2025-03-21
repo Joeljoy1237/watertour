@@ -16,8 +16,8 @@ export default function ProfilePage() {
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="max-w-3xl w-full bg-white shadow-xl rounded-2xl p-8 text-gray-900">
+    <div className="flex flex-col items-center justify-center z-0 min-h-screen w-full px-4 md:px-8 bg-gray-50">
+      <div className="max-w-3xl w-full bg-white shadow-xl rounded-2xl p-6 md:p-8 text-gray-900">
         {/* Profile Header */}
         <div className="flex flex-col items-center">
           <div className="relative">
@@ -35,11 +35,11 @@ export default function ProfilePage() {
           <h2 className="text-2xl font-semibold mt-4 text-primary">
             {user.name}
           </h2>
-          <p className="text-gray-600">{user.bio}</p>
+          <p className="text-gray-600 text-center">{user.bio}</p>
         </div>
 
         {/* Profile Details */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 bg-gray-100 rounded-xl shadow-md">
             <p className="text-sm text-gray-500">Email</p>
             <p className="text-lg font-medium">{user.email}</p>
@@ -48,7 +48,7 @@ export default function ProfilePage() {
             <p className="text-sm text-gray-500">Phone</p>
             <p className="text-lg font-medium">{user.phone}</p>
           </div>
-          <div className="p-4 bg-gray-100 rounded-xl shadow-md">
+          <div className="p-4 bg-gray-100 rounded-xl shadow-md col-span-1 md:col-span-2">
             <p className="text-sm text-gray-500">Location</p>
             <p className="text-lg font-medium">{user.location}</p>
           </div>
