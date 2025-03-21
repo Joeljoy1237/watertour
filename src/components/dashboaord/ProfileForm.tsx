@@ -1,127 +1,99 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-interface ProfileData {
+interface UserProfile {
   name: string;
   email: string;
   phone: string;
-  address: string;
+  location: string;
+  bio: string;
+  profilePic: string;
 }
 
-const ProfileForm: React.FC = () => {
-  const [formData, setFormData] = useState<ProfileData>({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-  });
+interface ProfileFormProps {
+  user: UserProfile;
+  setUser: (user: UserProfile) => void;
+  onClose: () => void;
+}
 
-  useEffect(() => {
-    // Fetch profile data from an API or local storage
-    const fetchProfileData = async () => {
-      // Replace with your data fetching logic
-      const data: ProfileData = {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        phone: "123-456-7890",
-        address: "123 Main St, Anytown, USA",
-      };
-      setFormData(data);
-    };
+export default function ProfileForm({
+  user,
+  setUser,
+  onClose,
+}: ProfileFormProps) {
+  const [formData, setFormData] = useState<UserProfile>(user);
 
-    fetchProfileData();
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form data submitted:", formData);
+  const handleSave = () => {
+    setUser(formData);
+    onClose();
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 px-5 pt-20 lg:px-[20rem]  md:px-20"
-    >
-      <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Name
-        </label>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-96">
+        <h2 className="text-xl font-semibold text-primary mb-4">
+          Edit Profile
+        </h2>
+
         <input
           type="text"
-          id="name"
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="w-full p-2 mb-3 border rounded focus:ring-primary focus:ring-2"
+          placeholder="Full Name"
         />
-      </div>
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Email
-        </label>
         <input
           type="email"
-          id="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="w-full p-2 mb-3 border rounded focus:ring-primary focus:ring-2"
+          placeholder="Email"
         />
-      </div>
-      <div>
-        <label
-          htmlFor="phone"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Phone
-        </label>
         <input
-          type="tel"
-          id="phone"
+          type="text"
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="w-full p-2 mb-3 border rounded focus:ring-primary focus:ring-2"
+          placeholder="Phone Number"
         />
-      </div>
-      <div>
-        <label
-          htmlFor="address"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Address
-        </label>
         <input
           type="text"
-          id="address"
-          name="address"
-          value={formData.address}
+          name="location"
+          value={formData.location}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="w-full p-2 mb-3 border rounded focus:ring-primary focus:ring-2"
+          placeholder="Location"
         />
-      </div>
-      <button
-        type="submit"
-        className="mt-4 w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-[#499954] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#499954]"
-      >
-        Save Profile
-      </button>
-    </form>
-  );
-};
+        <textarea
+          name="bio"
+          value={formData.bio}
+          onChange={handleChange}
+          className="w-full p-2 mb-3 border rounded focus:ring-primary focus:ring-2"
+          placeholder="Bio"
+          rows={3}
+        ></textarea>
 
-export default ProfileForm;
+        <div className="flex justify-between mt-4">
+          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 bg-primary text-white rounded hover:bg-green-700 transition"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

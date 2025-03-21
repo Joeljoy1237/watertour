@@ -1,21 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+
+/* Hide scrollbar for WebKit browsers */
+::-webkit-scrollbar {
+  display: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Hide scrollbar for Firefox */
+html {
+  scrollbar-width: none;
 }
 
+/* Hide scrollbar for IE/Edge */
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-} */
+  -ms-overflow-style: none;
+}

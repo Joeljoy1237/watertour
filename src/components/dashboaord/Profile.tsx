@@ -1,96 +1,78 @@
 "use client";
-import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Button from "@/components/Button";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { FiEdit, FiCamera } from "react-icons/fi";
+import ProfileForm from "./ProfileForm";
 
-interface ProfileData {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  profileImage: string;
-}
-
-const ProfileView: React.FC = () => {
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const router = useRouter();
-  useEffect(() => {
-    // Simulated API call to fetch profile data
-    const fetchProfileData = async () => {
-      const data: ProfileData = {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        phone: "+91 123-456-7890",
-        address: "123 Main St, Anytown, USA",
-        profileImage: "/test_boat.jpg", // Replace with actual image URL
-      };
-      setProfile(data);
-    };
-
-    fetchProfileData();
-  }, []);
-
-  if (!profile) {
-    return <p className="text-center text-gray-500">Loading profile...</p>;
-  }
+export default function ProfilePage() {
+  const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState({
+    name: "Joel Mathew",
+    email: "joel@example.com",
+    phone: "+91 9876543210",
+    location: "Punnapra, Kerala",
+    bio: "Boat enthusiast | Tech lover | Houseboat owner",
+    profilePic: "/boat.jpg", // Replace with actual image URL
+  });
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-white">
-      <div className="w-full max-w-lg lg:max-w-2xl bg-white shadow-lg rounded-xl p-8 transition-all duration-300 hover:shadow-2xl">
-        {/* Profile Image */}
-        <div className="flex justify-center">
-          <Image
-            src={profile.profileImage}
-            alt="Profile"
-            width={160}
-            height={160}
-            className="w-32 h-32 lg:w-40 lg:h-40 rounded-full border-4 border-gray-300 shadow-sm"
-          />
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="max-w-3xl w-full bg-white shadow-xl rounded-2xl p-8 text-gray-900">
+        {/* Profile Header */}
+        <div className="flex flex-col items-center">
+          <div className="relative">
+            <Image
+              src={user.profilePic}
+              width={150}
+              height={150}
+              alt="Profile"
+              className="w-32 h-32 object-cover rounded-full border-4 border-primary shadow-lg"
+            />
+            <button className="absolute bottom-1 right-1 bg-primary p-2 rounded-full shadow-md hover:bg-green-700 transition">
+              <FiCamera className="text-white text-lg" />
+            </button>
+          </div>
+          <h2 className="text-2xl font-semibold mt-4 text-primary">
+            {user.name}
+          </h2>
+          <p className="text-gray-600">{user.bio}</p>
         </div>
 
         {/* Profile Details */}
-        <div className="space-y-6 text-center mt-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-500">
-              Name
-            </label>
-            <p className="text-2xl font-semibold text-gray-900">
-              {profile.name}
-            </p>
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-4 bg-gray-100 rounded-xl shadow-md">
+            <p className="text-sm text-gray-500">Email</p>
+            <p className="text-lg font-medium">{user.email}</p>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-500">
-              Email
-            </label>
-            <p className="text-lg text-gray-800">{profile.email}</p>
+          <div className="p-4 bg-gray-100 rounded-xl shadow-md">
+            <p className="text-sm text-gray-500">Phone</p>
+            <p className="text-lg font-medium">{user.phone}</p>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-500">
-              Phone
-            </label>
-            <p className="text-lg text-gray-800">{profile.phone}</p>
+          <div className="p-4 bg-gray-100 rounded-xl shadow-md">
+            <p className="text-sm text-gray-500">Location</p>
+            <p className="text-lg font-medium">{user.location}</p>
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-500">
-              Address
-            </label>
-            <p className="text-lg text-gray-800">{profile.address}</p>
-          </div>
-
-          {/* Edit Button */}
-          <Button
-            title="Edit Profile"
-            type="button"
-            onClick={() => router.push("/dashboard/profile/edit")}
-          />
+        {/* Edit Profile Button */}
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => setIsEditing(true)}
+            className="bg-primary px-6 py-2 flex items-center gap-2 rounded-full text-lg text-white shadow-md hover:bg-green-700 transition"
+          >
+            <FiEdit className="text-white" />
+            Edit Profile
+          </button>
         </div>
       </div>
+
+      {isEditing && (
+        <ProfileForm
+          user={user}
+          setUser={setUser}
+          onClose={() => setIsEditing(false)}
+        />
+      )}
     </div>
   );
-};
-
-export default ProfileView;
+}
