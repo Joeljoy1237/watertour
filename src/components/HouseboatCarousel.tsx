@@ -1,130 +1,89 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
-const HouseboatCarousel: React.FC = () => {
-  // Array of houseboat images
-  const images = [
-    { src: "/boat.jpg", alt: "Houseboat view 1" },
-    { src: "/boatbg1.jpg", alt: "Houseboat view 2" },
-    { src: "/test_boat.jpg", alt: "Houseboat view 3" },
-  ];
+const images = [
+  { src: "/boat.jpg", alt: "Houseboat view 1" },
+  { src: "/boatbg1.jpg", alt: "Houseboat view 2" },
+  { src: "/test_boat.jpg", alt: "Houseboat view 3" },
+];
 
+export default function HouseboatCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = images.length;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle going to specific slide
-  const goToSlide = (index: number) => {
-    if (index < 0) {
-      setCurrentSlide(totalSlides - 1);
-    } else if (index >= totalSlides) {
-      setCurrentSlide(0);
-    } else {
-      setCurrentSlide(index);
+  // Auto-slide function
+  const startAutoSlide = () => {
+    stopAutoSlide(); // Reset timer
+    intervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % totalSlides);
+    }, 5000);
+  };
+
+  // Stop auto-slide
+  const stopAutoSlide = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
     }
   };
 
+  // Start auto-slide on mount
+  useEffect(() => {
+    startAutoSlide();
+    return () => stopAutoSlide();
+  }, []);
+
+  // Manually change slide & reset timer
+  const goToSlide = (index: number) => {
+    stopAutoSlide();
+    setCurrentSlide(index < 0 ? totalSlides - 1 : index % totalSlides);
+    startAutoSlide();
+  };
+
   return (
-    <div
-      id="default-carousel"
-      className="relative w-full"
-      data-carousel="slide"
-    >
-      {/* Carousel Wrapper */}
-      <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
+    <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden">
+      {/* Image Wrapper - Sliding Animation */}
+      <div
+        className="flex transition-transform duration-1000 ease-in-out"
+        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+      >
         {images.map((img, index) => (
           <div
             key={index}
-            data-carousel-item
-            className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
+            className="min-w-full relative h-[500px] md:h-[600px]"
           >
-            <div className="relative w-full h-full">
-              <Image
-                src={img.src}
-                alt={img.alt}
-                fill
-                className="object-cover"
-              />
-            </div>
+            <Image src={img.src} alt={img.alt} fill className="object-cover" />
           </div>
         ))}
       </div>
 
-      {/* Slider Indicators */}
-      <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3">
+      {/* Navigation Dots */}
+      <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex space-x-3">
         {images.map((_, index) => (
           <button
             key={index}
-            type="button"
-            aria-current={index === currentSlide ? "true" : "false"}
-            aria-label={`Slide ${index + 1}`}
-            data-carousel-slide-to={index}
             onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-full ${
-              index === currentSlide ? "bg-white" : "bg-gray-300"
+            className={`w-4 h-4 rounded-full transition ${
+              index === currentSlide ? "bg-white scale-110" : "bg-gray-300"
             }`}
-          ></button>
+          />
         ))}
       </div>
 
-      {/* Slider Controls */}
-      {/* Previous Button */}
+      {/* Prev & Next Buttons */}
       <button
-        type="button"
-        data-carousel-prev
         onClick={() => goToSlide(currentSlide - 1)}
-        className="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black transition"
       >
-        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white">
-          <svg
-            className="w-4 h-4 text-white rtl:rotate-180"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 6 10"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M5 1 1 5l4 4"
-            />
-          </svg>
-          <span className="sr-only">Previous</span>
-        </span>
+        ❮
       </button>
-
-      {/* Next Button */}
       <button
-        type="button"
-        data-carousel-next
         onClick={() => goToSlide(currentSlide + 1)}
-        className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-3 rounded-full hover:bg-black transition"
       >
-        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white">
-          <svg
-            className="w-4 h-4 text-white rtl:rotate-180"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 6 10"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="m1 9 4-4-4-4"
-            />
-          </svg>
-          <span className="sr-only">Next</span>
-        </span>
+        ❯
       </button>
     </div>
   );
-};
-
-export default HouseboatCarousel;
+}
