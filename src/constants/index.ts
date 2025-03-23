@@ -12,7 +12,4 @@ export const navLinks = [
     {
         href: "/contact", key: "contact", label: "Contact"
     }
-    , {
-        href: "/listboat", key: "listBoat", label: "List new boat?"
-    }
 ];
