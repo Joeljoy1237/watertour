@@ -27,6 +27,13 @@ export default function MyHouseboats() {
       price: "₹12,000 per night",
       image: "/boat.jpg",
     },
+    {
+      id: 3,
+      name: "Bidhun Breeze",
+      location: "Kayamkulam, Kerala",
+      price: "₹9,000 per night",
+      image: "/boat3.jpg",
+    },
   ]);
 
   return (
