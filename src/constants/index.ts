@@ -8,8 +8,10 @@ export const navLinks = [
     {
         href: "/about", key: "about", label: "About"
     },
-
     {
         href: "/contact", key: "contact", label: "Contact"
+    },
+    {
+        href: "/dashboard/owner", key: "host", label: "Become a host"
     }
 ];
