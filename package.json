@@ -31,7 +31,7 @@
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.4.0",
     "swiper": "^11.2.5",
-    "uploadthing": "^7.5.2"
+    "uploadthing": "^7.6.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

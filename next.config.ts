@@ -18,6 +18,10 @@ module.exports = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'ujg1omlqoz.ufs.sh',
+      },
     ],
   },
 };
