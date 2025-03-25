@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { FiEdit, FiTrash, FiPlus } from "react-icons/fi";
+import Link from "next/link";
 
 interface Houseboat {
   id: number;
@@ -42,9 +43,11 @@ export default function MyHouseboats() {
         {/* Page Title & Add Button */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-semibold text-primary">My Houseboats</h1>
+          <Link href={"/dashboard/owner/add-houseboat/basic-details"}>
           <button className="bg-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-md hover:bg-green-700 transition">
             <FiPlus /> Add New
-          </button>
+            </button>
+            </Link>
         </div>
 
         {/* Houseboat List */}
