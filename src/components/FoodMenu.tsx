@@ -18,44 +18,44 @@ const FoodMenu: React.FC<FoodMenuProps> = ({ vegItems, nonVegItems }) => {
 
   return (
     <div className="food-menu">
-      <div className="menu-tabs">
+      <div className="menu-tabs space-x-3">
         <button
-          className={`tab-button ${activeTab === 'veg' ? 'active' : ''}`}
+          className={`tab-button ${activeTab === 'veg' ? 'active bg-primary-400 p-3 border border-primary-600  rounded-md text-white' : 'border border-primary-500 p-3 rounded-md'}`}
           onClick={() => setActiveTab('veg')}
         >
           Vegetarian
         </button>
         <button
-          className={`tab-button ${activeTab === 'nonVeg' ? 'active' : ''}`}
+          className={`tab-button ${activeTab === 'nonVeg' ? 'active bg-primary-400 p-3 border border-primary-600  rounded-md text-white' : 'border border-primary-500 p-3 rounded-md'}`}
           onClick={() => setActiveTab('nonVeg')}
         >
           Non-Vegetarian
         </button>
       </div>
 
-      <div className="menu-items">
+      <div className="menu-items flex ">
         {activeTab === 'veg' ? (
           <div className="veg-items">
-            <h3>Vegetarian Options</h3>
+            <h3 className='font-semibold mt-3 text-lg '>Vegetarian Options:</h3>
             <ul>
               {vegItems.map((item) => (
                 <li key={item.id} className="menu-item">
-                  <h4>{item.name}</h4>
+                  <h4>🥦{item.name}</h4>
                   <p>{item.description}</p>
-                  <span>${item.price.toFixed(2)}</span>
+                  <span>₹{item.price.toFixed(2)}</span>
                 </li>
               ))}
             </ul>
           </div>
         ) : (
           <div className="non-veg-items">
-            <h3>Non-Vegetarian Options</h3>
+            <h3 className='font-semibold mt-3 text-lg'>Non-Vegetarian Options:</h3>
             <ul>
               {nonVegItems.map((item) => (
                 <li key={item.id} className="menu-item">
-                  <h4>{item.name}</h4>
+                  <h4>🟥{item.name}</h4>
                   <p>{item.description}</p>
-                  <span>${item.price.toFixed(2)}</span>
+                  <span>₹{item.price.toFixed(2)}</span>
                 </li>
               ))}
             </ul>

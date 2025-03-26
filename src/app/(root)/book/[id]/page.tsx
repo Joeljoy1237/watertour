@@ -126,7 +126,9 @@ const nonVegItems = [
           </div>
           {/* Food Menu */}
           <div className="bg-white p-6 rounded-md shadow-md">
-            <FoodMenu vegItems={vegItems} nonVegItems={nonVegItems} />
+            <h3 className="text-xl font-semibold text-primary-600">
+            Food</h3>
+              <FoodMenu vegItems={vegItems} nonVegItems={nonVegItems} />
 
            
           </div>   
