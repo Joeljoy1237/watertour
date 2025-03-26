@@ -2,12 +2,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/image-upload";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
 // Amenities Selector Component
 const AmenitiesSelector = () => {
   const [amenities, setAmenities] = useState<string[]>([]);
   const [newAmenity, setNewAmenity] = useState("");
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editedAmenity, setEditedAmenity] = useState("");
 
   const addAmenity = () => {
     if (newAmenity.trim() && !amenities.includes(newAmenity)) {
@@ -16,16 +18,49 @@ const AmenitiesSelector = () => {
     }
   };
 
+  const startEditing = (index: number) => {
+    setEditingIndex(index);
+    setEditedAmenity(amenities[index]);
+  };
+
+  const cancelEditing = () => {
+    setEditingIndex(null);
+    setEditedAmenity("");
+  };
+
+  const saveEditedAmenity = () => {
+    if (editedAmenity.trim()) {
+      const updatedAmenities = [...amenities];
+      updatedAmenities[editingIndex!] = editedAmenity;
+      setAmenities(updatedAmenities);
+      cancelEditing();
+    }
+  };
+
+  const deleteAmenity = (index: number) => {
+    const updatedAmenities = amenities.filter((_, i) => i !== index);
+    setAmenities(updatedAmenities);
+  };
+
   return (
     <div className="border p-4 w-full rounded-lg ">
-      <details className="cursor-pointer">
-        <summary className="font-light">Amenities</summary>
-        <div className="mt-2">
-          {amenities.map((amenity, index) => (
-            <div key={index} className="p-2 border rounded-md mb-2">
-              {amenity}
+    <details className="cursor-pointer">
+      <summary className="font-light">Amenities</summary>
+      <div className="mt-2">
+        {amenities.map((amenity, index) => (
+          <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
+            <span>{amenity}</span>
+            <div className="flex space-x-2">
+              <button onClick={() => startEditing(index)} className="text-blue-500">
+                <FaEdit />
+              </button>
+              <button onClick={() => deleteAmenity(index)} className="text-red-500">
+                <FaTrash />
+              </button>
             </div>
-          ))}
+          </div>
+        ))}
+        {editingIndex === null ? (
           <div className="flex items-center border rounded-md p-2">
             <input
               type="text"
@@ -38,10 +73,27 @@ const AmenitiesSelector = () => {
               <FaPlus />
             </button>
           </div>
-        </div>
-      </details>
-    </div>
-  );
+        ) : (
+          <div className="flex items-center border rounded-md p-2">
+            <input
+              type="text"
+              value={editedAmenity}
+              onChange={(e) => setEditedAmenity(e.target.value)}
+              placeholder="Edit amenity"
+              className="flex-grow outline-none"
+            />
+            <button onClick={saveEditedAmenity} className="ml-2 text-green-600">
+              Save
+            </button>
+            <button onClick={cancelEditing} className="ml-2 text-gray-600">
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
+    </details>
+  </div>
+);
 };
 
 {/* food and drinks */}
@@ -49,6 +101,8 @@ const AmenitiesSelector = () => {
 const FoodAndDrinksSelector = () => {
   const [items, setItems] = useState<string[]>([]);
   const [newItem, setNewItem] = useState("");
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editedItem, setEditedItem] = useState("");
 
   const addItem = () => {
     if (newItem.trim() && !items.includes(newItem)) {
@@ -57,16 +111,49 @@ const FoodAndDrinksSelector = () => {
     }
   };
 
+  const startEditing = (index: number) => {
+    setEditingIndex(index);
+    setEditedItem(items[index]);
+  };
+
+  const cancelEditing = () => {
+    setEditingIndex(null);
+    setEditedItem("");
+  };
+
+  const saveEditedItem = () => {
+    if (editedItem.trim()) {
+      const updatedItems = [...items];
+      updatedItems[editingIndex!] = editedItem;
+      setItems(updatedItems);
+      cancelEditing();
+    }
+  };
+
+  const deleteItem = (index: number) => {
+    const updatedItems = items.filter((_, i) => i !== index);
+    setItems(updatedItems);
+  };
+
   return (
-    <div className="border  p-4 rounded-lg w-full">
-      <details className="cursor-pointer">
-        <summary className="font-light">Food & Drinks</summary>
-        <div className="mt-2">
-          {items.map((item, index) => (
-            <div key={index} className="p-2 border rounded-md mb-2">
-              {item}
+    <div className="border p-4 rounded-lg w-full">
+    <details className="cursor-pointer">
+      <summary className="font-light">Food & Drinks</summary>
+      <div className="mt-2">
+        {items.map((item, index) => (
+          <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
+            <span>{item}</span>
+            <div className="flex space-x-2">
+              <button onClick={() => startEditing(index)} className="text-blue-500">
+                <FaEdit />
+              </button>
+              <button onClick={() => deleteItem(index)} className="text-red-500">
+                <FaTrash />
+              </button>
             </div>
-          ))}
+          </div>
+        ))}
+        {editingIndex === null ? (
           <div className="flex items-center border rounded-md p-2">
             <input
               type="text"
@@ -75,14 +162,31 @@ const FoodAndDrinksSelector = () => {
               placeholder="Add food or drink"
               className="flex-grow outline-none"
             />
-            <button onClick={addItem} className="ml-2 text=-gray-600">
+            <button onClick={addItem} className="ml-2 text-gray-600">
               <FaPlus />
             </button>
           </div>
-        </div>
-      </details>
-    </div>
-  );
+        ) : (
+          <div className="flex items-center border rounded-md p-2">
+            <input
+              type="text"
+              value={editedItem}
+              onChange={(e) => setEditedItem(e.target.value)}
+              placeholder="Edit food or drink"
+              className="flex-grow outline-none"
+            />
+            <button onClick={saveEditedItem} className="ml-2 text-green-600">
+              Save
+            </button>
+            <button onClick={cancelEditing} className="ml-2 text-gray-600">
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
+    </details>
+  </div>
+);
 };
 
 export default function BasicDetails() {
