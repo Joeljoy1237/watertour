@@ -81,7 +81,29 @@ const HouseboatDetails: React.FC = () => {
               <strong>Total Beds:</strong> {totalBeds}
             </p>
           </div>
-
+          {/* Tour Package House Rules */}
+          <div className="bg-white p-6 rounded-md shadow-md">
+    <h2 className="text-2xl font-semibold text-primary-600">
+       Tour Package House Rules
+    </h2>
+          <ul className="text-gray-700 mt-2 ml-5 list-disc">
+            <li>Check in Time: 12 noon and Checkout 09.00 AM next day.</li>
+            <li>Houseboats are for exclusive usage and not shared.</li>
+            <li>Houseboats are accompanied by navigator and cook.</li>
+            <li>Meal plan - Starts with Lunch and ends with Breakfast (Typical Kerala Cuisine, if you require any other cuisine inform 
+              us at least 5 days in advance)</li>
+            <li>The Houseboat will anchor by 5:30 PM for the night stay and will retain the cruise the very next morning at 08:00 AM. 
+            There is no cruising in the lake allowed in the evening hours or late night.</li>
+            <li>You can use A/C anytime required in PREMIUM / LUXURY Houseboats.</li>
+            <li>Swimming in the backwater is strictly prohibited.</li>
+            <li>Do not cause noise disturbance to the villagers during night halt.</li>
+            <li>The Food and beverage service on the houseboat is only up to 10:30 PM.</li>
+            <li>Guests are not permitted to remain or sleep outside the rooms after 10:30 PM.</li>
+            <li>Boat will be halted for one hour during lunch break.</li>
+            <li>The distance we cover is about 20-30 kms and the place of the night halt will be decided by the captain according to 
+            the weather and climate</li>
+          </ul> 
+</div>
           {/* Comment Section */}
           <CommentSection />
         </div>
