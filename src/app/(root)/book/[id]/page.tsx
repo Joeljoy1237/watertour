@@ -84,8 +84,15 @@ const nonVegItems = [
               Luxury Houseboat Stay
             </h2>
             <p className="text-gray-700 mt-2">
-              Enjoy a peaceful stay with scenic views, luxurious interiors, and
-              top-tier service.
+            A Luxuary Houseboat in Alleppey offers a peaceful escape into the scenic backwaters of Kerala. Ideal for couples and small families, this houseboat provides a relaxing stay with comfortable amenities and beautiful surroundings.
+            <br />
+            With two upper decks, the front deck is perfect for sitting and sightseeing, while the back deck offers a great space for sunbathing. These open areas allow uninterrupted views of the calm waters and lush greenery, creating a serene experience.
+            <br />
+            The houseboat features a well-furnished bedroom, a private bathroom with a bathtub, and a dining area with a TV. A music system adds to the ambiance and air conditioning is available.
+            <br />
+            Safety and convenience are prioritized, making this houseboat a great choice for a romantic getaway or a peaceful retreat. Freshly prepared Kerala cuisine enhances the experience, allowing guests to enjoy traditional flavors while gliding through the backwaters.
+            <br /><br />
+            Book a stay today and enjoy the beauty of Alleppey's waterways for an unforgettable journey.
             </p>
           </div>
 
