@@ -92,7 +92,7 @@ const nonVegItems = [
             <br />
             Safety and convenience are prioritized, making this houseboat a great choice for a romantic getaway or a peaceful retreat. Freshly prepared Kerala cuisine enhances the experience, allowing guests to enjoy traditional flavors while gliding through the backwaters.
             <br /><br />
-            Book a stay today and enjoy the beauty of Alleppey's waterways for an unforgettable journey.
+            Book a stay today and enjoy the beauty of Alleppey&apos;s waterways for an unforgettable journey.
             </p>
           </div>
 
