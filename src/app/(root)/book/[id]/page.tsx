@@ -20,6 +20,15 @@ const HouseboatDetails: React.FC = () => {
   const pricePerBedNight = 500;
 
 {/* Food Menu func */}
+
+interface FoodItem {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+}
+
+
 const vegItems = [
   {
     id: 1,
