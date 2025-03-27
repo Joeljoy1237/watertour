@@ -100,7 +100,7 @@ const nonVegItems = [
             The houseboat features a well-furnished bedroom, a private bathroom with a bathtub, and a dining area with a TV. A music system adds to the ambiance and air conditioning is available.
             <br />
             Safety and convenience are prioritized, making this houseboat a great choice for a romantic getaway or a peaceful retreat. Freshly prepared Kerala cuisine enhances the experience, allowing guests to enjoy traditional flavors while gliding through the backwaters.
-            <br /><br />
+            <br />
             Book a stay today and enjoy the beauty of Alleppey's waterways for an unforgettable journey.
             </p>
           </div>
