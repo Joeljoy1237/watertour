@@ -1,4 +1,4 @@
-
+"use client";
 import HouseboatCarousel from "@/components/HouseboatCarousel";
 import CommentSection from "@/components/CommentSection";
 
@@ -20,6 +20,15 @@ const HouseboatDetails: React.FC = () => {
   const pricePerBedNight = 500;
 
 {/* Food Menu func */}
+
+interface FoodItem {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+}
+
+
 const vegItems = [
   {
     id: 1,
@@ -124,7 +133,14 @@ const nonVegItems = [
               <strong>Extra Person cost:</strong> ₹{ExtraPersonCost} 
             </p>
           </div>
+          {/* Food Menu */}
+          <div className="bg-white p-6 rounded-md shadow-md">
+            <h3 className="text-xl font-semibold text-primary-600">
+            Food</h3>
+              <FoodMenu vegItems={vegItems} nonVegItems={nonVegItems} />
 
+           
+          </div>   
           {/* Comment Section */}
           <CommentSection />
         </div>
