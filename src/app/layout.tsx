@@ -3,12 +3,8 @@ import "./globals.css";
 import { Metadata } from "next";
 import { Roboto } from "next/font/google";
 
-import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 
-import "tailwindcss";
-import "uploadthing/tw/v4";
-config.autoAddCss = false;
 
 export const metadata: Metadata = {
   title: "Water Tour",
