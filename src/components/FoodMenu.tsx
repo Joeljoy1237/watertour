@@ -14,22 +14,22 @@ interface FoodMenuProps {
 }
 
 const FoodMenu: React.FC<FoodMenuProps> = ({ vegItems, nonVegItems }) => {
-  const [activeTab, setActiveTab] = useState<'veg' | 'nonVeg'>('veg');
+  const [activeTab, setActiveTab] = useState<'veg' | 'nonVeg'>('nonVeg');
 
   return (
     <div className="food-menu">
-      <div className="menu-tabs space-x-3">
+      <div className="menu-tabs pt-3 space-x-3">
+        <button
+          className={`tab-button ${activeTab === 'nonVeg' ? 'active bg-red-500 p-3 border border-red-400  rounded-md text-white' : 'border border-red-500 p-3 rounded-md'}`}
+          onClick={() => setActiveTab('nonVeg')}
+        >
+          Non-Vegetarian
+        </button>
         <button
           className={`tab-button ${activeTab === 'veg' ? 'active bg-primary-400 p-3 border border-primary-600  rounded-md text-white' : 'border border-primary-500 p-3 rounded-md'}`}
           onClick={() => setActiveTab('veg')}
         >
           Vegetarian
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'nonVeg' ? 'active bg-primary-400 p-3 border border-primary-600  rounded-md text-white' : 'border border-primary-500 p-3 rounded-md'}`}
-          onClick={() => setActiveTab('nonVeg')}
-        >
-          Non-Vegetarian
         </button>
       </div>
 
