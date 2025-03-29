@@ -23,6 +23,7 @@
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.5",
     "next": "^15.2.3",
+    "next-auth": "^4.24.11",
     "rc-slider": "^11.1.8",
     "react": "^19.0.0",
     "react-datepicker": "^8.0.0",

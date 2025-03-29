@@ -1,18 +1,26 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-const isPublicRoute = createRouteMatcher(['/', '/about', '/contact', '/sign-in(.*)', '/sign-up(.*)'])
+export async function middleware(req: NextRequest) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-export default clerkMiddleware(async (auth, request) => {
-    if (!isPublicRoute(request)) {
-        await auth.protect()
+    // Check if the request is for a protected route
+    const protectedRoutes = ["/dashboard"];
+
+    if (protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route))) {
+        console.log(token?.isAdmin);
+        if (!token) {
+            // Redirect to login if user is not authenticated
+            const loginUrl = new URL("/login", req.url);
+            return NextResponse.redirect(loginUrl);
+        }
+
     }
-})
 
-export const config = {
-    matcher: [
-        // Skip Next.js internals and all static files, unless found in search params
-        '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-        // Always run for API routes
-        '/(api|trpc)(.*)',
-    ],
+    return NextResponse.next(); // Allow request to continue
 }
+
+// Apply middleware only to specific routes
+export const config = {
+    matcher: ["/dashboard/:path*"], // Apply middleware to /dashboard and all its subroutes
+};

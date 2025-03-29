@@ -1,7 +1,9 @@
-import { ClerkProvider } from "@clerk/nextjs";
+
 import "./globals.css";
 import { Metadata } from "next";
 import { Roboto } from "next/font/google";
+import { Toaster } from 'react-hot-toast';
+import  Provider  from "@/components/Provider";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 
@@ -25,12 +27,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider appearance={{ variables: { colorPrimary: "#5EBC67" } }}>
-      <html lang="en">
-        <body>
-          <main className={`${roboto.variable} antialiased`}>{children}</main>
-        </body>
+    
+    <html lang="en">
+      <body className={`${roboto.variable} font-sans bg-[#F9F9F9]`}>
+        <Provider>
+          {children}
+          <Toaster />
+        </Provider>
+      </body>
       </html>
-    </ClerkProvider>
+   
   );
 }

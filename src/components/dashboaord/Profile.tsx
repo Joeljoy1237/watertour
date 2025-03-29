@@ -1,78 +1,49 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import { FiEdit, FiCamera } from "react-icons/fi";
-import ProfileForm from "./ProfileForm";
+import { useSession } from "next-auth/react";
 
 export default function ProfilePage() {
-  const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState({
-    name: "Joel Mathew",
-    email: "joel@example.com",
-    phone: "+91 9876543210",
-    location: "Punnapra, Kerala",
-    bio: "Boat enthusiast | Tech lover | Houseboat owner",
-    profilePic: "/boat.jpg", // Replace with actual image URL
-  });
+  const { data: session, status } = useSession();
+
+  // Handle loading or unauthenticated states
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "unauthenticated") {
+    return <div>You need to sign in to view this page.</div>;
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center z-0 min-h-screen w-full px-4 md:px-8 bg-gray-50">
-      <div className="max-w-3xl w-full bg-white shadow-xl rounded-2xl p-6 md:p-8 text-gray-900">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full px-4 md:px-8 bg-gray-50">
+      <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-gray-900">
         {/* Profile Header */}
-        <div className="flex flex-col items-center">
-          <div className="relative">
-            <Image
-              src={user.profilePic}
-              width={150}
-              height={150}
-              alt="Profile"
-              className="w-32 h-32 object-cover rounded-full border-4 border-primary shadow-lg"
-            />
-            <button className="absolute bottom-1 right-1 bg-primary p-2 rounded-full shadow-md hover:bg-green-700 transition">
-              <FiCamera className="text-white text-lg" />
-            </button>
-          </div>
-          <h2 className="text-2xl font-semibold mt-4 text-primary">
-            {user.name}
+        <div className="flex flex-col items-center mb-6">
+          <Image
+            src={session!.user?.image || "/boat.jpg"}
+            width={100}
+            height={100}
+            alt="Profile"
+            className="w-24 h-24 object-cover rounded-full border-4 border-primary shadow-md"
+          />
+          <h2 className="text-xl font-semibold mt-4 text-primary">
+            {session!.user?.name || "User Name"}
           </h2>
-          <p className="text-gray-600 text-center">{user.bio}</p>
         </div>
 
         {/* Profile Details */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-gray-100 rounded-xl shadow-md">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="p-4 bg-gray-100 rounded-lg shadow-md">
             <p className="text-sm text-gray-500">Email</p>
-            <p className="text-lg font-medium">{user.email}</p>
+            <p className="text-lg font-medium">{session!.user?.email || "email"}</p>
           </div>
-          <div className="p-4 bg-gray-100 rounded-xl shadow-md">
+          <div className="p-4 bg-gray-100 rounded-lg shadow-md">
             <p className="text-sm text-gray-500">Phone</p>
-            <p className="text-lg font-medium">{user.phone}</p>
+            <p className="text-lg font-medium">{session!.user?.phone || "NULL"}</p>
           </div>
-          <div className="p-4 bg-gray-100 rounded-xl shadow-md col-span-1 md:col-span-2">
-            <p className="text-sm text-gray-500">Location</p>
-            <p className="text-lg font-medium">{user.location}</p>
-          </div>
-        </div>
-
-        {/* Edit Profile Button */}
-        <div className="flex justify-center mt-6">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="bg-primary px-6 py-2 flex items-center gap-2 rounded-full text-lg text-white shadow-md hover:bg-green-700 transition"
-          >
-            <FiEdit className="text-white" />
-            Edit Profile
-          </button>
         </div>
       </div>
-
-      {isEditing && (
-        <ProfileForm
-          user={user}
-          setUser={setUser}
-          onClose={() => setIsEditing(false)}
-        />
-      )}
     </div>
   );
 }
