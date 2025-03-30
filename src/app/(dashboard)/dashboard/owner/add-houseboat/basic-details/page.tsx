@@ -4,6 +4,98 @@ import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/dashboaord/ImageUploader";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
+// Special Program Selector Component
+const SpecialPrograms: React.FC<{ amenities: string[]; setAmenities: React.Dispatch<React.SetStateAction<string[]>> }> = ({ amenities, setAmenities }) => {
+  
+  const [newAmenity, setNewAmenity] = useState("");
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editedAmenity, setEditedAmenity] = useState("");
+
+  const addAmenity = () => {
+    if (newAmenity.trim() && !amenities.includes(newAmenity)) {
+      setAmenities([...amenities, newAmenity]);
+      setNewAmenity("");
+    }
+  };
+
+  const startEditing = (index: number) => {
+    setEditingIndex(index);
+    setEditedAmenity(amenities[index]);
+  };
+
+  const cancelEditing = () => {
+    setEditingIndex(null);
+    setEditedAmenity("");
+  };
+
+  const saveEditedAmenity = () => {
+    if (editedAmenity.trim()) {
+      const updatedAmenities = [...amenities];
+      updatedAmenities[editingIndex!] = editedAmenity;
+      setAmenities(updatedAmenities);
+      cancelEditing();
+    }
+  };
+
+  const deleteAmenity = (index: number) => {
+    const updatedAmenities = amenities.filter((_, i) => i !== index);
+    setAmenities(updatedAmenities);
+  };
+
+  return (
+    <div className="border p-4 w-full rounded-lg ">
+    <details className="cursor-pointer">
+      <summary className="font-light">Live Performances(if any)</summary>
+      <div className="mt-2">
+        {amenities.map((amenity, index) => (
+          <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
+            <span>{amenity}</span>
+            <div className="flex space-x-2">
+              <button onClick={() => startEditing(index)} className="text-blue-500">
+                <FaEdit />
+              </button>
+              <button onClick={() => deleteAmenity(index)} className="text-red-500">
+                <FaTrash />
+              </button>
+            </div>
+          </div>
+        ))}
+        {editingIndex === null ? (
+          <div className="flex items-center border rounded-md p-2">
+            <input
+              type="text"
+              value={newAmenity}
+              onChange={(e) => setNewAmenity(e.target.value)}
+              placeholder="Add Event"
+              className="flex-grow outline-none"
+            />
+            <button onClick={addAmenity} className="ml-2 text-gray-600">
+              <FaPlus />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center border rounded-md p-2">
+            <input
+              type="text"
+              value={editedAmenity}
+              onChange={(e) => setEditedAmenity(e.target.value)}
+              placeholder="Edit amenity"
+              className="flex-grow outline-none"
+            />
+            <button onClick={saveEditedAmenity} className="ml-2 text-green-600">
+              Save
+            </button>
+            <button onClick={cancelEditing} className="ml-2 text-gray-600">
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
+    </details>
+  </div>
+);
+};
+
 // Amenities Selector Component
 const AmenitiesSelector: React.FC<{ amenities: string[]; setAmenities: React.Dispatch<React.SetStateAction<string[]>> }> = ({ amenities, setAmenities }) => {
   
@@ -282,18 +374,52 @@ export default function BasicDetails() {
           />
           <input
             type="number"
+            id="numberInput"
+            min="0"
+            onInput={(e) => {
+              const input = e.target as HTMLInputElement;
+              if (Number(input.value) < 0) {
+                input.value = "0";
+              }
+            }}
             name="beds"
             placeholder="Capacity"
             className="w-full p-3 border rounded"
             onChange={handleChange}
           />
           <input
-            type="text"
+            type="number"
+            id="numberInput"
+            min="0"
+            onInput={(e) => {
+              const input = e.target as HTMLInputElement;
+              if (Number(input.value) < 0) {
+                input.value = "0";
+              }
+            }}
             name="price"
             placeholder="Base Price"
             className="w-full p-3 border rounded"
             onChange={handleChange}
           />
+          <input
+            type="number"
+            id="numberInput"
+            min="0"
+            onInput={(e) => {
+              const input = e.target as HTMLInputElement;
+              if (Number(input.value) < 0) {
+                input.value = "0";
+              }
+            }}
+            name="price"
+            placeholder="Extra Person Price"
+            className="w-full p-3 border rounded"
+            onChange={handleChange}
+          />
+
+          {/* Special Program Selector Component */}
+          <SpecialPrograms amenities={amenities} setAmenities={setAmenities} />
 
           {/* Amenities Selector Component */}
           <AmenitiesSelector amenities={amenities} setAmenities={setAmenities} />

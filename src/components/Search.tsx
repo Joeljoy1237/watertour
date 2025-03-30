@@ -108,7 +108,7 @@ const SearchBar: React.FC = () => {
       {/* Price Range Slider */}
       <div className="mt-6">
         <label className="font-semibold mb-2 flex items-center">
-          <FaRupeeSign className="text-gray-400 mr-2" />
+          {/*<FaRupeeSign className="text-gray-400 mr-2" />*/}
           Price Range
         </label>
         <div className="px-2">
