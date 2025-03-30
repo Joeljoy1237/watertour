@@ -3,24 +3,25 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/dashboaord/ImageUploader";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-
+import DateRangePicker from '@/components/DateRangePicker';
+import DateRange from "@/components/DateRange";
 // Special Program Selector Component
-const SpecialPrograms: React.FC<{ amenities: string[]; setAmenities: React.Dispatch<React.SetStateAction<string[]>> }> = ({ amenities, setAmenities }) => {
+const SpecialPrograms: React.FC<{ programs: string[]; setPrograms: React.Dispatch<React.SetStateAction<string[]>> }> = ({ programs, setPrograms }) => {
   
   const [newAmenity, setNewAmenity] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editedAmenity, setEditedAmenity] = useState("");
 
   const addAmenity = () => {
-    if (newAmenity.trim() && !amenities.includes(newAmenity)) {
-      setAmenities([...amenities, newAmenity]);
+    if (newAmenity.trim() && !programs.includes(newAmenity)) {
+      setPrograms([...programs, newAmenity]);
       setNewAmenity("");
     }
   };
 
   const startEditing = (index: number) => {
     setEditingIndex(index);
-    setEditedAmenity(amenities[index]);
+    setEditedAmenity(programs[index]);
   };
 
   const cancelEditing = () => {
@@ -30,16 +31,16 @@ const SpecialPrograms: React.FC<{ amenities: string[]; setAmenities: React.Dispa
 
   const saveEditedAmenity = () => {
     if (editedAmenity.trim()) {
-      const updatedAmenities = [...amenities];
+      const updatedAmenities = [...programs];
       updatedAmenities[editingIndex!] = editedAmenity;
-      setAmenities(updatedAmenities);
+      setPrograms(updatedAmenities);
       cancelEditing();
     }
   };
 
   const deleteAmenity = (index: number) => {
-    const updatedAmenities = amenities.filter((_, i) => i !== index);
-    setAmenities(updatedAmenities);
+    const updatedAmenities = programs.filter((_, i) => i !== index);
+    setPrograms(updatedAmenities);
   };
 
   return (
@@ -47,9 +48,9 @@ const SpecialPrograms: React.FC<{ amenities: string[]; setAmenities: React.Dispa
     <details className="cursor-pointer">
       <summary className="font-light">Live Performances(if any)</summary>
       <div className="mt-2">
-        {amenities.map((amenity, index) => (
+        {programs.map((programs, index) => (
           <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
-            <span>{amenity}</span>
+            <span>{programs}</span>
             <div className="flex space-x-2">
               <button onClick={() => startEditing(index)} className="text-blue-500">
                 <FaEdit />
@@ -187,39 +188,46 @@ const AmenitiesSelector: React.FC<{ amenities: string[]; setAmenities: React.Dis
   </div>
 );
 };
-
-{/* food and drinks */}
-
-const FoodAndDrinksSelector: React.FC<{ items: string[]; setItems: React.Dispatch<React.SetStateAction<string[]>> }> = ({ items, setItems }) => {
+{/* food */}
+const FoodSelector: React.FC<{ items: string[]; setItems: React.Dispatch<React.SetStateAction<string[]>> }> = ({ items, setItems }) => {
 
   const [newItem, setNewItem] = useState("");
+  const [isVeg, setIsVeg] = useState(true); // New state for veg/non-veg
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editedItem, setEditedItem] = useState("");
+  const [editedIsVeg, setEditedIsVeg] = useState(true); // New state for editing veg/non-veg
 
   const addItem = () => {
     if (newItem.trim() && !items.includes(newItem)) {
-      setItems([...items, newItem]);
+      setItems([...items, `${newItem} (${isVeg ? 'Veg' : 'Non-Veg'})`]); // Modified to include veg info
       setNewItem("");
     }
   };
 
   const startEditing = (index: number) => {
     setEditingIndex(index);
-    setEditedItem(items[index]);
-  };
-
-  const cancelEditing = () => {
-    setEditingIndex(null);
-    setEditedItem("");
+    const item = items[index];
+    // Extract the name and veg status from the existing item
+    const vegMatch = item.match(/\(([^)]+)\)$/);
+    const isVegStatus = vegMatch ? vegMatch[1] === 'Veg' : true;
+    setEditedItem(item.replace(/\s*\([^)]*\)$/, ''));
+    setEditedIsVeg(isVegStatus);
   };
 
   const saveEditedItem = () => {
     if (editedItem.trim()) {
       const updatedItems = [...items];
-      updatedItems[editingIndex!] = editedItem;
+      updatedItems[editingIndex!] = `${editedItem} (${editedIsVeg ? 'Veg' : 'Non-Veg'})`;
       setItems(updatedItems);
       cancelEditing();
     }
+  };
+
+  // Rest of the functions remain exactly the same
+  const cancelEditing = () => {
+    setEditingIndex(null);
+    setEditedItem("");
+    setEditedIsVeg(true);
   };
 
   const deleteItem = (index: number) => {
@@ -229,12 +237,155 @@ const FoodAndDrinksSelector: React.FC<{ items: string[]; setItems: React.Dispatc
 
   return (
     <div className="border p-4 rounded-lg w-full">
+      <details className="cursor-pointer">
+        <summary className="font-light">Food </summary>
+        <div className="mt-2">
+        {items.map((item, index) => {
+            const isVeg = item.includes('(Veg)');
+            return (
+              <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
+                <div className="flex items-center">
+                  <span className={`w-3 h-3 rounded-full mr-2 ${isVeg ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                  <span>{item}</span>
+                </div>
+                <div className="flex space-x-2">
+                  {/* buttons remain exactly the same */}
+                  <button onClick={() => startEditing(index)} className="text-blue-500">
+                            <FaEdit />
+                          </button>
+                          <button onClick={() => deleteItem(index)} className="text-red-500">
+                            <FaTrash />
+                          </button>
+                </div>
+              </div>
+            );
+          })}
+          {editingIndex === null ? (
+            <div className="space-y-2">
+              <div className="flex items-center border rounded-md p-2">
+                <input
+                  type="text"
+                  value={newItem}
+                  onChange={(e) => setNewItem(e.target.value)}
+                  placeholder="Add food"
+                  className="flex-grow outline-none"
+                />
+                <button onClick={addItem} className="ml-2 text-gray-600">
+                  <FaPlus />
+                </button>
+              </div>
+              <div className="flex items-center space-x-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={isVeg}
+                    onChange={() => setIsVeg(true)}
+                    className="mr-1"
+                  />
+                  Veg
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={!isVeg}
+                    onChange={() => setIsVeg(false)}
+                    className="mr-1"
+                  />
+                  Non-Veg
+                </label>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-center border rounded-md p-2">
+                <input
+                  type="text"
+                  value={editedItem}
+                  onChange={(e) => setEditedItem(e.target.value)}
+                  placeholder="Edit food"
+                  className="flex-grow outline-none"
+                />
+                <button onClick={saveEditedItem} className="ml-2 text-green-600">
+                  Save
+                </button>
+                <button onClick={cancelEditing} className="ml-2 text-gray-600">
+                  Cancel
+                </button>
+              </div>
+              <div className="flex items-center space-x-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={editedIsVeg}
+                    onChange={() => setEditedIsVeg(true)}
+                    className="mr-1"
+                  />
+                  Veg
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={!editedIsVeg}
+                    onChange={() => setEditedIsVeg(false)}
+                    className="mr-1"
+                  />
+                  Non-Veg
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
+      </details>
+    </div>
+  );
+};
+
+{/*drinks */}
+const DrinksSelector: React.FC<{ drinks: string[]; setDrinks: React.Dispatch<React.SetStateAction<string[]>> }> = ({ drinks, setDrinks }) => {
+
+  const [newItem, setNewItem] = useState("");
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editedItem, setEditedItem] = useState("");
+
+  const addItem = () => {
+    if (newItem.trim() && !drinks.includes(newItem)) {
+      setDrinks([...drinks, newItem]);
+      setNewItem("");
+    }
+  };
+
+  const startEditing = (index: number) => {
+    setEditingIndex(index);
+    setEditedItem(drinks[index]);
+  };
+
+  const cancelEditing = () => {
+    setEditingIndex(null);
+    setEditedItem("");
+  };
+
+  const saveEditedItem = () => {
+    if (editedItem.trim()) {
+      const updatedItems = [...drinks];
+      updatedItems[editingIndex!] = editedItem;
+      setDrinks(updatedItems);
+      cancelEditing();
+    }
+  };
+
+  const deleteItem = (index: number) => {
+    const updatedItems = drinks.filter((_, i) => i !== index);
+    setDrinks(updatedItems);
+  };
+
+  return (
+    <div className="border p-4 rounded-lg w-full">
     <details className="cursor-pointer">
-      <summary className="font-light">Food & Drinks</summary>
+      <summary className="font-light">Drinks</summary>
       <div className="mt-2">
-        {items.map((item, index) => (
+        {drinks.map((drink, index) => (
           <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
-            <span>{item}</span>
+            <span>{drink}</span>
             <div className="flex space-x-2">
               <button onClick={() => startEditing(index)} className="text-blue-500">
                 <FaEdit />
@@ -251,7 +402,7 @@ const FoodAndDrinksSelector: React.FC<{ items: string[]; setItems: React.Dispatc
               type="text"
               value={newItem}
               onChange={(e) => setNewItem(e.target.value)}
-              placeholder="Add food or drink"
+              placeholder="Add drinks"
               className="flex-grow outline-none"
             />
             <button onClick={addItem} className="ml-2 text-gray-600">
@@ -291,6 +442,12 @@ export default function BasicDetails() {
   const router = useRouter();
   const [amenities, setAmenities] = useState<string[]>([]);
   const [items, setItems] = useState<string[]>([]);
+  const [drinks, setDrinks] = useState<string[]>([]);
+  const [programs, setPrograms] = useState<string[]>([]);
+
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [image, setImage] = useState<ImageObject[]>([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -419,14 +576,24 @@ export default function BasicDetails() {
           />
 
           {/* Special Program Selector Component */}
-          <SpecialPrograms amenities={amenities} setAmenities={setAmenities} />
+          <SpecialPrograms programs={programs} setPrograms={setPrograms} />
 
           {/* Amenities Selector Component */}
           <AmenitiesSelector amenities={amenities} setAmenities={setAmenities} />
 
-          {/* Food & Drinks Selector Component */}
-          <FoodAndDrinksSelector items={items} setItems={setItems} />
-
+          {/* Food  Selector Component */}
+          <FoodSelector items={items} setItems={setItems} />
+          {/*  Drinks Selector Component */}
+          <DrinksSelector drinks={drinks} setDrinks={setDrinks} />
+            {/* Date Range Picker Component */}
+            {/* <DateRangePicker
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+      /> */}
+{/* Date Selector Component */}
+<DateRange/>
         </div>
 
         <button
