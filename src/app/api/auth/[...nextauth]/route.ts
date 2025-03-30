@@ -88,7 +88,7 @@ const authOptions: NextAuthOptions = {
             return token;
         },
         async signIn({ user, account }) {
-            console.log(user, account)
+
             try {
                 await connectToDB(); // Ensure DB connection
                 const existingUser = await User.findOne({ email: user.email });

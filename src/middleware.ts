@@ -8,7 +8,6 @@ export async function middleware(req: NextRequest) {
     const protectedRoutes = ["/dashboard"];
 
     if (protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route))) {
-        console.log(token?.isAdmin);
         if (!token) {
             // Redirect to login if user is not authenticated
             const loginUrl = new URL("/login", req.url);

@@ -26,6 +26,10 @@ module.exports = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'w1w0x6dayg.ufs.sh',
+      },
     ],
   },
 };

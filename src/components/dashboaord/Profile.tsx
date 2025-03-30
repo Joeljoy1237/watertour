@@ -17,7 +17,7 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full px-4 md:px-8 bg-gray-50">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-gray-900">
+      <div className="max-w-screen-sm w-full h-full bg-white shadow-lg rounded-lg p-6 text-gray-900">
         {/* Profile Header */}
         <div className="flex flex-col items-center mb-6">
           <Image

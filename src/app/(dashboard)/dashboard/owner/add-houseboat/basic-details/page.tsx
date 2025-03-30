@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ImageUpload from "@/components/image-upload";
+import ImageUpload from "@/components/dashboaord/ImageUploader";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
 // Amenities Selector Component
-const AmenitiesSelector = () => {
-  const [amenities, setAmenities] = useState<string[]>([]);
+const AmenitiesSelector: React.FC<{ amenities: string[]; setAmenities: React.Dispatch<React.SetStateAction<string[]>> }> = ({ amenities, setAmenities }) => {
+  
   const [newAmenity, setNewAmenity] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editedAmenity, setEditedAmenity] = useState("");
@@ -98,8 +98,8 @@ const AmenitiesSelector = () => {
 
 {/* food and drinks */}
 
-const FoodAndDrinksSelector = () => {
-  const [items, setItems] = useState<string[]>([]);
+const FoodAndDrinksSelector: React.FC<{ items: string[]; setItems: React.Dispatch<React.SetStateAction<string[]>> }> = ({ items, setItems }) => {
+
   const [newItem, setNewItem] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editedItem, setEditedItem] = useState("");
@@ -190,7 +190,16 @@ const FoodAndDrinksSelector = () => {
 };
 
 export default function BasicDetails() {
+
+  interface ImageObject {
+    url: string;
+    name: string;
+  }
+
   const router = useRouter();
+  const [amenities, setAmenities] = useState<string[]>([]);
+  const [items, setItems] = useState<string[]>([]);
+  const [image, setImage] = useState<ImageObject[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -199,6 +208,39 @@ export default function BasicDetails() {
     maxPeople: 2,
     price: "",
   });
+
+  const handleSubmit=() => {
+    try {
+      fetch("/api/houseboat/owner/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId:"67e79ee42d346260ef4635cf",
+          ...formData,
+          amenities,
+          items,
+          images: image.map((img) => img.url),
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to add houseboat");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Houseboat added successfully:", data);
+          router.push("/dashboard/owner/houseboats");
+        })
+        .catch((error) => {
+          console.error("Error adding houseboat:", error);
+        });
+    } catch{
+      
+    }
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -211,7 +253,7 @@ export default function BasicDetails() {
       <section className="bg-white mx-3 shadow-lg rounded-lg p-6 lg:flex flex-col w-1/2">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Add Image</h1>
         <div className="flex items-center space-x-4">
-          <ImageUpload />
+          <ImageUpload image={image} setImage={setImage} />
         </div>
       </section>
 
@@ -254,20 +296,20 @@ export default function BasicDetails() {
           />
 
           {/* Amenities Selector Component */}
-          <AmenitiesSelector />
+          <AmenitiesSelector amenities={amenities} setAmenities={setAmenities} />
 
           {/* Food & Drinks Selector Component */}
-          <FoodAndDrinksSelector />
+          <FoodAndDrinksSelector items={items} setItems={setItems} />
 
         </div>
 
         <button
           onClick={() =>
-            router.push("/dashboard/owner/add-houseboat/more-details")
+            handleSubmit()
           }
           className="mt-4 bg-primary text-white p-3 rounded w-full"
         >
-          Next
+          Submit
         </button>
       </div>
     </div>
