@@ -1,125 +1,118 @@
 "use client";
+
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import ImageUpload from "@/components/dashboaord/ImageUploader";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import DateRange from "@/components/DateRange";
 
-export default function BecomeHost() {
+export default function Form() {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    location: "",
-    beds: 0,
-    price: 0,
-    extraPersonPrice: 0,
+    firstName: "",
+    lastName: "",
+    address: "",
+    city: "",
+    pincode: "",
+    email: "",
+    phone: "",
+    licenseNumber: "",
+    govtId: null as string | null, // Store the uploaded file URL
   });
-  const [image, setImage] = useState<string | null>(null);
-  const router = useRouter();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const [image, setImage] = useState<string | null>(null); // State for ImageUpload component
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async () => {
-    const formDataWithImage = { ...formData, image };
-    const response = await fetch("/api/houseboat", {
-      method: "POST",
-      headers: {
-    },
-      body: JSON.stringify(formDataWithImage),
-    });
-    if (response.ok) {
-      router.push("/dashboard/owner");
-    } else {
-      console.error("Failed to submit form");
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-     
-      <div className="max-w-3xl w-full bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Details</h2>
-        <div className="space-y-4">
-        <textarea
-            name="description"
-            placeholder="Address"
-            className="w-full p-3 border rounded"
-            onChange={handleChange}
-          ></textarea>
-          <textarea
-            name="description"
-            placeholder="Description"
-            className="w-full p-3 border rounded"
-            onChange={handleChange}
-          ></textarea>
-          <input
-            type="text"
-            name="location"
-            placeholder="Location"
-            className="w-full p-3 border rounded"
-            onChange={handleChange}
-          />
-          <input
-            type="number"
-            id="numberInput"
-            min="0"
-            onInput={(e) => {
-              const input = e.target as HTMLInputElement;
-              if (Number(input.value) < 0) {
-                input.value = "0";
-              }
-            }}
-            name="beds"
-            placeholder="Capacity"
-            className="w-full p-3 border rounded"
-            onChange={handleChange}
-          />
-          <input
-            type="number"
-            id="numberInput"
-            min="0"
-            onInput={(e) => {
-              const input = e.target as HTMLInputElement;
-              if (Number(input.value) < 0) {
-                input.value = "0";
-              }
-            }}
-            name="extraPersonPrice"
-            placeholder="Extra Person Price"
-            className="w-full p-3 border rounded"
-            onChange={handleChange}
-          />
-          <input
-            type="number"
-            id="numberInput"
-            min="0"
-            onInput={(e) => {
-              const input = e.target as HTMLInputElement;
-              if (Number(input.value) < 0) {
-                input.value = "0";
-              }
-            }}
-            name="price"
-            placeholder="Price"
-            className="w-full p-3 border rounded"
-            onChange={handleChange}
-          />
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-         
+    if (!image) {
+      console.error("No file uploaded.");
+      return;
+    }
+
+    // Add the uploaded image URL to the form data
+    const finalFormData = { ...formData, govtId: image };
+
+    // Submit the form data to your backend or handle it as needed
+    console.log("Final Form Data:", finalFormData);
+  };
+
+  return (
+    <div className="max-w-5xl my-3 mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-xl font-semibold mb-4">Fill the Details</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          name="firstName"
+          placeholder="First Name"
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          name="lastName"
+          placeholder="Last Name"
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          name="address"
+          placeholder="Address"
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          name="city"
+          placeholder="City / Town"
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone number"
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          name="licenseNumber"
+          placeholder="License Number"
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <label className="block  text-base mt-4 ">Upload any Govt. ID (Adhar card, Driving Licence) </label>
+        <input
+          type="file"
+          onChange={handleFileChange}
+          className="w-full p-2 border rounded"
+        />
         <button
-          onClick={() =>
-            handleSubmit()
-          }
-          className="mt-4 bg-primary text-white p-3 rounded w-full"
+          type="submit"
+          className="w-full p-3 bg-green-500 text-white rounded"
         >
           Submit
         </button>
-      </div>
+      </form>
     </div>
-  </div>
   );
 }
