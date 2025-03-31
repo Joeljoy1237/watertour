@@ -8,10 +8,12 @@ import { usePathname } from "next/navigation";
 import { HiUserAdd } from "react-icons/hi";
 import { FiLogOut, FiMenu } from "react-icons/fi";
 import { BiSolidMessageSquareAdd } from "react-icons/bi";
+import { FaMoneyBillWave } from "react-icons/fa";
 
 export default function DashboardSidebar() {
   const location = usePathname();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [revenue, setRevenue] = useState<string>("0"); // State to store revenue value
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -29,6 +31,20 @@ export default function DashboardSidebar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
+
+  // You might want to fetch the actual revenue from an API here
+  useEffect(() => {
+    // Example: Fetch revenue from an API
+      const fetchRevenue = async () => {
+      const response = await fetch('/api/revenue');
+      const data = await response.json();
+       setRevenue(data.amount);
+     };
+     fetchRevenue();
+    
+    
+    setRevenue("0"); // Set default revenue value to 0
+  }, []);
 
   const menuItems = [
     { title: "Profile", link: "/dashboard/profile", icon: <CgProfile /> },
@@ -52,6 +68,11 @@ export default function DashboardSidebar() {
       link: "/dashboard/owner/bookings",
       icon: <IoMdListBox />,
     },
+    /* {
+      title: "Revenue",
+      link: "/dashboard/owner/revenue",
+      icon: <FaMoneyBillWave />,
+    }, */
   ];
 
   return (
@@ -94,8 +115,22 @@ export default function DashboardSidebar() {
               <span className="text-[1.1rem]">{menuItem.title}</span>
             </Link>
           ))}
+          
+          {/* Revenue Display Box */}
+          <div className="mt-4 px-[2vw]">
+            <div className="flex items-center gap-2 text-gray-700 mb-1">
+              <FaMoneyBillWave className="text-xl" />
+              <span className="text-[1.rem] font-medium">Total Revenue</span>
+            </div>
+            <input
+              type="text"
+              value={`₹${revenue}`}
+              readOnly
+              className="w-full p-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 font-medium"
+            />
+          </div>
         </div>
-
+        
         {/* Logout Button */}
         <div className="absolute bottom-20 lg:bottom-2 w-full p-[2vw]">
           <button className="bg-red-100 flex items-center justify-center gap-2 py-2 font-semibold text-red-600 rounded-lg outline-none border-none w-full">
