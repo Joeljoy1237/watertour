@@ -22,7 +22,10 @@ const HouseboatSchema = new mongoose.Schema(
             extraPricePerBed: { type: Number },
         }],
         amenities: { type: [String], required: true },
-        items: { type: [String], required: true },
+        food: {
+            veg: { type: [String], require: true },
+            nonVeg: { type: [String], require: true }
+        },
         images: { type: [String], required: true },
         isAvailable: { type: Boolean, default: true },
         isVerified: { type: Boolean, default: false },

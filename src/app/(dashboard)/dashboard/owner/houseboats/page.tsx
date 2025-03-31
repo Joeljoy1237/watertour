@@ -30,9 +30,9 @@ export default function MyHouseboats() {
           const response = await fetch("/api/houseboat/fetch", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId:"67e79ee42d346260ef4635cf" }),
+            body: JSON.stringify({ userId:session.user.id }),
           });
-          console.log(response)
+          console.log(session.user.id)
 
           const data = await response.json();
 
@@ -54,6 +54,8 @@ export default function MyHouseboats() {
     fetchHouseboats();
   }, [status, session?.user]);
 
+
+  
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-6xl mx-auto">
@@ -98,7 +100,7 @@ export default function MyHouseboats() {
           <p className="text-gray-600">{boat.location}</p>
           <p className="text-primary font-medium mt-2">₹{boat.price}</p>
           <div className="mt-4 flex justify-between">
-            <button onClick={async () => await router.push("/dashboard/owner/add-houseboat/basic-details?editing=true")} className="bg-gray-200 px-3 py-1 rounded-lg flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition">
+            <button onClick={async () => router.push("/dashboard/owner/add-houseboat/basic-details?editing=true")} className="bg-gray-200 px-3 py-1 rounded-lg flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition">
               <FiEdit /> Edit
             </button>
             <button className="bg-red-500 text-white px-3 py-1 rounded-lg flex items-center gap-2 hover:bg-red-600 transition">
