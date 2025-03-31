@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FiEdit, FiTrash, FiPlus } from "react-icons/fi";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Houseboat {
   _id: string;
@@ -15,6 +16,7 @@ interface Houseboat {
 }
 
 export default function MyHouseboats() {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const [houseboats, setHouseboats] = useState<Houseboat[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,7 +27,7 @@ export default function MyHouseboats() {
     const fetchHouseboats = async () => {
       if (status === "authenticated" && session?.user?.id) {
         try {
-          const response = await fetch("/api/houseboat/owner/fetch", {
+          const response = await fetch("/api/houseboat/fetch", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId:"67e79ee42d346260ef4635cf" }),
@@ -86,7 +88,7 @@ export default function MyHouseboats() {
                   <p className="text-gray-600">{boat.location}</p>
                   <p className="text-primary font-medium mt-2">₹{boat.price}</p>
                   <div className="mt-4 flex justify-between">
-                    <button className="bg-gray-200 px-3 py-1 rounded-lg flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition">
+                    <button onClick={async () => await router.push("/dashboard/owner/add-houseboat/basic-details?editing=true")} className="bg-gray-200 px-3 py-1 rounded-lg flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition">
                       <FiEdit /> Edit
                     </button>
                     <button className="bg-red-500 text-white px-3 py-1 rounded-lg flex items-center gap-2 hover:bg-red-600 transition">
