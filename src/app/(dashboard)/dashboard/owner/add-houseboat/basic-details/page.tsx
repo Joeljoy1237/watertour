@@ -382,9 +382,9 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
       }]);
       
       setNewDate("");
-      setNewPricePerDay(0);
-      setNewPricePerNight(0);
-      setNewExtraPricePerBed(0);
+      setNewPricePerDay(null);
+      setNewPricePerNight(null);
+      setNewExtraPricePerBed(null);
     } else {
       alert("Please enter valid positive prices.");
     }
