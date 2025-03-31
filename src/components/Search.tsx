@@ -1,139 +1,86 @@
-"use client"
-import { useRouter } from "next/navigation";
+"use client";
 import React, { useState } from "react";
-import Button from "@/components/Button"; // Importing Button component
-import {
-  FaMapMarkerAlt,
-  FaUserFriends,
-  FaBed,
-  FaCalendarAlt,
-} from "react-icons/fa"; // Importing icons
-import DatePicker from "react-datepicker"; // For date picker
-import "react-datepicker/dist/react-datepicker.css"; // Date picker styles
-import "rc-slider/assets/index.css"; // Slider styles
-import Slider from "rc-slider"; // For price range slider
-// import { FaRupeeSign } from "react-icons/fa6";
+import { FaMapMarkerAlt } from "react-icons/fa"; // Importing location icon
+import Button from "@/components/Button"; // Ensure Button component exists and is correctly imported
 
 const SearchBar: React.FC = () => {
-  const router = useRouter();
-
-  // State variables
   const [location, setLocation] = useState("");
-  const [searchDate, setSearchDate] = useState<Date | null>(new Date());
-  const [person, setPerson] = useState(1);
-  const [priceRange, setPriceRange] = useState<number[]>([0, 1000]);
-  const [numBeds, setNumBeds] = useState(1);
+  interface SearchResult {
+    id: string;
+    houseboat: string;
+    location: string;
+    date: string;
+    status: string;
+  }
 
-  const handleSearch = () => {
-    if (!location || !searchDate) {
-      // You can add more comprehensive validation here
-      alert("Please fill in all required fields.");
+  const [results, setResults] = useState<SearchResult[]>([]); // State to store search results
+  const [loading, setLoading] = useState(false); // State to handle loading
+
+  const handleSearch = async () => {
+    if (!location) {
+      alert("Please enter a location.");
       return;
     }
 
-    const query = {
-      location,
-      date: searchDate.toISOString().split("T")[0],
-      person,
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
-      numBeds,
-    };
+    setLoading(true);
 
-    const queryString = Object.entries(query)
-      .map(
-        ([key, value]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-      )
-      .join("&");
-
-    router.push(`/search?${queryString}`);
+    try {
+      // Fetch search results from the backend API
+      const response = await fetch(`/api/bookings/search?location=${encodeURIComponent(location)}`);
+      const data = await response.json();
+      setResults(data); // Update results state with the fetched data
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      alert("Failed to fetch search results. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Location Input */}
-        <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
-          <FaMapMarkerAlt className="text-gray-400 mr-2" />
-          <input
-            type="text"
-            placeholder="Where are you going?"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full focus:outline-none"
-          />
-        </div>
-
-        {/* Date Input */}
-        <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
-          <FaCalendarAlt className="text-gray-400 mr-2" />
-          <DatePicker
-            selected={searchDate}
-            onChange={(date: Date | null) => setSearchDate(date)}
-            dateFormat="yyyy-MM-dd"
-            minDate={new Date()}
-            className="w-full focus:outline-none"
-            placeholderText="Select a date"
-          />
-        </div>
-
-        {/* Person Input */}
-        <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
-          <FaUserFriends className="text-gray-400 mr-2" />
-          <input
-            type="number"
-            placeholder="Guests"
-            value={person}
-            onChange={(e) => setPerson(Math.max(1, Number(e.target.value)))}
-            min="1"
-            className="w-full focus:outline-none"
-          />
-        </div>
-
-        {/* Number of Beds Input */}
-        <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
-          <FaBed className="text-gray-400 mr-2" />
-          <input
-            type="number"
-            placeholder="Beds"
-            value={numBeds}
-            onChange={(e) => setNumBeds(Math.max(1, Number(e.target.value)))}
-            min="1"
-            className="w-full focus:outline-none"
+    <div className="flex flex-col items-center w-full mx-6 p-4 bg-white shadow-lg rounded-lg">
+      {/* Location Input */}
+      <div className="flex items-center border max-w-xl w-full border-gray-300 rounded-md mb-4">
+        <FaMapMarkerAlt className="text-gray-400 ml-3 mr-3" />
+        <input
+          type="text"
+          placeholder="Where are you going?"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="w-full p-3 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-md"
+        />
+        {/* Search Button */}
+        <div className="flex items-center ml-3">
+          <Button
+            onClick={handleSearch}
+            title={loading ? "Searching..." : "Search"}
+            className="px-6 py-3 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:outline-none"
+            disabled={loading}
           />
         </div>
       </div>
 
-      {/* Price Range Slider */}
-      <div className="mt-6">
-        <label className="font-semibold mb-2 flex items-center">
-          {/*<FaRupeeSign className="text-gray-400 mr-2" />*/}
-          Price Range
-        </label>
-        <div className="px-2">
-          <Slider
-            range
-            min={0}
-            max={5000}
-            step={50}
-            value={priceRange}
-            onChange={(values) => setPriceRange(values as number[])}
-            styles={{
-              track: { backgroundColor: "#5EBC67" },
-              handle: { borderColor: "#5EBC67", backgroundColor: "#5EBC67" },
-            }}
-          />
-          <div className="flex justify-between text-sm mt-2">
-            <span>₹{priceRange[0]}</span>
-            <span>₹{priceRange[1]}</span>
+      {/* Search Results */}
+      <div className="w-full max-w-4xl">
+        {results.length > 0 ? (
+          <div className="grid gap-4">
+            {results.map((result) => (
+              <div
+                key={result.id}
+                className="bg-white p-4 rounded-xl shadow-md flex items-center gap-4"
+              >
+                <div>
+                  <h3 className="text-lg font-bold">{result.houseboat}</h3>
+                  <p className="text-sm text-gray-600">{result.location}</p>
+                  <p className="text-sm text-gray-600">Date: {result.date}</p>
+                  <p className="text-sm text-gray-600">Status: {result.status}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      </div>
-
-      {/* Search Button */}
-      <div className="flex justify-center mt-8">
-        <Button onClick={handleSearch} title="Search" className="px-10" />
+        ) : (
+          !loading && <p className="text-gray-500">No results found.</p>
+        )}
       </div>
     </div>
   );
