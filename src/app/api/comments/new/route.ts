@@ -4,14 +4,14 @@ import Comment from "@/models/Comment";
 import { getServerSession } from "next-auth";
 
 export async function POST(req: NextRequest) {
-    console.log("asda")
+
     const session = await getServerSession();
     if (!session) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { boatId, comment, rating } = await req.json();
-    console.log(comment, rating)
+
     if (!comment || !rating || !boatId) {
         return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }

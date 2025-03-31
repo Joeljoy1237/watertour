@@ -19,7 +19,7 @@ export async function POST(req: Request): Promise<Response> {
     const { boatId }: PostRequestBody = await req.json();
     try {
         const comments: CommentType[] = await Comment.find({ boatId }).sort({ createdAt: -1 }); // Fetch recent comments
-        console.log(comments);
+
         return NextResponse.json(comments, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 });

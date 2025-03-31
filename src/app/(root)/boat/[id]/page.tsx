@@ -43,7 +43,7 @@ const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
         if (!res.ok) throw new Error("Failed to fetch houseboat details");
 
         const data = await res.json()
-          // console.log(data);
+          
         setHouseboat(data);
       } catch {
         setError("Error loading houseboat details.");

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/dashboaord/ImageUploader";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
@@ -715,8 +716,8 @@ export default function BasicDetails() {
     pricePerNight: number;
     extraPricePerBed: number;
   }
-
   const router = useRouter();
+  const { data: session } = useSession();
 
   const [amenities, setAmenities] = useState<string[]>([]);
   const [vegItems, setVegItems] = useState<string[]>([]);
@@ -738,7 +739,6 @@ export default function BasicDetails() {
     const food = {
   veg:vegItems,nonVeg:nonVegItems
     }
-    console.log(food)
     try {
       fetch("/api/houseboat/owner/add", {
         method: "POST",
@@ -746,7 +746,7 @@ export default function BasicDetails() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId:"67e79ee42d346260ef4635cf",
+          userId:session?.user.id,
           ...formData,
           amenities,
           food,

@@ -63,9 +63,8 @@ const authOptions: NextAuthOptions = {
     callbacks: {
         async session({ session, token }) {
             const sessionUser = await User.findOne({ email: session.user.email }).select("_id");
-
             session.user = {
-                id: sessionUser,
+                id: sessionUser._id,
                 email: token.email,
                 name: token.name ?? "",
                 image: token.image ?? "",
