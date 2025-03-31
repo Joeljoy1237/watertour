@@ -12,6 +12,6 @@ export const navLinks = [
         href: "/contact", key: "contact", label: "Contact"
     },
     {
-        href: "/dashboard/owner/Become-host", key: "host", label: "Become a host"
+        href: "/Become-host", key: "host", label: "Become a host"
     }
 ];
