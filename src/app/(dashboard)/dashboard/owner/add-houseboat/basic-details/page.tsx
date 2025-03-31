@@ -363,39 +363,62 @@ type DateRangeProps = {
 };
 
 const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRanges }) => {
-  const [newDate, setNewDate] = useState("");
   const [newPricePerDay, setNewPricePerDay] = useState<number | null>(null);
   const [newPricePerNight, setNewPricePerNight] = useState<number | null>(null);
   const [newExtraPricePerBed, setNewExtraPricePerBed] = useState<number | null>(null);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const generateDateArray = (start: string, end: string) => {
+    const startDateObj = new Date(start);
+    const endDateObj = new Date(end);
+    const dateArray = [];
+
+    const currentDate = new Date(startDateObj); // Create a new Date instance
+  while (currentDate <= endDateObj) {
+    dateArray.push(new Date(currentDate)); // Push a copy of the current date
+    currentDate.setDate(currentDate.getDate() + 1); // Increment the date
+  }
+
+  return dateArray;
+};
 
   const addDateRange = () => {
-    if (newDate && newPricePerDay !== null && newPricePerDay >= 0 &&
-        (newPricePerNight ?? 0) >= 0 && (newExtraPricePerBed ?? 0) >= 0) {
-      setDateRanges([...dateRanges, {
-        date: new Date(newDate),
-        dayCruiser: true,
-        nightStay: true,
+    if (
+      startDate &&
+      endDate &&
+      newPricePerDay !== null && newPricePerDay >= 0 &&
+      (newPricePerNight ?? 0) >= 0 && (newExtraPricePerBed ?? 0) >= 0
+    ) {
+      const dateArray = generateDateArray(startDate, endDate);
+      
+      // Create the new date range array
+      const newRanges = dateArray.map(date => ({
+        date,
+        dayCruiser: true,  // Example: true for all ranges, can be modified based on conditions
+        nightStay: true,   // Example: true for all ranges, can be modified based on conditions
         pricePerDay: newPricePerDay,
         pricePerNight: newPricePerNight ?? 0,
         extraPricePerBed: newExtraPricePerBed ?? 0,
-      }]);
-      
-      setNewDate("");
+      }));
+
+      // Update the state with the new ranges
+      setDateRanges([...dateRanges, ...newRanges]);
+
+      // Reset form fields
+      setStartDate("");
+      setEndDate("");
       setNewPricePerDay(0);
       setNewPricePerNight(0);
       setNewExtraPricePerBed(0);
     } else {
-      alert("Please enter valid positive prices.");
+      alert("Please enter valid prices and date range.");
     }
   };
 
-  const deleteRange = (index: number) => {
-    setDateRanges(dateRanges.filter((_, i) => i !== index));
-  };
-
   return (
-    <div className="border p-4 rounded-lg">
+    <div>
+      <div className="border p-4 rounded-lg">
       <h2 className="text-l font-bold mb-4">Date Pricing</h2>
       <div>
         {dateRanges.map((range, index) => (
@@ -406,21 +429,24 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
               <p>Price per person Night: ₹{range.pricePerNight}</p>
               <p>Extra Price per Bed: ₹{range.extraPricePerBed}</p>
             </div>
-            <div className="flex space-x-2">
-              <button onClick={() => deleteRange(index)} className="text-red-500">
-                <FaTrash />
-              </button>
-            </div>
+            
           </div>
         ))}
 
         <div className="space-y-4">
           <input
             type="date"
-            value={newDate}
-            onChange={(e) => setNewDate(e.target.value)}
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
             className="p-2 border rounded w-full"
-            placeholder="Select Date"
+            placeholder="Select Start Date"
+          />
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="p-2 border rounded w-full"
+            placeholder="Select End Date"
           />
           <input
             type="number"
@@ -452,6 +478,7 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 };
