@@ -4,100 +4,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/dashboaord/ImageUploader";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import DateRangePicker from "@/components/DateRange"; 
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-// Special Program Selector Component
-const SpecialPrograms: React.FC<{ programs: string[]; setPrograms: React.Dispatch<React.SetStateAction<string[]>> }> = ({ programs, setPrograms }) => {
-  
-  const [newAmenity, setNewAmenity] = useState("");
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editedAmenity, setEditedAmenity] = useState("");
-
-  const addAmenity = () => {
-    if (newAmenity.trim() && !programs.includes(newAmenity)) {
-      setPrograms([...programs, newAmenity]);
-      setNewAmenity("");
-    }
-  };
-
-  const startEditing = (index: number) => {
-    setEditingIndex(index);
-    setEditedAmenity(programs[index]);
-  };
-
-  const cancelEditing = () => {
-    setEditingIndex(null);
-    setEditedAmenity("");
-  };
-
-  const saveEditedAmenity = () => {
-    if (editedAmenity.trim()) {
-      const updatedAmenities = [...programs];
-      updatedAmenities[editingIndex!] = editedAmenity;
-      setPrograms(updatedAmenities);
-      cancelEditing();
-    }
-  };
-
-  const deleteAmenity = (index: number) => {
-    const updatedAmenities = programs.filter((_, i) => i !== index);
-    setPrograms(updatedAmenities);
-  };
-
-  return (
-    <div className="border p-4 w-full rounded-lg ">
-    <details className="cursor-pointer">
-      <summary className="font-light">Live Performances(if any)</summary>
-      <div className="mt-2">
-        {programs.map((programs, index) => (
-          <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
-            <span>{programs}</span>
-            <div className="flex space-x-2">
-              <button onClick={() => startEditing(index)} className="text-blue-500">
-                <FaEdit />
-              </button>
-              <button onClick={() => deleteAmenity(index)} className="text-red-500">
-                <FaTrash />
-              </button>
-            </div>
-          </div>
-        ))}
-        {editingIndex === null ? (
-          <div className="flex items-center border rounded-md p-2">
-            <input
-              type="text"
-              value={newAmenity}
-              onChange={(e) => setNewAmenity(e.target.value)}
-              placeholder="Add Event"
-              className="flex-grow outline-none"
-            />
-            <button onClick={addAmenity} className="ml-2 text-gray-600">
-              <FaPlus />
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center border rounded-md p-2">
-            <input
-              type="text"
-              value={editedAmenity}
-              onChange={(e) => setEditedAmenity(e.target.value)}
-              placeholder="Edit amenity"
-              className="flex-grow outline-none"
-            />
-            <button onClick={saveEditedAmenity} className="ml-2 text-green-600">
-              Save
-            </button>
-            <button onClick={cancelEditing} className="ml-2 text-gray-600">
-              Cancel
-            </button>
-          </div>
-        )}
-      </div>
-    </details>
-  </div>
-);
-};
 
 // Amenities Selector Component
 const AmenitiesSelector: React.FC<{ amenities: string[]; setAmenities: React.Dispatch<React.SetStateAction<string[]>> }> = ({ amenities, setAmenities }) => {
@@ -442,110 +348,50 @@ const DrinksSelector: React.FC<{ drinks: string[]; setDrinks: React.Dispatch<Rea
 
 {/* DateRangePicker */}
 
-interface DateRangeProps {
-  dateRanges: {
-    startDate: string;
-    endDate: string;
-    pricePerDay: number;
-    pricePerNight: number;
-    extraPricePerBed: number;
-  }[];
-  setDateRanges: React.Dispatch<React.SetStateAction<{
-    startDate: string;
-    endDate: string;
-    pricePerDay: number;
-    pricePerNight: number;
-    extraPricePerBed: number;
-  }[]>>;
-}
+type DetailedDateRange = {
+  date: Date;
+  dayCruiser: boolean;
+  nightStay: boolean;
+  pricePerDay: number;
+  pricePerNight: number;
+  extraPricePerBed: number;
+};
 
-const DateRange: React.FC<DateRangeProps> = ({ dateRanges, setDateRanges }) => {
+type DateRangeProps = {
+  dateRanges: DetailedDateRange[];
+  setDateRanges: React.Dispatch<React.SetStateAction<DetailedDateRange[]>>;
+};
 
-  
-  // const [dateRanges, setDateRanges] = useState<DateRange[]>([]);
-  const [newStartDate, setNewStartDate] = useState("");
-  const [newEndDate, setNewEndDate] = useState("");
+const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRanges }) => {
+  const [newDate, setNewDate] = useState("");
   const [newPricePerDay, setNewPricePerDay] = useState<number | null>(null);
   const [newPricePerNight, setNewPricePerNight] = useState<number | null>(null);
-  const [newExtraPricePerPerson, setNewExtraPricePerPerson] = useState<number | null>(null);
+  const [newExtraPricePerBed, setNewExtraPricePerBed] = useState<number | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const addDateRange = () => {
-    // Ensure prices are not negative
-    if (
-      newStartDate &&
-      newEndDate &&
-      newPricePerDay !== null && newPricePerDay >= 0 &&
-      (newPricePerNight ?? 0) >= 0 &&
-      (newExtraPricePerPerson ?? 0) >= 0
-    ) {
-      setDateRanges([
-        ...dateRanges,
-        {
-          startDate: newStartDate,
-          endDate: newEndDate,
-          pricePerDay: newPricePerDay,
-          pricePerNight: newPricePerNight ?? 0,
-          extraPricePerBed: newExtraPricePerPerson ?? 0,
-        },
-      ]);
-      // Reset input fields after adding
-      setNewStartDate("");
-      setNewEndDate("");
-      setNewPricePerDay(0);
-      setNewPricePerNight(0);
-      setNewExtraPricePerPerson(0);
-    } else {
-      alert("Please enter valid positive prices.");
-    }
-  };
-
-  const startEditing = (index: number) => {
-    setEditingIndex(index);
-    const range = dateRanges[index];
-    setNewStartDate(range.startDate);
-    setNewEndDate(range.endDate);
-    setNewPricePerDay(range.pricePerDay);
-    setNewPricePerNight(range.pricePerNight);
-    setNewExtraPricePerPerson(range.extraPricePerBed);
-  };
-
-  const cancelEditing = () => {
-    setEditingIndex(null);
-    setNewStartDate("");
-    setNewEndDate("");
-    setNewPricePerDay(0);
-    setNewPricePerNight(0);
-    setNewExtraPricePerPerson(0);
-  };
-
-  const saveEditedRange = () => {
-    // Ensure prices are not negative
-    if (
-      newStartDate &&
-      newEndDate &&
-      newPricePerDay !== null && newPricePerDay >= 0 &&
-      (newPricePerNight ?? 0) >= 0 &&
-      (newExtraPricePerPerson ?? 0) >= 0
-    ) {
-      const updatedRanges = [...dateRanges];
-      updatedRanges[editingIndex!] = {
-        startDate: newStartDate,
-        endDate: newEndDate,
+    if (newDate && newPricePerDay !== null && newPricePerDay >= 0 &&
+        (newPricePerNight ?? 0) >= 0 && (newExtraPricePerBed ?? 0) >= 0) {
+      setDateRanges([...dateRanges, {
+        date: new Date(newDate),
+        dayCruiser: true,
+        nightStay: true,
         pricePerDay: newPricePerDay,
         pricePerNight: newPricePerNight ?? 0,
-        extraPricePerBed: newExtraPricePerPerson ?? 0,
-      };
-      setDateRanges(updatedRanges);
-      cancelEditing();
+        extraPricePerBed: newExtraPricePerBed ?? 0,
+      }]);
+      
+      setNewDate("");
+      setNewPricePerDay(0);
+      setNewPricePerNight(0);
+      setNewExtraPricePerBed(0);
     } else {
       alert("Please enter valid positive prices.");
     }
   };
 
   const deleteRange = (index: number) => {
-    const updatedRanges = dateRanges.filter((_, i) => i !== index);
-    setDateRanges(updatedRanges);
+    setDateRanges(dateRanges.filter((_, i) => i !== index));
   };
 
   return (
@@ -555,17 +401,12 @@ const DateRange: React.FC<DateRangeProps> = ({ dateRanges, setDateRanges }) => {
         {dateRanges.map((range, index) => (
           <div key={index} className="p-4 border rounded-md mb-4 flex justify-between">
             <div>
-              <p>
-                <strong>From:</strong> {range.startDate} <strong>To:</strong> {range.endDate}
-              </p>
+              <p><strong>Date:</strong> {range.date.toDateString()}</p>
               <p>Price per person Day: ₹{range.pricePerDay}</p>
-              <p>Price per person Night : ₹{range.pricePerNight}</p>
-              <p>Price per room Night: ₹{range.extraPricePerBed}</p>
+              <p>Price per person Night: ₹{range.pricePerNight}</p>
+              <p>Extra Price per Bed: ₹{range.extraPricePerBed}</p>
             </div>
             <div className="flex space-x-2">
-              <button onClick={() => startEditing(index)} className="text-blue-500">
-                <FaEdit />
-              </button>
               <button onClick={() => deleteRange(index)} className="text-red-500">
                 <FaTrash />
               </button>
@@ -573,129 +414,43 @@ const DateRange: React.FC<DateRangeProps> = ({ dateRanges, setDateRanges }) => {
           </div>
         ))}
 
-        {editingIndex === null ? (
-          <div className="space-y-4">
-            <div className="flex space-x-4">
-              <input
-                type="date"
-                value={newStartDate}
-                onChange={(e) => setNewStartDate(e.target.value)}
-                className="p-2 border rounded w-1/2"
-                placeholder="Start Date"
-              />
-              <input
-                type="date"
-                value={newEndDate}
-                onChange={(e) => setNewEndDate(e.target.value)}
-                className="p-2 border rounded w-1/2"
-                placeholder="End Date"
-              />
-            </div>
-            <div className="flex space-x-4">
-              <div className="w-1/3">
-                <label className="block text-sm font-medium mb-1">Price per Day</label>
-                <input
-                  type="number"
-                  value={newPricePerDay ?? ''}
-                  onChange={(e) => setNewPricePerDay(Math.max(0, Number(e.target.value)))}
-                  placeholder="₹ 1500"
-                  className="p-2 border rounded w-full"
-                />
-              </div>
-              <div className="w-1/3">
-                <label className="block text-sm font-medium mb-1">Price per Night</label>
-                <input
-                  type="number"
-                  value={newPricePerNight ?? ''}
-                  onChange={(e) => setNewPricePerNight(Math.max(0, Number(e.target.value)))}
-                  placeholder="₹ 2000"
-                  className="p-2 border rounded w-full"
-                />
-              </div>
-              <div className="w-1/3">
-                <label className="block text-sm font-medium mb-1">Extra Price per Bed</label>
-                <input
-                  type="number"
-                  value={newExtraPricePerPerson ?? ''}
-                  onChange={(e) => setNewExtraPricePerPerson(Math.max(0, Number(e.target.value)))}
-                  placeholder="₹ 500"
-                  className="p-2 border rounded w-full"
-                />
-              </div>
-            </div>
-            <button
-              onClick={addDateRange}
-              className="mt-4 bg-green-500 text-white py-2 px-4 rounded-full flex items-center space-x-2"
-            >
-              
-              <span>Add </span>
-              <FaPlus />
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="flex space-x-4">
-              <input
-                type="date"
-                value={newStartDate}
-                onChange={(e) => setNewStartDate(e.target.value)}
-                className="p-2 border rounded w-1/2"
-              />
-              <input
-                type="date"
-                value={newEndDate}
-                onChange={(e) => setNewEndDate(e.target.value)}
-                className="p-2 border rounded w-1/2"
-              />
-            </div>
-            <div className="flex space-x-4">
-              <div className="w-1/3">
-                <label className="block text-sm font-medium mb-1">Price per Day</label>
-                <input
-                  type="number"
-                  value={newPricePerDay ?? ''}
-                  onChange={(e) => setNewPricePerDay(Math.max(0, Number(e.target.value)))}
-                  placeholder="₹ 1500"
-                  className="p-2 border rounded w-full"
-                />
-              </div>
-              <div className="w-1/3">
-                <label className="block text-sm font-medium mb-1">Price per Night</label>
-                <input
-                  type="number"
-                  value={newPricePerNight ?? ''}
-                  onChange={(e) => setNewPricePerNight(Number(e.target.value))}
-                  placeholder="₹ 2000"
-                  className="p-2 border rounded w-full"
-                />
-              </div>
-              <div className="w-1/3">
-                <label className="block text-sm font-medium mb-1">Extra Price per Bed</label>
-                <input
-                  type="number"
-                  value={newExtraPricePerPerson ?? ''}
-                  onChange={(e) => setNewExtraPricePerPerson(Math.max(0, Number(e.target.value)))}
-                  placeholder="₹ 500"
-                  className="p-2 border rounded w-full"
-                />
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <button
-                onClick={saveEditedRange}
-                className="bg-green-500 text-white py-2 px-4 rounded-full"
-              >
-                Save
-              </button>
-              <button
-                onClick={cancelEditing}
-                className="bg-gray-400 text-white py-2 px-4 rounded-full"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
+        <div className="space-y-4">
+          <input
+            type="date"
+            value={newDate}
+            onChange={(e) => setNewDate(e.target.value)}
+            className="p-2 border rounded w-full"
+            placeholder="Select Date"
+          />
+          <input
+            type="number"
+            value={newPricePerDay ?? ''}
+            onChange={(e) => setNewPricePerDay(Math.max(0, Number(e.target.value)))}
+            placeholder="Price per Day"
+            className="p-2 border rounded w-full"
+          />
+          <input
+            type="number"
+            value={newPricePerNight ?? ''}
+            onChange={(e) => setNewPricePerNight(Math.max(0, Number(e.target.value)))}
+            placeholder="Price per Night"
+            className="p-2 border rounded w-full"
+          />
+          <input
+            type="number"
+            value={newExtraPricePerBed ?? ''}
+            onChange={(e) => setNewExtraPricePerBed(Math.max(0, Number(e.target.value)))}
+            placeholder="Extra Price per Bed"
+            className="p-2 border rounded w-full"
+          />
+          <button
+            onClick={addDateRange}
+            className="mt-4 bg-green-500 text-white py-2 px-4 rounded-full flex items-center space-x-2"
+          >
+            <span>Add</span>
+            <FaPlus />
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -724,7 +479,7 @@ export default function BasicDetails() {
   const [nonVegItems, setNonVegItems] = useState<string[]>([]);
   const [drinks, setDrinks] = useState<string[]>([]);
   // const [programs, setPrograms] = useState<string[]>([]);    
-  const [dateRanges, setDateRanges] = useState<DateRange[]>([]);
+  const [dateRanges, setDateRanges] = useState<DetailedDateRange[]>([]);
   const [image, setImage] = useState<ImageObject[]>([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -905,7 +660,7 @@ export default function BasicDetails() {
 
         {/* Date Range Picker Component */}
             
-        <DateRange dateRanges={dateRanges} setDateRanges = {setDateRanges} />
+        <DateRangeComponent dateRanges={dateRanges} setDateRanges={setDateRanges} />
         </div>
 
         <button

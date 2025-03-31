@@ -15,8 +15,9 @@ const HouseboatSchema = new mongoose.Schema(
         price: { type: String, required: true },
         rating: { type: Number, default: 3.5 },
         dates: [{
-            startDate: { type: String },
-            endDate: { type: String },
+            date: { type: Date },
+            dayCruiser: { type: Boolean, default: true },
+            nightStay: { type: Boolean, default: true },
             pricePerDay: { type: Number },
             pricePerNight: { type: Number },
             extraPricePerBed: { type: Number },

@@ -43,7 +43,7 @@ const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
         if (!res.ok) throw new Error("Failed to fetch houseboat details");
 
         const data = await res.json()
-          
+          console.log(data)
         setHouseboat(data);
       } catch {
         setError("Error loading houseboat details.");
@@ -91,7 +91,7 @@ const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
           pricePerGuestDay={parseInt(houseboat?.price || "0")}
           pricePerGuestNight={parseInt(houseboat?.price || "0")}
           pricePerBedNight={500}
-          sampleAvailability={{}} 
+          availability={{}} 
         />
 
         <div className="md:w-2/3 space-y-6">
@@ -111,14 +111,15 @@ const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
 
           <div className="bg-white p-6 rounded-md shadow-md">
             <h3 className="text-xl font-semibold text-primary-600">Occupancy</h3>
+            
             <p className="text-gray-600 mt-4">
-              <strong>Minimum occupancy:</strong> 2 Persons
-            </p>
-            <p className="text-gray-600">
               <strong>Maximum occupancy:</strong> {houseboat?.maxPeople} Persons
             </p>
+            <p className="text-gray-600 ">
+              <strong>Minimum Bed:</strong> {houseboat?.beds} Beds
+            </p>
             <p className="text-gray-600">
-              <strong>Extra Person cost:</strong> ₹500
+              <strong>base Price:</strong> {houseboat?.price}
             </p>
           </div>
 

@@ -4,13 +4,13 @@ import CalendarAvailabilityPicker from "@/components/CalendarAvailabilityPicker"
 interface AvalibilityProps {
     maxCapacity: number;
     totalBeds: number;
-    sampleAvailability: Record<string, { dayCruiser: boolean; nightStay: boolean }>;
+    availability: Record<string, { dayCruiser: boolean; nightStay: boolean }>;
     pricePerGuestDay: number;
     pricePerGuestNight: number;
     pricePerBedNight: number;
 }
 
-const BookOption: React.FC<AvalibilityProps> = ({sampleAvailability, maxCapacity, totalBeds,pricePerGuestDay,pricePerGuestNight,pricePerBedNight }) => {
+const BookOption: React.FC<AvalibilityProps> = ({availability, maxCapacity, totalBeds,pricePerGuestDay,pricePerGuestNight,pricePerBedNight }) => {
 
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedType, setSelectedType] = useState("");
@@ -23,15 +23,12 @@ const BookOption: React.FC<AvalibilityProps> = ({sampleAvailability, maxCapacity
 },[guests,beds,selectedType,selectedDate])
     
       // Availability Checking
-      const availableOptions = sampleAvailability[selectedDate] ?? {
+      const availableOptions = availability[selectedDate] ?? {
         dayCruiser: true,
         nightStay: true,
       };
-      const isFullyBooked =
-        selectedDate && !availableOptions.dayCruiser && !availableOptions.nightStay;
+      const isFullyBooked = selectedDate && !availableOptions.dayCruiser && !availableOptions.nightStay;
     
-
-
       const calculatePrice = () => {
         if (selectedType === "Day Cruiser") {
           setTotalPrice(guests * pricePerGuestDay);
@@ -69,7 +66,7 @@ const BookOption: React.FC<AvalibilityProps> = ({sampleAvailability, maxCapacity
             <CalendarAvailabilityPicker
               selectedDate={selectedDate}
               onSelectDate={setSelectedDate}
-              sampleAvailability={sampleAvailability}
+              availability={availability}
             />
           </div>
 

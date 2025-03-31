@@ -1,13 +1,6 @@
 "use client";
 import React, { useState } from 'react';
 
-interface FoodItem {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-}
-
 interface FoodMenuProps {
   vegItems: [string];
   nonVegItems:  [string];
@@ -38,10 +31,9 @@ const FoodMenu: React.FC<FoodMenuProps> = ({ vegItems, nonVegItems }) => {
           <div className="veg-items">
             <h3 className='font-semibold mt-3 text-lg '>Vegetarian Options:</h3>
             <ul>
-              {vegItems.map((_,item) => (
+              {vegItems.map((item,_) => (
                 
-                  <h4 key={_}>🥦{item}</h4>
-                  
+                  <h4 key={_}>🥦{item}</h4>     
   
               ))}
             </ul>

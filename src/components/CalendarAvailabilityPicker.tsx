@@ -8,12 +8,12 @@ interface Availability {
 interface CalendarAvailabilityPickerProps {
   selectedDate: string;
   onSelectDate: (date: string) => void;
-  sampleAvailability: Record<string, Availability>;
+  availability: Record<string, Availability>;
 }
 const CalendarAvailabilityPicker: React.FC<CalendarAvailabilityPickerProps> = ({
   selectedDate,
   onSelectDate,
-  sampleAvailability,
+  availability,
 }) => {
   const today = new Date();
   const todayMidnight = new Date(
@@ -73,7 +73,7 @@ const CalendarAvailabilityPicker: React.FC<CalendarAvailabilityPickerProps> = ({
     const isPast = cellDate < todayMidnight;
     const isSelected = selectedDate === dateStr;
 
-    const avail = sampleAvailability[dateStr] ?? {
+    const avail = availability[dateStr] ?? {
       dayCruiser: true,
       nightStay: true,
     };
