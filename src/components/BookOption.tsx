@@ -166,7 +166,7 @@ const BookOption: React.FC<AvalibilityProps> = ({sampleAvailability, maxCapacity
           {/* Book Now Button */}
           <button
             onClick={handleBooking}
-            className="w-full mt-6 bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-lg transition duration-200"
+            className={`w-full mt-6 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-300 text-white py-3 rounded-lg transition duration-200`}
             disabled={
               !selectedDate || isFullyBooked || !selectedType || guests < 1
             }

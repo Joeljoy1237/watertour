@@ -2,13 +2,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
-const images = [
-  { src: "/boat.jpg", alt: "Houseboat view 1" },
-  { src: "/boatbg1.jpg", alt: "Houseboat view 2" },
-  { src: "/test_boat.jpg", alt: "Houseboat view 3" },
-];
 
-export default function HouseboatCarousel() {
+
+interface ImageType {
+  src: string;
+  alt: string;
+}
+
+export default function HouseboatCarousel({ images }: { images: ImageType[] }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = images.length;
   const intervalRef = useRef<NodeJS.Timeout | null>(null);

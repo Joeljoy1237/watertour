@@ -1,149 +1,130 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
 import HouseboatCarousel from "@/components/HouseboatCarousel";
 import CommentSection from "@/components/CommentSection";
-
 import BookOption from "@/components/BookOption";
 import FoodMenu from "@/components/FoodMenu";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
-const HouseboatDetails: React.FC = () => {
-
-  const sampleAvailability: Record<
-  string,
-  { dayCruiser: boolean; nightStay: boolean }
-> = {
-  "2025-03-12": { dayCruiser: true, nightStay: false },
-  "2025-03-13": { dayCruiser: false, nightStay: true },
-};
-
-  const pricePerGuestDay = 1500;
-  const pricePerGuestNight = 2000;
-  const pricePerBedNight = 500;
-
-{/* Food Menu func */}
-
-interface FoodItem {
-  id: number;
+interface HouseboatData {
+  _id: string;
   name: string;
   description: string;
-  price: number;
+  location: string;
+  beds: string;
+  maxPeople: string;
+  price: string;
+  rating: number;
+  specialPrice: { date: string; price: number }[];
+  sesonalPrice: { date: string; price: number }[];
+  amenities: string[];
+  items: string[];
+  images: string[];
+  isAvailable: boolean;
 }
 
+const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
+  const [houseboat, setHouseboat] = useState<HouseboatData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const vegItems = [
-  {
-    id: 1,
-    name: 'Vegetable Stir Fry',
-    description: 'Fresh vegetables sautéed in a light sauce',
-    price: 12.99,
-  },
-  {
-    id: 2,
-    name: 'Mushroom Risotto',
-    description: 'Creamy arborio rice with wild mushrooms',
-    price: 14.99,
-  },
-];
+  const resolvedParams = useRef<string | null>(null);
+  useEffect(() => {
+    const fetchHouseboat = async () => {
+      try {
+        const { id } = await params;
+        resolvedParams.current = id;
+        const res = await fetch(`/api/houseboat/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch houseboat details");
 
-const nonVegItems = [
-  {
-    id: 3,
-    name: 'Grilled Salmon',
-    description: 'Fresh salmon with lemon butter sauce',
-    price: 18.99,
-  },
-  {
-    id: 4,
-    name: 'Chicken Parmesan',
-    description: 'Breaded chicken topped with marinara and cheese',
-    price: 16.99,
-  },
-];
+        const data = await res.json();
+        setHouseboat(data);
+      } catch {
+        setError("Error loading houseboat details.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchHouseboat();
+  }, [params]);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 p-6">
+        <Skeleton height={300} />
+        <div className="max-w-7xl mx-auto p-6 flex flex-col-reverse md:flex-row-reverse gap-8 mt-6">
+          <Skeleton height={400} className="md:w-1/3" />
+          <div className="md:w-2/3 space-y-6">
+            <Skeleton height={40} width={200} />
+            <Skeleton count={3} />
+            <Skeleton height={40} width={200} />
+            <Skeleton count={3} />
+            <Skeleton height={40} width={200} />
+            <Skeleton count={3} />
+            <Skeleton height={40} width={200} />
+            <Skeleton count={3} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const amenities = [
-    "Air Conditioning",
-    "Dining Area",
-    "WiFi",
-    "Fishing Gear",
-    "Safety Equipment",
-    "Sun Deck",
-  ];
-
-  const maxCapacity = 20;
-  const minCapacity = 2;
-  const totalBeds = 5;
-  const ExtraPersonCost = 500;
-
+  if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
 
   return (
     <div className="min-h-screen bg-gray-100">
       <section className="relative w-full">
-        <HouseboatCarousel />
+        <HouseboatCarousel images={(houseboat?.images || []).map((url) => ({ src: url, alt: `Image of ${houseboat?.name || "houseboat"}` }))} />
       </section>
 
       <main className="max-w-7xl mx-auto p-6 flex flex-col-reverse md:flex-row-reverse gap-8 mt-6">
-        {/* Booking Section */}
-        <BookOption sampleAvailability={sampleAvailability} maxCapacity={maxCapacity} totalBeds={totalBeds} pricePerGuestDay={pricePerGuestDay} pricePerGuestNight={pricePerGuestNight} pricePerBedNight={ pricePerBedNight} />
+        <BookOption
+          maxCapacity={parseInt(houseboat?.maxPeople || "0")}
+          totalBeds={parseInt(houseboat?.beds || "0")}
+          pricePerGuestDay={parseInt(houseboat?.price || "0")}
+          pricePerGuestNight={parseInt(houseboat?.price || "0")}
+          pricePerBedNight={500}
+          sampleAvailability={{}} 
+        />
 
-        {/* Houseboat Info Section */}
         <div className="md:w-2/3 space-y-6">
           <div className="bg-white p-6 rounded-md shadow-md">
-            <h2 className="text-2xl font-semibold text-primary-600">
-              Luxury Houseboat Stay
-            </h2>
-            <p className="text-gray-700 mt-2">
-            A Luxuary Houseboat in Alleppey offers a peaceful escape into the scenic backwaters of Kerala. Ideal for couples and small families, this houseboat provides a relaxing stay with comfortable amenities and beautiful surroundings.
-            <br />
-            With two upper decks, the front deck is perfect for sitting and sightseeing, while the back deck offers a great space for sunbathing. These open areas allow uninterrupted views of the calm waters and lush greenery, creating a serene experience.
-            <br />
-            The houseboat features a well-furnished bedroom, a private bathroom with a bathtub, and a dining area with a TV. A music system adds to the ambiance and air conditioning is available.
-            <br />
-            Safety and convenience are prioritized, making this houseboat a great choice for a romantic getaway or a peaceful retreat. Freshly prepared Kerala cuisine enhances the experience, allowing guests to enjoy traditional flavors while gliding through the backwaters.
-            <br />
-            Book a stay today and enjoy the beauty of Alleppey&apos;s waterways for an unforgettable journey.
-            </p>
+            <h2 className="text-2xl font-semibold text-primary-600">{houseboat?.name}</h2>
+            <p className="text-gray-700 mt-2">{houseboat?.description}</p>
           </div>
 
-          {/* Amenities & Facilities */}
           <div className="bg-white p-6 rounded-md shadow-md">
-            <h3 className="text-xl font-semibold text-primary-600">
-              Amenities & Facilities
-            </h3>
+            <h3 className="text-xl font-semibold text-primary-600">Amenities & Facilities</h3>
             <ul className="grid grid-cols-2 gap-2 mt-2 text-gray-700">
-              {amenities.map((amenity, index) => (
-                <li key={index} className="flex items-center gap-2">
-                  ✅ {amenity}
-                </li>
+              {houseboat?.amenities?.map((amenity, index) => (
+                <li key={index} className="flex items-center gap-2">✅ {amenity}</li>
               ))}
             </ul>
           </div>
-          
-          {/* Occupancy */}
+
           <div className="bg-white p-6 rounded-md shadow-md">
-            <h3 className="text-xl font-semibold text-primary-600">
-            Occupancy</h3>
+            <h3 className="text-xl font-semibold text-primary-600">Occupancy</h3>
             <p className="text-gray-600 mt-4">
-              <strong>Minimum occupancy:</strong> {minCapacity} Persons
-            </p>
-            <p className="text-gray-600 ">
-              <strong>Maximum occupancy:</strong> {maxCapacity} Persons
+              <strong>Minimum occupancy:</strong> 2 Persons
             </p>
             <p className="text-gray-600">
-              <strong>Extra Person cost:</strong> ₹{ExtraPersonCost} 
+              <strong>Maximum occupancy:</strong> {houseboat?.maxPeople} Persons
+            </p>
+            <p className="text-gray-600">
+              <strong>Extra Person cost:</strong> ₹500
             </p>
           </div>
-          {/* Food Menu */}
-          <div className="bg-white p-6 rounded-md shadow-md">
-            <h3 className="text-xl font-semibold text-primary-600">
-            Food</h3>
-              <FoodMenu vegItems={vegItems} nonVegItems={nonVegItems} />
 
-           
-          </div>   
-          {/* Comment Section */}
-          <CommentSection />
-        </div>
+          <div className="bg-white p-6 rounded-md shadow-md">
+            <h3 className="text-xl font-semibold text-primary-600">Food</h3>
+            <FoodMenu vegItems={[]} nonVegItems={[]} /> 
+          <CommentSection boatId={resolvedParams.current || ""} />
+
+      
+          </div>
+          </div>
       </main>
     </div>
   );
