@@ -72,31 +72,37 @@ export default function MyHouseboats() {
         {error && <p className="text-center text-red-500">{error}</p>}
 
         {/* Houseboat List */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {houseboats.length > 0 ? (
-            houseboats.map((boat) => (
-              <div key={boat._id} className="bg-white shadow-lg rounded-xl overflow-hidden">
-                <Image
-                  src={boat.images[0] || "/placeholder.jpg"}
-                  width={400}
-                  height={250}
-                  alt={boat.name}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold text-gray-900">{boat.name}</h2>
-                  <p className="text-gray-600">{boat.location}</p>
-                  <p className="text-primary font-medium mt-2">₹{boat.price}</p>
-                  <div className="mt-4 flex justify-between">
-                    <button onClick={async () => await router.push("/dashboard/owner/add-houseboat/basic-details?editing=true")} className="bg-gray-200 px-3 py-1 rounded-lg flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition">
-                      <FiEdit /> Edit
-                    </button>
-                    <button className="bg-red-500 text-white px-3 py-1 rounded-lg flex items-center gap-2 hover:bg-red-600 transition">
-                      <FiTrash /> Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
+         {houseboats.length > 0 ? (
+         houseboats.map((boat) => (
+          <div key={boat._id} className="bg-white shadow-lg rounded-xl overflow-hidden transform hover:scale-105 transition duration-300 ">           
+           <div className="relative group">
+          <Image
+            src={boat.images[0] || "/placeholder.jpg"}
+            width={400}
+            height={250}
+            alt={boat.name}
+            className="w-full h-48 object-cover"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
+            <span className="text-white text-lg font-medium">Preview</span>
+          </div>
+        </div>
+        <div className="p-4">
+          <h2 className="text-xl font-semibold text-gray-900">{boat.name}</h2>
+          <p className="text-gray-600">{boat.location}</p>
+          <p className="text-primary font-medium mt-2">₹{boat.price}</p>
+          <div className="mt-4 flex justify-between">
+            <button onClick={async () => await router.push("/dashboard/owner/add-houseboat/basic-details?editing=true")} className="bg-gray-200 px-3 py-1 rounded-lg flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition">
+              <FiEdit /> Edit
+            </button>
+            <button className="bg-red-500 text-white px-3 py-1 rounded-lg flex items-center gap-2 hover:bg-red-600 transition">
+              <FiTrash /> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+  
             ))
           ) : (
             !loading && <p className="text-center text-gray-600">No houseboats found.</p>

@@ -489,7 +489,7 @@ export default function BasicDetails() {
       
     }
   }
-
+  
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -591,8 +591,8 @@ export default function BasicDetails() {
         setStartDate={setStartDate}
         setEndDate={setEndDate}
       /> */}
-{/* Date Selector Component */}
-<DateRange/>
+        {/* Date Selector Component */}
+        <DateRange />
         </div>
 
         <button
