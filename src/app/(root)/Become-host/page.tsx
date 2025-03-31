@@ -1,8 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import ImageUpload from "@/components/dashboaord/ImageUploader";
+import { useRouter } from "next/navigation";
 
-export default function Form() {
+// Removed duplicate export default function Form
+
+
+export default function BasicDetails() {
+  const router = useRouter();
+  const [image, setImage] = useState<{ url: string; name: string }[]>([]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -12,39 +19,39 @@ export default function Form() {
     email: "",
     phone: "",
     licenseNumber: "",
-    govtId: null as string | null, // Store the uploaded file URL
   });
-
-  const [image, setImage] = useState<string | null>(null); // State for ImageUpload component
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const response = await fetch("/api/houseboat/owner/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: "67e79ee42d346260ef4635cf",
+          ...formData,
+          images: image.map((img) => img.url),
+        }),
+      });
 
-    if (!image) {
-      console.error("No file uploaded.");
-      return;
+      if (!response.ok) {
+        throw new Error("Failed to add houseboat");
+      }
+
+      const data = await response.json();
+      console.log("Houseboat added successfully:", data);
+      router.push("/dashboard/owner/houseboats");
+    } catch (error) {
+      console.error("Error adding houseboat:", error);
     }
+  };
 
-    // Add the uploaded image URL to the form data
-    const finalFormData = { ...formData, govtId: image };
-
-    // Submit the form data to your backend or handle it as needed
-    console.log("Final Form Data:", finalFormData);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -100,35 +107,12 @@ export default function Form() {
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
-        <label className="block text-base mt-4">Upload any Govt. ID (Aadhar card, Driving Licence)</label>
-        <input
-          type="file"
-          onChange={async (e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              const formData = new FormData();
-              formData.append("file", file);
-
-              try {
-            const response = await fetch("/api/uploadthing", {
-              method: "POST",
-              body: formData,
-            });
-
-            if (response.ok) {
-              const data = await response.json();
-              setFormData((prev) => ({ ...prev, govtId: data.fileUrl }));
-              console.log("File uploaded successfully:", data.fileUrl);
-            } else {
-              console.error("File upload failed.");
-            }
-              } catch (error) {
-            console.error("Error uploading file:", error);
-              }
-            }
-          }}
-          className="w-full p-2 border rounded"
-        />
+        <section className="bg-white mx-3 shadow-lg rounded-lg p-6 lg:flex flex-col w-1/2">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Upload any Govt. ID (Aadhar card, Driving Licence)</h1>
+          <div className="flex items-center ">
+            <ImageUpload image={image} setImage={setImage} />
+          </div>
+        </section>
         <button
           type="submit"
           className="w-full p-3 bg-green-500 text-white rounded"
