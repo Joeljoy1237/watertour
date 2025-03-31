@@ -14,13 +14,12 @@ const HouseboatSchema = new mongoose.Schema(
         maxPeople: { type: String, required: true },
         price: { type: String, required: true },
         rating: { type: Number, default: 3.5 },
-        specialPrice: [{
-            date: { type: Date, required: true },
-            price: { type: Number, required: true },
-        }],
-        sesonalPrice: [{
-            date: { type: Date, required: true },
-            price: { type: Number, required: true },
+        dates: [{
+            startDate: { type: String },
+            endDate: { type: String },
+            pricePerDay: { type: Number },
+            pricePerNight: { type: Number },
+            extraPricePerBed: { type: Number },
         }],
         amenities: { type: [String], required: true },
         items: { type: [String], required: true },

@@ -54,7 +54,7 @@ export default function HouseboatCarousel({ images }: { images: ImageType[] }) {
             key={index}
             className="min-w-full relative h-[500px] md:h-[600px]"
           >
-            <Image src={img.src} alt={img.alt} fill className="object-cover" />
+            <Image src={img.src} alt={img.alt} fill={true} className="object-cover" />
           </div>
         ))}
       </div>

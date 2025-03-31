@@ -12,7 +12,7 @@ import DatePicker from "react-datepicker"; // For date picker
 import "react-datepicker/dist/react-datepicker.css"; // Date picker styles
 import "rc-slider/assets/index.css"; // Slider styles
 import Slider from "rc-slider"; // For price range slider
-import { FaRupeeSign } from "react-icons/fa6";
+// import { FaRupeeSign } from "react-icons/fa6";
 
 const SearchBar: React.FC = () => {
   const router = useRouter();

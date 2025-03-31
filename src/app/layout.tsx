@@ -27,7 +27,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    
     <html lang="en">
       <body className={`${roboto.variable} font-sans bg-[#F9F9F9]`}>
         <Provider>

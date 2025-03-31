@@ -31,7 +31,7 @@ const Card: React.FC<CardProps> = ({ id, title, price, rating, imageUrl }) => {
   };
 
   return (
-    <Link href={`/book/${id}`}>
+    <Link href={`/boat/${id}`}>
     <div className="bg-white rounded-xl w-auto shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
       <div className="relative w-full h-48 md:h-56">
         <Image src={imageUrl || "/boat.jpg"} alt={title} fill className="object-cover" />
@@ -121,3 +121,5 @@ const CardList: React.FC = () => {
 };
 
 export default CardList;
+
+export { Card };

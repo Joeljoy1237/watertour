@@ -435,22 +435,32 @@ const DrinksSelector: React.FC<{ drinks: string[]; setDrinks: React.Dispatch<Rea
 
 {/* DateRangePicker */}
 
-const DateRange: React.FC = () => {
-  // Define the DateRange type
-  interface DateRange {
+interface DateRangeProps {
+  dateRanges: {
     startDate: string;
     endDate: string;
     pricePerDay: number;
     pricePerNight: number;
-    extraPricePerPerson: number;
-  }
+    extraPricePerBed: number;
+  }[];
+  setDateRanges: React.Dispatch<React.SetStateAction<{
+    startDate: string;
+    endDate: string;
+    pricePerDay: number;
+    pricePerNight: number;
+    extraPricePerBed: number;
+  }[]>>;
+}
+
+const DateRange: React.FC<DateRangeProps> = ({ dateRanges, setDateRanges }) => {
+
   
-  const [dateRanges, setDateRanges] = useState<DateRange[]>([]);
+  // const [dateRanges, setDateRanges] = useState<DateRange[]>([]);
   const [newStartDate, setNewStartDate] = useState("");
   const [newEndDate, setNewEndDate] = useState("");
-  const [newPricePerDay, setNewPricePerDay] = useState(0);
-  const [newPricePerNight, setNewPricePerNight] = useState(0);
-  const [newExtraPricePerPerson, setNewExtraPricePerPerson] = useState(0);
+  const [newPricePerDay, setNewPricePerDay] = useState<number | null>(null);
+  const [newPricePerNight, setNewPricePerNight] = useState<number | null>(null);
+  const [newExtraPricePerPerson, setNewExtraPricePerPerson] = useState<number | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const addDateRange = () => {
@@ -458,9 +468,9 @@ const DateRange: React.FC = () => {
     if (
       newStartDate &&
       newEndDate &&
-      newPricePerDay >= 0 &&
-      newPricePerNight >= 0 &&
-      newExtraPricePerPerson >= 0
+      newPricePerDay !== null && newPricePerDay >= 0 &&
+      (newPricePerNight ?? 0) >= 0 &&
+      (newExtraPricePerPerson ?? 0) >= 0
     ) {
       setDateRanges([
         ...dateRanges,
@@ -468,8 +478,8 @@ const DateRange: React.FC = () => {
           startDate: newStartDate,
           endDate: newEndDate,
           pricePerDay: newPricePerDay,
-          pricePerNight: newPricePerNight,
-          extraPricePerPerson: newExtraPricePerPerson,
+          pricePerNight: newPricePerNight ?? 0,
+          extraPricePerBed: newExtraPricePerPerson ?? 0,
         },
       ]);
       // Reset input fields after adding
@@ -490,7 +500,7 @@ const DateRange: React.FC = () => {
     setNewEndDate(range.endDate);
     setNewPricePerDay(range.pricePerDay);
     setNewPricePerNight(range.pricePerNight);
-    setNewExtraPricePerPerson(range.extraPricePerPerson);
+    setNewExtraPricePerPerson(range.extraPricePerBed);
   };
 
   const cancelEditing = () => {
@@ -507,17 +517,17 @@ const DateRange: React.FC = () => {
     if (
       newStartDate &&
       newEndDate &&
-      newPricePerDay >= 0 &&
-      newPricePerNight >= 0 &&
-      newExtraPricePerPerson >= 0
+      newPricePerDay !== null && newPricePerDay >= 0 &&
+      (newPricePerNight ?? 0) >= 0 &&
+      (newExtraPricePerPerson ?? 0) >= 0
     ) {
       const updatedRanges = [...dateRanges];
       updatedRanges[editingIndex!] = {
         startDate: newStartDate,
         endDate: newEndDate,
         pricePerDay: newPricePerDay,
-        pricePerNight: newPricePerNight,
-        extraPricePerPerson: newExtraPricePerPerson,
+        pricePerNight: newPricePerNight ?? 0,
+        extraPricePerBed: newExtraPricePerPerson ?? 0,
       };
       setDateRanges(updatedRanges);
       cancelEditing();
@@ -533,7 +543,7 @@ const DateRange: React.FC = () => {
 
   return (
     <div className="border p-4 rounded-lg">
-      <h2 className="text-l font-bold mb-4">Special Pricing</h2>
+      <h2 className="text-l font-bold mb-4">Date Pricing</h2>
       <div>
         {dateRanges.map((range, index) => (
           <div key={index} className="p-4 border rounded-md mb-4 flex justify-between">
@@ -541,9 +551,9 @@ const DateRange: React.FC = () => {
               <p>
                 <strong>From:</strong> {range.startDate} <strong>To:</strong> {range.endDate}
               </p>
-              <p>Price per Day: ₹{range.pricePerDay}</p>
-              <p>Price per Night: ₹{range.pricePerNight}</p>
-              <p>Extra Price per Person: ₹{range.extraPricePerPerson}</p>
+              <p>Price per person Day: ₹{range.pricePerDay}</p>
+              <p>Price per person Night : ₹{range.pricePerNight}</p>
+              <p>Price per room Night: ₹{range.extraPricePerBed}</p>
             </div>
             <div className="flex space-x-2">
               <button onClick={() => startEditing(index)} className="text-blue-500">
@@ -579,7 +589,7 @@ const DateRange: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Price per Day</label>
                 <input
                   type="number"
-                  value={newPricePerDay}
+                  value={newPricePerDay ?? ''}
                   onChange={(e) => setNewPricePerDay(Math.max(0, Number(e.target.value)))}
                   placeholder="₹ 1500"
                   className="p-2 border rounded w-full"
@@ -589,17 +599,17 @@ const DateRange: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Price per Night</label>
                 <input
                   type="number"
-                  value={newPricePerNight}
+                  value={newPricePerNight ?? ''}
                   onChange={(e) => setNewPricePerNight(Math.max(0, Number(e.target.value)))}
                   placeholder="₹ 2000"
                   className="p-2 border rounded w-full"
                 />
               </div>
               <div className="w-1/3">
-                <label className="block text-sm font-medium mb-1">Extra Price per Person</label>
+                <label className="block text-sm font-medium mb-1">Extra Price per Bed</label>
                 <input
                   type="number"
-                  value={newExtraPricePerPerson}
+                  value={newExtraPricePerPerson ?? ''}
                   onChange={(e) => setNewExtraPricePerPerson(Math.max(0, Number(e.target.value)))}
                   placeholder="₹ 500"
                   className="p-2 border rounded w-full"
@@ -636,7 +646,7 @@ const DateRange: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Price per Day</label>
                 <input
                   type="number"
-                  value={newPricePerDay}
+                  value={newPricePerDay ?? ''}
                   onChange={(e) => setNewPricePerDay(Math.max(0, Number(e.target.value)))}
                   placeholder="₹ 1500"
                   className="p-2 border rounded w-full"
@@ -646,17 +656,17 @@ const DateRange: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">Price per Night</label>
                 <input
                   type="number"
-                  value={newPricePerNight}
-                  onChange={(e) => setNewPricePerNight(Math.max(0, Number(e.target.value)))}
+                  value={newPricePerNight ?? ''}
+                  onChange={(e) => setNewPricePerNight(Number(e.target.value))}
                   placeholder="₹ 2000"
                   className="p-2 border rounded w-full"
                 />
               </div>
               <div className="w-1/3">
-                <label className="block text-sm font-medium mb-1">Extra Price per Person</label>
+                <label className="block text-sm font-medium mb-1">Extra Price per Bed</label>
                 <input
                   type="number"
-                  value={newExtraPricePerPerson}
+                  value={newExtraPricePerPerson ?? ''}
                   onChange={(e) => setNewExtraPricePerPerson(Math.max(0, Number(e.target.value)))}
                   placeholder="₹ 500"
                   className="p-2 border rounded w-full"
@@ -692,15 +702,21 @@ export default function BasicDetails() {
   }
   
 
+  interface DateRange {
+    startDate: string;
+    endDate: string;
+    pricePerDay: number;
+    pricePerNight: number;
+    extraPricePerBed: number;
+  }
+
   const router = useRouter();
+
   const [amenities, setAmenities] = useState<string[]>([]);
   const [items, setItems] = useState<string[]>([]);
   const [drinks, setDrinks] = useState<string[]>([]);
-  const [programs, setPrograms] = useState<string[]>([]);
-
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  // const [programs, setPrograms] = useState<string[]>([]);    
+  const [dateRanges, setDateRanges] = useState<DateRange[]>([]);
   const [image, setImage] = useState<ImageObject[]>([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -711,7 +727,8 @@ export default function BasicDetails() {
     price: "",
   });
 
-  const handleSubmit=() => {
+  const handleSubmit = () => {
+console.log(image)
     try {
       fetch("/api/houseboat/owner/add", {
         method: "POST",
@@ -723,7 +740,9 @@ export default function BasicDetails() {
           ...formData,
           amenities,
           items,
-          images: image.map((img) => img.url),
+          drinks,
+          dateRanges,
+        images: image.map((img) => img.url),
         }),
       })
         .then((response) => {
@@ -782,6 +801,24 @@ export default function BasicDetails() {
             className="w-full p-3 border rounded"
             onChange={handleChange}
           />
+
+          <input
+            type="number"
+            id="capacity"
+            min="0"
+            onInput={(e) => {
+              const input = e.target as HTMLInputElement;
+              if (Number(input.value) < 0) {
+                input.value = "0";
+              }
+            }}
+            name="maxPeople"
+            placeholder="Total Capacity"
+            className="w-full p-3 border rounded"
+            onChange={handleChange}
+          />
+
+
           <input
             type="number"
             id="numberInput"
@@ -793,7 +830,25 @@ export default function BasicDetails() {
               }
             }}
             name="beds"
-            placeholder="Capacity"
+            placeholder="No of beds"
+            className="w-full p-3 border rounded"
+            onChange={handleChange}
+          />
+
+
+
+          <input
+            type="number"
+            id="numberInput"
+            min="0"
+            onInput={(e) => {
+              const input = e.target as HTMLInputElement;
+              if (Number(input.value) < 0) {
+                input.value = "0";
+              }
+            }}
+            name="price"
+            placeholder="Day base Price"
             className="w-full p-3 border rounded"
             onChange={handleChange}
           />
@@ -808,26 +863,11 @@ export default function BasicDetails() {
               }
             }}
             name="price"
-            placeholder="Day Price"
+            placeholder="Night base Price"
             className="w-full p-3 border rounded"
             onChange={handleChange}
           />
-          <input
-            type="number"
-            id="numberInput"
-            min="0"
-            onInput={(e) => {
-              const input = e.target as HTMLInputElement;
-              if (Number(input.value) < 0) {
-                input.value = "0";
-              }
-            }}
-            name="price"
-            placeholder="Night Price"
-            className="w-full p-3 border rounded"
-            onChange={handleChange}
-          />
-          <input
+          {/* <input
             type="number"
             id="numberInput"
             min="0"
@@ -841,7 +881,7 @@ export default function BasicDetails() {
             placeholder="Extra Person Price"
             className="w-full p-3 border rounded"
             onChange={handleChange}
-          />
+          /> */}
 
           {/* Amenities Selector Component */}
           <AmenitiesSelector amenities={amenities} setAmenities={setAmenities} />
@@ -851,11 +891,11 @@ export default function BasicDetails() {
           {/*  Drinks Selector Component */}
           <DrinksSelector drinks={drinks} setDrinks={setDrinks} />
             {/* Special Program Selector Component */}
-          <SpecialPrograms programs={programs} setPrograms={setPrograms} />
+          {/* <SpecialPrograms programs={programs} setPrograms={setPrograms} /> */}
 
         {/* Date Range Picker Component */}
             
-        <DateRange />
+        <DateRange dateRanges={dateRanges} setDateRanges = {setDateRanges} />
         </div>
 
         <button

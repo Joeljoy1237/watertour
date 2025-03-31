@@ -76,18 +76,23 @@ export default function MyHouseboats() {
          {houseboats.length > 0 ? (
          houseboats.map((boat) => (
           <div key={boat._id} className="bg-white shadow-lg rounded-xl overflow-hidden transform hover:scale-105 transition duration-300 ">           
-           <div className="relative group">
+             <Link href={`/boat/${boat._id}`}>
+             <div className="relative group">
+               
           <Image
             src={boat.images[0] || "/boat.jpg"}
             width={400}
             height={250}
             alt={boat.name}
             className="w-full h-48 object-cover"
-          />
+                 />
+               
+                 
           <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
             <span className="text-white text-lg font-medium">Preview</span>
           </div>
-        </div>
+             </div>
+             </Link>
         <div className="p-4">
           <h2 className="text-xl font-semibold text-gray-900">{boat.name}</h2>
           <p className="text-gray-600">{boat.location}</p>

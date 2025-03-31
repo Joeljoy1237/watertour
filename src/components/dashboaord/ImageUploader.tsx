@@ -15,11 +15,11 @@ interface ImageUploaderProps {
   setImage: (images: ImageObject[]) => void;
 }
 
-export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
+const ImageUploader = ({ image, setImage }: ImageUploaderProps) => {
+
   const [uploadState, setUploadState] = useState<"ready" | "uploading">("ready");
 
-  const handleDelete = async(url: string) => {
-    
+  const handleDelete = async (url: string) => {
     try {
       const response = await fetch("/api/uploadthing", {
         method: "DELETE",
@@ -27,8 +27,7 @@ export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
         body: JSON.stringify({ url }),
       });
       if (!response.ok) throw new Error("Failed to delete image");
-      setImage((image.filter((img) => img.url !== url)));
-  
+      setImage(image.filter((img) => img.url !== url));
     } catch (error) {
       console.error("Error deleting image:", error);
       alert("Failed to delete image. Please try again.");
@@ -36,17 +35,16 @@ export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
   };
 
   return (
-    <div className="max-h-fit flex flex-col items-center justify-center bg-white text-black p-6">
+    <div className="max-h-fit flex flex-col items-center z-0 justify-center bg-white text-black p-6">
       <UploadDropzone<OurFileRouter, "imageUploader">
         endpoint="imageUploader"
-        onClientUploadComplete={async (res) => {
-          if (res) {
+         onClientUploadComplete={async (res) => {
+          if (res && res.length > 0) {
             setUploadState("uploading");
-            const newImages: ImageObject[] = [];
-            res.forEach((file) => {
-              const { ufsUrl, name } = file;
-              newImages.push({ url: ufsUrl, name });
-            });
+            const newImages: ImageObject[] = res.map((file) => ({
+              url: file.ufsUrl,
+              name: file.name,
+            }));
             setImage([...image, ...newImages]);
             setUploadState("ready");
           }
@@ -71,3 +69,4 @@ export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
     </div>
   );
 }
+export default ImageUploader;
