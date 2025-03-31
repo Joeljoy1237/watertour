@@ -36,7 +36,7 @@ export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-white text-black p-6">
+    <div className="max-h-fit flex flex-col items-center justify-center bg-white text-black p-6">
       <UploadDropzone<OurFileRouter, "imageUploader">
         endpoint="imageUploader"
         onClientUploadComplete={async (res) => {

@@ -78,7 +78,7 @@ export default function MyHouseboats() {
           <div key={boat._id} className="bg-white shadow-lg rounded-xl overflow-hidden transform hover:scale-105 transition duration-300 ">           
            <div className="relative group">
           <Image
-            src={boat.images[0] || "/placeholder.jpg"}
+            src={boat.images[0] || "/boat.jpg"}
             width={400}
             height={250}
             alt={boat.name}
