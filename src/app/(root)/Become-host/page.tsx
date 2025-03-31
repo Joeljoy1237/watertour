@@ -100,10 +100,33 @@ export default function Form() {
           onChange={handleChange}
           className="w-full p-2 border rounded"
         />
-        <label className="block  text-base mt-4 ">Upload any Govt. ID (Adhar card, Driving Licence) </label>
+        <label className="block text-base mt-4">Upload any Govt. ID (Aadhar card, Driving Licence)</label>
         <input
           type="file"
-          onChange={handleFileChange}
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const formData = new FormData();
+              formData.append("file", file);
+
+              try {
+            const response = await fetch("/api/uploadthing", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              setFormData((prev) => ({ ...prev, govtId: data.fileUrl }));
+              console.log("File uploaded successfully:", data.fileUrl);
+            } else {
+              console.error("File upload failed.");
+            }
+              } catch (error) {
+            console.error("Error uploading file:", error);
+              }
+            }
+          }}
           className="w-full p-2 border rounded"
         />
         <button
