@@ -9,8 +9,8 @@ interface FoodItem {
 }
 
 interface FoodMenuProps {
-  vegItems: FoodItem[];
-  nonVegItems: FoodItem[];
+  vegItems: [string];
+  nonVegItems:  [string];
 }
 
 const FoodMenu: React.FC<FoodMenuProps> = ({ vegItems, nonVegItems }) => {
@@ -38,12 +38,11 @@ const FoodMenu: React.FC<FoodMenuProps> = ({ vegItems, nonVegItems }) => {
           <div className="veg-items">
             <h3 className='font-semibold mt-3 text-lg '>Vegetarian Options:</h3>
             <ul>
-              {vegItems.map((item) => (
-                <li key={item.id} className="menu-item">
-                  <h4>🥦{item.name}</h4>
-                  <p>{item.description}</p>
-                  <span>₹{item.price.toFixed(2)}</span>
-                </li>
+              {vegItems.map((_,item) => (
+                
+                  <h4 key={_}>🥦{item}</h4>
+                  
+  
               ))}
             </ul>
           </div>
@@ -51,12 +50,10 @@ const FoodMenu: React.FC<FoodMenuProps> = ({ vegItems, nonVegItems }) => {
           <div className="non-veg-items">
             <h3 className='font-semibold mt-3 text-lg'>Non-Vegetarian Options:</h3>
             <ul>
-              {nonVegItems.map((item) => (
-                <li key={item.id} className="menu-item">
-                  <h4>🟥{item.name}</h4>
-                  <p>{item.description}</p>
-                  <span>₹{item.price.toFixed(2)}</span>
-                </li>
+              {nonVegItems.map((item,_) => (
+                
+                  <h4 key={_}>🟥{item}</h4>
+                  
               ))}
             </ul>
           </div>

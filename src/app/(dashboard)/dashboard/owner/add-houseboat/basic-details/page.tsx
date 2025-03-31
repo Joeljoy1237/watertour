@@ -190,77 +190,83 @@ const AmenitiesSelector: React.FC<{ amenities: string[]; setAmenities: React.Dis
 );
 };
 {/* food */}
-const FoodSelector: React.FC<{ items: string[]; setItems: React.Dispatch<React.SetStateAction<string[]>> }> = ({ items, setItems }) => {
+const FoodSelector: React.FC<{ vegItems: string[]; setVegItems: React.Dispatch<React.SetStateAction<string[]>>; nonVegItems: string[]; setNonVegItems: React.Dispatch<React.SetStateAction<string[]>> }> = ({ vegItems, setVegItems, nonVegItems, setNonVegItems }) => {
 
   const [newItem, setNewItem] = useState("");
-  const [isVeg, setIsVeg] = useState(true); // New state for veg/non-veg
+  const [isVeg, setIsVeg] = useState(true);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editedItem, setEditedItem] = useState("");
-  const [editedIsVeg, setEditedIsVeg] = useState(true); // New state for editing veg/non-veg
+  const [editedIsVeg, setEditedIsVeg] = useState(true);
 
   const addItem = () => {
-    if (newItem.trim() && !items.includes(newItem)) {
-      setItems([...items, `${newItem} (${isVeg ? 'Veg' : 'Non-Veg'})`]); // Modified to include veg info
+    if (newItem.trim()) {
+      if (isVeg) {
+        setVegItems([...vegItems, newItem]);
+      } else {
+        setNonVegItems([...nonVegItems, newItem]);
+      }
       setNewItem("");
     }
   };
 
-  const startEditing = (index: number) => {
+  const startEditing = (index: number, isVegItem: boolean) => {
     setEditingIndex(index);
-    const item = items[index];
-    // Extract the name and veg status from the existing item
-    const vegMatch = item.match(/\(([^)]+)\)$/);
-    const isVegStatus = vegMatch ? vegMatch[1] === 'Veg' : true;
-    setEditedItem(item.replace(/\s*\([^)]*\)$/, ''));
-    setEditedIsVeg(isVegStatus);
+    setEditedIsVeg(isVegItem);
+    setEditedItem(isVegItem ? vegItems[index] : nonVegItems[index]);
   };
 
   const saveEditedItem = () => {
     if (editedItem.trim()) {
-      const updatedItems = [...items];
-      updatedItems[editingIndex!] = `${editedItem} (${editedIsVeg ? 'Veg' : 'Non-Veg'})`;
-      setItems(updatedItems);
+      if (editedIsVeg) {
+        const updatedVegItems = [...vegItems];
+        updatedVegItems[editingIndex!] = editedItem;
+        setVegItems(updatedVegItems);
+      } else {
+        const updatedNonVegItems = [...nonVegItems];
+        updatedNonVegItems[editingIndex!] = editedItem;
+        setNonVegItems(updatedNonVegItems);
+      }
       cancelEditing();
     }
   };
 
-  // Rest of the functions remain exactly the same
   const cancelEditing = () => {
     setEditingIndex(null);
     setEditedItem("");
     setEditedIsVeg(true);
   };
 
-  const deleteItem = (index: number) => {
-    const updatedItems = items.filter((_, i) => i !== index);
-    setItems(updatedItems);
+  const deleteItem = (index: number, isVegItem: boolean) => {
+    if (isVegItem) {
+      setVegItems(vegItems.filter((_, i) => i !== index));
+    } else {
+      setNonVegItems(nonVegItems.filter((_, i) => i !== index));
+    }
   };
 
   return (
     <div className="border p-4 rounded-lg w-full">
       <details className="cursor-pointer">
-        <summary className="font-light">Food </summary>
+        <summary className="font-light">Food</summary>
         <div className="mt-2">
-        {items.map((item, index) => {
-            const isVeg = item.includes('(Veg)');
-            return (
-              <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
-                <div className="flex items-center">
-                  <span className={`w-3 h-3 rounded-full mr-2 ${isVeg ? 'bg-green-500' : 'bg-red-500'}`}></span>
+          {[{ title: "Veg", items: vegItems, isVeg: true }, { title: "Non-Veg", items: nonVegItems, isVeg: false }].map(({ title, items, isVeg }) => (
+            <div key={title}>
+              <h3 className="font-medium mt-2">{title}</h3>
+              {items.map((item, index) => (
+                <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
                   <span>{item}</span>
+                  <div className="flex space-x-2">
+                    <button onClick={() => startEditing(index, isVeg)} className="text-blue-500">
+                      <FaEdit />
+                    </button>
+                    <button onClick={() => deleteItem(index, isVeg)} className="text-red-500">
+                      <FaTrash />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex space-x-2">
-                  {/* buttons remain exactly the same */}
-                  <button onClick={() => startEditing(index)} className="text-blue-500">
-                            <FaEdit />
-                          </button>
-                          <button onClick={() => deleteItem(index)} className="text-red-500">
-                            <FaTrash />
-                          </button>
-                </div>
-              </div>
-            );
-          })}
+              ))}
+            </div>
+          ))}
           {editingIndex === null ? (
             <div className="space-y-2">
               <div className="flex items-center border rounded-md p-2">
@@ -713,7 +719,8 @@ export default function BasicDetails() {
   const router = useRouter();
 
   const [amenities, setAmenities] = useState<string[]>([]);
-  const [items, setItems] = useState<string[]>([]);
+  const [vegItems, setVegItems] = useState<string[]>([]);
+  const [nonVegItems, setNonVegItems] = useState<string[]>([]);
   const [drinks, setDrinks] = useState<string[]>([]);
   // const [programs, setPrograms] = useState<string[]>([]);    
   const [dateRanges, setDateRanges] = useState<DateRange[]>([]);
@@ -728,7 +735,10 @@ export default function BasicDetails() {
   });
 
   const handleSubmit = () => {
-console.log(image)
+    const food = {
+  veg:vegItems,nonVeg:nonVegItems
+    }
+    console.log(food)
     try {
       fetch("/api/houseboat/owner/add", {
         method: "POST",
@@ -739,7 +749,7 @@ console.log(image)
           userId:"67e79ee42d346260ef4635cf",
           ...formData,
           amenities,
-          items,
+          food,
           drinks,
           dateRanges,
         images: image.map((img) => img.url),
@@ -886,8 +896,8 @@ console.log(image)
           {/* Amenities Selector Component */}
           <AmenitiesSelector amenities={amenities} setAmenities={setAmenities} />
 
-          {/* Food  Selector Component */}
-          <FoodSelector items={items} setItems={setItems} />
+          <FoodSelector vegItems={vegItems} setVegItems={setVegItems} nonVegItems={nonVegItems} setNonVegItems={setNonVegItems} />
+          {/* <FoodSelector items={items} setItems={setItems} /> */}
           {/*  Drinks Selector Component */}
           <DrinksSelector drinks={drinks} setDrinks={setDrinks} />
             {/* Special Program Selector Component */}

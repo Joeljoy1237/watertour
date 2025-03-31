@@ -8,6 +8,10 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 interface HouseboatData {
+  food: {
+    veg: [string];
+    nonVeg:[string]
+  };
   _id: string;
   name: string;
   description: string;
@@ -39,7 +43,7 @@ const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
         if (!res.ok) throw new Error("Failed to fetch houseboat details");
 
         const data = await res.json()
-          console.log(data);
+          // console.log(data);
         setHouseboat(data);
       } catch {
         setError("Error loading houseboat details.");
@@ -120,7 +124,7 @@ const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
 
           <div className="bg-white p-6 rounded-md shadow-md">
             <h3 className="text-xl font-semibold text-primary-600">Food</h3>
-            <FoodMenu vegItems={[]} nonVegItems={[]} /> 
+            <FoodMenu vegItems={houseboat!.food.veg} nonVegItems={houseboat!.food.nonVeg} /> 
           <CommentSection boatId={resolvedParams.current || ""} />
 
       

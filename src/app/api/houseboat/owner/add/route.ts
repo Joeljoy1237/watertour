@@ -3,7 +3,7 @@ import { connectToDB } from "@/utils/database"
 // import mongoose from "mongoose";
 
 export const POST = async (req: Request) => {
-    const { userId, name, description, location, beds, maxPeople, price, drinks, dateRange, amenities, items, images } = await req.json();
+    const { userId, name, description, location, beds, maxPeople, price, drinks, dateRange, amenities, food, images } = await req.json();
     connectToDB();
 
     try {
@@ -17,8 +17,8 @@ export const POST = async (req: Request) => {
             price,
             amenities,
             drinks,
-            dateRange,
-            items,
+            dates: dateRange,
+            food,
             images
         });
 

@@ -16,8 +16,8 @@ declare module "next-auth" {
         };
     }
     interface User {
-        given_name?: string;
-        family_name?: string;
+        _id: string;
+        name?: string;
         email: string;
         image?: string; // Add image URL
         picture?: string; // Add picture URL
@@ -62,8 +62,10 @@ const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async session({ session, token }) {
+            const sessionUser = await User.findOne({ email: session.user.email }).select("_id");
+
             session.user = {
-                id: token.id,
+                id: sessionUser,
                 email: token.email,
                 name: token.name ?? "",
                 image: token.image ?? "",
