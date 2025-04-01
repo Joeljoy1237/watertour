@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/dashboaord/ImageUploader";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { Toaster, toast } from 'react-hot-toast';
 
 // Amenities Selector Component
 const AmenitiesSelector: React.FC<{ amenities: string[]; setAmenities: React.Dispatch<React.SetStateAction<string[]>> }> = ({ amenities, setAmenities }) => {
@@ -16,6 +17,11 @@ const AmenitiesSelector: React.FC<{ amenities: string[]; setAmenities: React.Dis
     if (newAmenity.trim() && !amenities.includes(newAmenity)) {
       setAmenities([...amenities, newAmenity]);
       setNewAmenity("");
+      toast.success("Amenity added successfully!"); // Success toast for adding amenity
+    } else if (newAmenity.trim() === "") {
+      toast.error("Amenity name cannot be empty!"); // Error toast if the input is empty
+    } else {
+      toast.error("This amenity already exists!"); // Error toast if amenity already exists
     }
   };
 
@@ -35,66 +41,72 @@ const AmenitiesSelector: React.FC<{ amenities: string[]; setAmenities: React.Dis
       updatedAmenities[editingIndex!] = editedAmenity;
       setAmenities(updatedAmenities);
       cancelEditing();
+      toast.success("Amenity updated successfully!"); // Success toast for saving edited amenity
+    } else {
+      toast.error("Edited amenity cannot be empty!"); // Error toast if the edited amenity is empty
     }
   };
 
   const deleteAmenity = (index: number) => {
+    const amenityToDelete = amenities[index];
     const updatedAmenities = amenities.filter((_, i) => i !== index);
     setAmenities(updatedAmenities);
+    toast.success(`${amenityToDelete} deleted successfully!`); // Success toast for deleting amenity
   };
 
   return (
     <div className="border p-4 w-full rounded-lg ">
-    <details className="cursor-pointer">
-      <summary className="font-light">Amenities</summary>
-      <div className="mt-2">
-        {amenities.map((amenity, index) => (
-          <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
-            <span>{amenity}</span>
-            <div className="flex space-x-2">
-              <button onClick={() => startEditing(index)} className="text-blue-500">
-                <FaEdit />
-              </button>
-              <button onClick={() => deleteAmenity(index)} className="text-red-500">
-                <FaTrash />
+      <details className="cursor-pointer">
+        <summary className="font-light">Amenities</summary>
+        <div className="mt-2">
+          {amenities.map((amenity, index) => (
+            <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
+              <span>{amenity}</span>
+              <div className="flex space-x-2">
+                <button onClick={() => startEditing(index)} className="text-blue-500">
+                  <FaEdit />
+                </button>
+                <button onClick={() => deleteAmenity(index)} className="text-red-500">
+                  <FaTrash />
+                </button>
+              </div>
+            </div>
+          ))}
+          {editingIndex === null ? (
+            <div className="flex items-center border rounded-md p-2">
+              <input
+                type="text"
+                value={newAmenity}
+                onChange={(e) => setNewAmenity(e.target.value)}
+                placeholder="Add amenity"
+                className="flex-grow outline-none"
+              />
+              <button onClick={addAmenity} className="ml-2 text-gray-600">
+                <FaPlus />
               </button>
             </div>
-          </div>
-        ))}
-        {editingIndex === null ? (
-          <div className="flex items-center border rounded-md p-2">
-            <input
-              type="text"
-              value={newAmenity}
-              onChange={(e) => setNewAmenity(e.target.value)}
-              placeholder="Add amenity"
-              className="flex-grow outline-none"
-            />
-            <button onClick={addAmenity} className="ml-2 text-gray-600">
-              <FaPlus />
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center border rounded-md p-2">
-            <input
-              type="text"
-              value={editedAmenity}
-              onChange={(e) => setEditedAmenity(e.target.value)}
-              placeholder="Edit amenity"
-              className="flex-grow outline-none"
-            />
-            <button onClick={saveEditedAmenity} className="ml-2 text-green-600">
-              Save
-            </button>
-            <button onClick={cancelEditing} className="ml-2 text-gray-600">
-              Cancel
-            </button>
-          </div>
-        )}
-      </div>
-    </details>
-  </div>
-);
+          ) : (
+            <div className="flex items-center border rounded-md p-2">
+              <input
+                type="text"
+                value={editedAmenity}
+                onChange={(e) => setEditedAmenity(e.target.value)}
+                placeholder="Edit amenity"
+                className="flex-grow outline-none"
+              />
+              <button onClick={saveEditedAmenity} className="ml-2 text-green-600">
+                Save
+              </button>
+              <button onClick={cancelEditing} className="ml-2 text-gray-600">
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+      </details>
+      <Toaster /> {/* Toaster component to display the toast notifications */}
+    </div>
+  );
 };
 {/* food */}
 const FoodSelector: React.FC<{ vegItems: string[]; setVegItems: React.Dispatch<React.SetStateAction<string[]>>; nonVegItems: string[]; setNonVegItems: React.Dispatch<React.SetStateAction<string[]>> }> = ({ vegItems, setVegItems, nonVegItems, setNonVegItems }) => {
@@ -113,6 +125,9 @@ const FoodSelector: React.FC<{ vegItems: string[]; setVegItems: React.Dispatch<R
         setNonVegItems([...nonVegItems, newItem]);
       }
       setNewItem("");
+      toast.success(`${newItem} added successfully!`); // Success toast for adding food
+    } else {
+      toast.error("Food name cannot be empty!"); // Error toast for empty input
     }
   };
 
@@ -134,6 +149,9 @@ const FoodSelector: React.FC<{ vegItems: string[]; setVegItems: React.Dispatch<R
         setNonVegItems(updatedNonVegItems);
       }
       cancelEditing();
+      toast.success("Food item updated successfully!"); // Success toast for updating food item
+    } else {
+      toast.error("Edited food name cannot be empty!"); // Error toast for empty edit input
     }
   };
 
@@ -145,9 +163,13 @@ const FoodSelector: React.FC<{ vegItems: string[]; setVegItems: React.Dispatch<R
 
   const deleteItem = (index: number, isVegItem: boolean) => {
     if (isVegItem) {
+      const itemToDelete = vegItems[index];
       setVegItems(vegItems.filter((_, i) => i !== index));
+      toast.success(`${itemToDelete} deleted successfully!`); // Success toast for deleting food
     } else {
+      const itemToDelete = nonVegItems[index];
       setNonVegItems(nonVegItems.filter((_, i) => i !== index));
+      toast.success(`${itemToDelete} deleted successfully!`); // Success toast for deleting food
     }
   };
 
@@ -250,6 +272,7 @@ const FoodSelector: React.FC<{ vegItems: string[]; setVegItems: React.Dispatch<R
           )}
         </div>
       </details>
+      <Toaster /> {/* Toaster component to display toast notifications */}
     </div>
   );
 };
@@ -265,6 +288,11 @@ const DrinksSelector: React.FC<{ drinks: string[]; setDrinks: React.Dispatch<Rea
     if (newItem.trim() && !drinks.includes(newItem)) {
       setDrinks([...drinks, newItem]);
       setNewItem("");
+      toast.success(`${newItem} added to drinks!`); // Success toast for adding a drink
+    } else if (!newItem.trim()) {
+      toast.error("Drink name cannot be empty!"); // Error toast if the input is empty
+    } else {
+      toast.error("This drink already exists!"); // Error toast if the drink already exists
     }
   };
 
@@ -284,66 +312,72 @@ const DrinksSelector: React.FC<{ drinks: string[]; setDrinks: React.Dispatch<Rea
       updatedItems[editingIndex!] = editedItem;
       setDrinks(updatedItems);
       cancelEditing();
+      toast.success("Drink updated successfully!"); // Success toast for editing a drink
+    } else {
+      toast.error("Edited drink name cannot be empty!"); // Error toast for empty edit input
     }
   };
 
   const deleteItem = (index: number) => {
+    const itemToDelete = drinks[index];
     const updatedItems = drinks.filter((_, i) => i !== index);
     setDrinks(updatedItems);
+    toast.success(`${itemToDelete} deleted from drinks!`); // Success toast for deleting a drink
   };
 
   return (
     <div className="border p-4 rounded-lg w-full">
-    <details className="cursor-pointer">
-      <summary className="font-light">Drinks</summary>
-      <div className="mt-2">
-        {drinks.map((drink, index) => (
-          <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
-            <span>{drink}</span>
-            <div className="flex space-x-2">
-              <button onClick={() => startEditing(index)} className="text-blue-500">
-                <FaEdit />
-              </button>
-              <button onClick={() => deleteItem(index)} className="text-red-500">
-                <FaTrash />
+      <details className="cursor-pointer">
+        <summary className="font-light">Drinks</summary>
+        <div className="mt-2">
+          {drinks.map((drink, index) => (
+            <div key={index} className="p-2 border rounded-md mb-2 flex justify-between">
+              <span>{drink}</span>
+              <div className="flex space-x-2">
+                <button onClick={() => startEditing(index)} className="text-blue-500">
+                  <FaEdit />
+                </button>
+                <button onClick={() => deleteItem(index)} className="text-red-500">
+                  <FaTrash />
+                </button>
+              </div>
+            </div>
+          ))}
+          {editingIndex === null ? (
+            <div className="flex items-center border rounded-md p-2">
+              <input
+                type="text"
+                value={newItem}
+                onChange={(e) => setNewItem(e.target.value)}
+                placeholder="Add drink"
+                className="flex-grow outline-none"
+              />
+              <button onClick={addItem} className="ml-2 text-gray-600">
+                <FaPlus />
               </button>
             </div>
-          </div>
-        ))}
-        {editingIndex === null ? (
-          <div className="flex items-center border rounded-md p-2">
-            <input
-              type="text"
-              value={newItem}
-              onChange={(e) => setNewItem(e.target.value)}
-              placeholder="Add drinks"
-              className="flex-grow outline-none"
-            />
-            <button onClick={addItem} className="ml-2 text-gray-600">
-              <FaPlus />
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center border rounded-md p-2">
-            <input
-              type="text"
-              value={editedItem}
-              onChange={(e) => setEditedItem(e.target.value)}
-              placeholder="Edit food or drink"
-              className="flex-grow outline-none"
-            />
-            <button onClick={saveEditedItem} className="ml-2 text-green-600">
-              Save
-            </button>
-            <button onClick={cancelEditing} className="ml-2 text-gray-600">
-              Cancel
-            </button>
-          </div>
-        )}
-      </div>
-    </details>
-  </div>
-);
+          ) : (
+            <div className="flex items-center border rounded-md p-2">
+              <input
+                type="text"
+                value={editedItem}
+                onChange={(e) => setEditedItem(e.target.value)}
+                placeholder="Edit drink"
+                className="flex-grow outline-none"
+              />
+              <button onClick={saveEditedItem} className="ml-2 text-green-600">
+                Save
+              </button>
+              <button onClick={cancelEditing} className="ml-2 text-gray-600">
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+      </details>
+      <Toaster /> {/* Toaster component to display toast notifications */}
+    </div>
+  );
 };
 
 {/* DateRangePicker */}
@@ -368,6 +402,7 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  // Function to generate an array of dates between startDate and endDate
   const generateDateArray = (start: string, end: string) => {
     const startDateObj = new Date(start);
     const endDateObj = new Date(end);
@@ -382,6 +417,7 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
     return dateArray;
   };
 
+  // Add a new date range
   const addDateRange = () => {
     if (
       startDate &&
@@ -409,71 +445,96 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
 
       setDateRanges(updatedRanges);
 
+      // Toast notification on successful addition
+      toast.success("Date range added successfully!");
+
       // Reset form fields
       setStartDate("");
       setEndDate("");
-      setNewPricePerDay(0);
-      setNewPricePerNight(0);
-      setNewExtraPricePerBed(0);
+      setNewPricePerDay(null);
+      setNewPricePerNight(null);
+      setNewExtraPricePerBed(null);
     } else {
-      alert("Please enter valid prices and date range.");
+      // Toast notification for invalid input
+      toast.error("Please enter valid prices and date range.");
     }
   };
 
+  // Function to delete a specific date range
+  const deleteDateRange = (date: string) => {
+    const updatedRanges = { ...dateRanges };
+    delete updatedRanges[date];
+    setDateRanges(updatedRanges);
+
+    // Toast notification on successful deletion
+    toast.success(`Date range for ${date} deleted!`);
+  };
+
   return (
-    <div>
-      <div className="border p-4 rounded-lg">
-        <h2 className="text-l font-bold mb-4">Date Pricing</h2>
-        <div>
+    <div className="border p-4 rounded-lg w-full">
+      <Toaster /> {/* This renders the toast notifications */}
+
+      <details className="cursor-pointer">
+        <summary className="font-light">Date Pricing</summary>
+        <div className="mt-2">
           {Object.entries(dateRanges).map(([date, range]) => (
-            <div key={date} className="p-4 border rounded-md mb-4 flex justify-between">
+            <div key={date} className="p-2 border rounded-md mb-2 flex justify-between">
               <div>
-                <p>
-                  <strong>Date:</strong> {date}
-                </p>
+                <p><strong>Date:</strong> {date}</p>
                 <p>Price per person Day: ₹{range.pricePerDay}</p>
                 <p>Price per person Night: ₹{range.pricePerNight}</p>
                 <p>Extra Price per Bed: ₹{range.extraPricePerBed}</p>
+              </div>
+              <div className="flex space-x-2">
+                <button onClick={() => deleteDateRange(date)} className="text-red-500">
+                  <FaTrash />
+                </button>
               </div>
             </div>
           ))}
 
           <div className="space-y-4">
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="p-2 border rounded w-full"
-              placeholder="Select Start Date"
-            />
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="p-2 border rounded w-full"
-              placeholder="Select End Date"
-            />
-            <input
-              type="number"
-              value={newPricePerDay ?? ""}
-              onChange={(e) => setNewPricePerDay(Math.max(0, Number(e.target.value)))}
-              placeholder="Price per Day"
-              className="p-2 border rounded w-full"
-            />
-            <input
-              type="number"
-              value={newPricePerNight ?? ""}
-              onChange={(e) => setNewPricePerNight(Math.max(0, Number(e.target.value)))}
-              placeholder="Price per Night"
-              className="p-2 border rounded w-full"
-            />
-            <input
-              type="number"
-              value={newExtraPricePerBed ?? ""}
-              onChange={(e) => setNewExtraPricePerBed(Math.max(0, Number(e.target.value)))}
-              placeholder="Extra Price per Bed"
-              className="p-2 border rounded w-full"
-            />
+            <div className="flex space-x-4">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="p-2 border rounded w-full"
+                placeholder="Select Start Date"
+              />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="p-2 border rounded w-full"
+                placeholder="Select End Date"
+              />
+            </div>
+
+            <div className="flex space-x-4">
+              <input
+                type="number"
+                value={newPricePerDay ?? ""}
+                onChange={(e) => setNewPricePerDay(Math.max(0, Number(e.target.value)))}
+                placeholder="Price per Day"
+                className="p-2 border rounded w-full"
+              />
+              <input
+                type="number"
+                value={newPricePerNight ?? ""}
+                onChange={(e) => setNewPricePerNight(Math.max(0, Number(e.target.value)))}
+                placeholder="Price per Night"
+                className="p-2 border rounded w-full"
+              />
+              <input
+                type="number"
+                value={newExtraPricePerBed ?? ""}
+                onChange={(e) => setNewExtraPricePerBed(Math.max(0, Number(e.target.value)))}
+                placeholder="Extra Price per Bed"
+                className="p-2 border rounded w-full"
+              />
+            </div>
+
             <button
               onClick={addDateRange}
               className="mt-4 bg-green-500 text-white py-2 px-4 rounded-full flex items-center space-x-2"
@@ -483,19 +544,17 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
             </button>
           </div>
         </div>
-      </div>
+      </details>
     </div>
   );
 };
 
 
 export default function BasicDetails() {
-
   interface ImageObject {
     url: string;
     name: string;
   }
-  
 
   interface DateRange {
     startDate: string;
@@ -504,6 +563,7 @@ export default function BasicDetails() {
     pricePerNight: number;
     extraPricePerBed: number;
   }
+
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -511,7 +571,6 @@ export default function BasicDetails() {
   const [vegItems, setVegItems] = useState<string[]>([]);
   const [nonVegItems, setNonVegItems] = useState<string[]>([]);
   const [drinks, setDrinks] = useState<string[]>([]);
-  // const [programs, setPrograms] = useState<string[]>([]);    
   const [dateRanges, setDateRanges] = useState<Record<string, DetailedDateRange>>({});
   const [image, setImage] = useState<ImageObject[]>([]);
   const [formData, setFormData] = useState({
@@ -524,10 +583,37 @@ export default function BasicDetails() {
   });
 
   const handleSubmit = () => {
+    // Validate required fields
+    if (!formData.name.trim()) {
+      toast.error("Houseboat name is required!");
+      return;
+    }
+    if (!formData.description.trim()) {
+      toast.error("Description is required!");
+      return;
+    }
+    if (!formData.location.trim()) {
+      toast.error("Location is required!");
+      return;
+    }
+    if (!formData.maxPeople) {
+      toast.error("Maximum capacity is required!");
+      return;
+    }
+    if (!formData.price.trim()) {
+      toast.error("Base price is required!");
+      return;
+    }
+    if (image.length === 0) {
+      toast.error("At least one image is required!");
+      return;
+    }
 
     const food = {
-  veg:vegItems,nonVeg:nonVegItems
-    }
+      veg: vegItems,
+      nonVeg: nonVegItems,
+    };
+
     try {
       fetch("/api/houseboat/owner/add", {
         method: "POST",
@@ -535,13 +621,13 @@ export default function BasicDetails() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId:session?.user.id,
+          userId: session?.user.id,
           ...formData,
           amenities,
           food,
           drinks,
-          dateRanges,
-        images: image.map((img) => img.url),
+          dateRanges, // Optional field
+          images: image.map((img) => img.url),
         }),
       })
         .then((response) => {
@@ -551,16 +637,18 @@ export default function BasicDetails() {
           return response.json();
         })
         .then((data) => {
-          console.log("Houseboat added successfully:", data);
+          toast.success("Houseboat added successfully!");
           router.push("/dashboard/owner/houseboats");
         })
         .catch((error) => {
           console.error("Error adding houseboat:", error);
+          toast.error("Failed to add houseboat!");
         });
-    } catch{
-      
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An unexpected error occurred!");
     }
-  }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -569,7 +657,8 @@ export default function BasicDetails() {
   };
 
   return (
-    <div className="flex ">
+    <div className="flex">
+      <Toaster /> {/* Add Toaster component for notifications */}
       <section className="bg-white mx-3 shadow-lg rounded-lg p-6 lg:flex flex-col w-1/2">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Add Image</h1>
         <div className="flex items-center space-x-4">
@@ -587,6 +676,7 @@ export default function BasicDetails() {
             className="w-full p-3 border rounded"
             onChange={handleChange}
           />
+
           <textarea
             name="description"
             placeholder="Description"
@@ -617,7 +707,6 @@ export default function BasicDetails() {
             onChange={handleChange}
           />
 
-
           <input
             type="number"
             id="numberInput"
@@ -634,8 +723,6 @@ export default function BasicDetails() {
             onChange={handleChange}
           />
 
-
-
           <input
             type="number"
             id="numberInput"
@@ -647,60 +734,30 @@ export default function BasicDetails() {
               }
             }}
             name="price"
-            placeholder="Day base Price"
+            placeholder="Base Price"
             className="w-full p-3 border rounded"
             onChange={handleChange}
           />
-          <input
-            type="number"
-            id="numberInput"
-            min="0"
-            onInput={(e) => {
-              const input = e.target as HTMLInputElement;
-              if (Number(input.value) < 0) {
-                input.value = "0";
-              }
-            }}
-            name="price"
-            placeholder="Night base Price"
-            className="w-full p-3 border rounded"
-            onChange={handleChange}
-          />
-          {/* <input
-            type="number"
-            id="numberInput"
-            min="0"
-            onInput={(e) => {
-              const input = e.target as HTMLInputElement;
-              if (Number(input.value) < 0) {
-                input.value = "0";
-              }
-            }}
-            name="price"
-            placeholder="Extra Person Price"
-            className="w-full p-3 border rounded"
-            onChange={handleChange}
-          /> */}
 
           {/* Amenities Selector Component */}
           <AmenitiesSelector amenities={amenities} setAmenities={setAmenities} />
 
-          <FoodSelector vegItems={vegItems} setVegItems={setVegItems} nonVegItems={nonVegItems} setNonVegItems={setNonVegItems} />
-          {/* <FoodSelector items={items} setItems={setItems} /> */}
-          {/*  Drinks Selector Component */}
-          <DrinksSelector drinks={drinks} setDrinks={setDrinks} />
-            {/* Special Program Selector Component */}
-          {/* <SpecialPrograms programs={programs} setPrograms={setPrograms} /> */}
+          <FoodSelector
+            vegItems={vegItems}
+            setVegItems={setVegItems}
+            nonVegItems={nonVegItems}
+            setNonVegItems={setNonVegItems}
+          />
 
-        {/* Date Range Picker Component */}
-            
-        <DateRangeComponent dateRanges={dateRanges} setDateRanges={setDateRanges} />
+          {/* Drinks Selector Component */}
+          <DrinksSelector drinks={drinks} setDrinks={setDrinks} />
+
+          {/* Date Range Picker Component */}
+          <DateRangeComponent dateRanges={dateRanges} setDateRanges={setDateRanges} />
         </div>
 
         <button
-          onClick={() =>
-            handleSubmit()
-          }
+          onClick={() => handleSubmit()}
           className="mt-4 bg-primary text-white p-3 rounded w-full"
         >
           Submit
