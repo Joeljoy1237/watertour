@@ -10,34 +10,37 @@ const HouseboatSchema = new mongoose.Schema(
         name: { type: String, required: true },
         description: { type: String, required: true },
         location: { type: String, required: true },
-        beds: { type: String, require: true },
-        maxPeople: { type: String, required: true },
-        price: { type: String, required: true },
-        rating: { type: Number, default: 3.5 },
-        dates: [{
-            date: { type: Date },
-            dayCruiser: { type: Boolean, default: true },
-            nightStay: { type: Boolean, default: true },
-            pricePerDay: { type: Number },
-            pricePerNight: { type: Number },
-            extraPricePerBed: { type: Number },
-        }],
+        beds: { type: Number, required: true }, // Changed to Number
+        maxPeople: { type: Number, required: true }, // Changed to Number
+        price: { type: Number, required: true }, // Changed to Number
+        rating: { type: Number, default: 3 },
+        dates: {
+            type: Map,
+            of: new mongoose.Schema({
+                price: Number,
+                available: Boolean,
+                dayCruiser: Boolean,
+                nightStay: Boolean,
+                pricePerDay: Number,
+                pricePerNight: Number,
+                extraPricePerBed: Number,
+            }),
+            default: {},
+        },
         amenities: { type: [String], required: true },
         food: {
-            veg: { type: [String], require: true },
-            nonVeg: { type: [String], require: true }
+            veg: { type: [String], required: true }, // Fixed 'require' to 'required'
+            nonVeg: { type: [String], required: true }, // Fixed 'require' to 'required'
         },
         images: { type: [String], required: true },
         isAvailable: { type: Boolean, default: true },
         isVerified: { type: Boolean, default: false },
         updatedAt: { type: Date, default: Date.now },
-
-
     },
     { timestamps: true }
 );
 
 // Ensure the model is only created once
-const User = mongoose.models.Houseboat || mongoose.model("Houseboat", HouseboatSchema);
+const Houseboat = mongoose.models.Houseboat || mongoose.model("Houseboat", HouseboatSchema);
 
-export default User;
+export default Houseboat;

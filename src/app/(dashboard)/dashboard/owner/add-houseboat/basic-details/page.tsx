@@ -349,17 +349,16 @@ const DrinksSelector: React.FC<{ drinks: string[]; setDrinks: React.Dispatch<Rea
 {/* DateRangePicker */}
 
 type DetailedDateRange = {
-  date: Date;
-  dayCruiser: boolean;
-  nightStay: boolean;
   pricePerDay: number;
   pricePerNight: number;
   extraPricePerBed: number;
+  dayCruiser: boolean;
+  nightStay: boolean;
 };
 
 type DateRangeProps = {
-  dateRanges: DetailedDateRange[];
-  setDateRanges: React.Dispatch<React.SetStateAction<DetailedDateRange[]>>;
+  dateRanges: Record<string, DetailedDateRange>;
+  setDateRanges: React.Dispatch<React.SetStateAction<Record<string, DetailedDateRange>>>;
 };
 
 const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRanges }) => {
@@ -372,16 +371,16 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
   const generateDateArray = (start: string, end: string) => {
     const startDateObj = new Date(start);
     const endDateObj = new Date(end);
-    const dateArray = [];
+    const dateArray: string[] = [];
 
-    const currentDate = new Date(startDateObj); // Create a new Date instance
-  while (currentDate <= endDateObj) {
-    dateArray.push(new Date(currentDate)); // Push a copy of the current date
-    currentDate.setDate(currentDate.getDate() + 1); // Increment the date
-  }
+    const currentDate = new Date(startDateObj);
+    while (currentDate <= endDateObj) {
+      dateArray.push(currentDate.toISOString().split("T")[0]); // Format as YYYY-MM-DD
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
 
-  return dateArray;
-};
+    return dateArray;
+  };
 
   const addDateRange = () => {
     if (
@@ -391,19 +390,24 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
       (newPricePerNight ?? 0) >= 0 && (newExtraPricePerBed ?? 0) >= 0
     ) {
       const dateArray = generateDateArray(startDate, endDate);
-      
-      // Create the new date range array
-      const newRanges = dateArray.map(date => ({
-        date,
-        dayCruiser: true,  // Example: true for all ranges, can be modified based on conditions
-        nightStay: true,   // Example: true for all ranges, can be modified based on conditions
-        pricePerDay: newPricePerDay,
-        pricePerNight: newPricePerNight ?? 0,
-        extraPricePerBed: newExtraPricePerBed ?? 0,
-      }));
 
-      // Update the state with the new ranges
-      setDateRanges([...dateRanges, ...newRanges]);
+      const newRanges: Record<string, DetailedDateRange> = {};
+      dateArray.forEach((date) => {
+        newRanges[date] = {
+          dayCruiser: true,
+          nightStay: true,
+          pricePerDay: newPricePerDay,
+          pricePerNight: newPricePerNight ?? 0,
+          extraPricePerBed: newExtraPricePerBed ?? 0,
+        };
+      });
+
+      // Merge with existing dateRanges and sort by date
+      const updatedRanges = Object.fromEntries(
+        Object.entries({ ...dateRanges, ...newRanges }).sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime())
+      );
+
+      setDateRanges(updatedRanges);
 
       // Reset form fields
       setStartDate("");
@@ -419,69 +423,71 @@ const DateRangeComponent: React.FC<DateRangeProps> = ({ dateRanges, setDateRange
   return (
     <div>
       <div className="border p-4 rounded-lg">
-      <h2 className="text-l font-bold mb-4">Date Pricing</h2>
-      <div>
-        {dateRanges.map((range, index) => (
-          <div key={index} className="p-4 border rounded-md mb-4 flex justify-between">
-            <div>
-              <p><strong>Date:</strong> {range.date.toDateString()}</p>
-              <p>Price per person Day: ₹{range.pricePerDay}</p>
-              <p>Price per person Night: ₹{range.pricePerNight}</p>
-              <p>Extra Price per Bed: ₹{range.extraPricePerBed}</p>
+        <h2 className="text-l font-bold mb-4">Date Pricing</h2>
+        <div>
+          {Object.entries(dateRanges).map(([date, range]) => (
+            <div key={date} className="p-4 border rounded-md mb-4 flex justify-between">
+              <div>
+                <p>
+                  <strong>Date:</strong> {date}
+                </p>
+                <p>Price per person Day: ₹{range.pricePerDay}</p>
+                <p>Price per person Night: ₹{range.pricePerNight}</p>
+                <p>Extra Price per Bed: ₹{range.extraPricePerBed}</p>
+              </div>
             </div>
-            
-          </div>
-        ))}
+          ))}
 
-        <div className="space-y-4">
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="p-2 border rounded w-full"
-            placeholder="Select Start Date"
-          />
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="p-2 border rounded w-full"
-            placeholder="Select End Date"
-          />
-          <input
-            type="number"
-            value={newPricePerDay ?? ''}
-            onChange={(e) => setNewPricePerDay(Math.max(0, Number(e.target.value)))}
-            placeholder="Price per Day"
-            className="p-2 border rounded w-full"
-          />
-          <input
-            type="number"
-            value={newPricePerNight ?? ''}
-            onChange={(e) => setNewPricePerNight(Math.max(0, Number(e.target.value)))}
-            placeholder="Price per Night"
-            className="p-2 border rounded w-full"
-          />
-          <input
-            type="number"
-            value={newExtraPricePerBed ?? ''}
-            onChange={(e) => setNewExtraPricePerBed(Math.max(0, Number(e.target.value)))}
-            placeholder="Extra Price per Bed"
-            className="p-2 border rounded w-full"
-          />
-          <button
-            onClick={addDateRange}
-            className="mt-4 bg-green-500 text-white py-2 px-4 rounded-full flex items-center space-x-2"
-          >
-            <span>Add</span>
-            <FaPlus />
-          </button>
+          <div className="space-y-4">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="p-2 border rounded w-full"
+              placeholder="Select Start Date"
+            />
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="p-2 border rounded w-full"
+              placeholder="Select End Date"
+            />
+            <input
+              type="number"
+              value={newPricePerDay ?? ""}
+              onChange={(e) => setNewPricePerDay(Math.max(0, Number(e.target.value)))}
+              placeholder="Price per Day"
+              className="p-2 border rounded w-full"
+            />
+            <input
+              type="number"
+              value={newPricePerNight ?? ""}
+              onChange={(e) => setNewPricePerNight(Math.max(0, Number(e.target.value)))}
+              placeholder="Price per Night"
+              className="p-2 border rounded w-full"
+            />
+            <input
+              type="number"
+              value={newExtraPricePerBed ?? ""}
+              onChange={(e) => setNewExtraPricePerBed(Math.max(0, Number(e.target.value)))}
+              placeholder="Extra Price per Bed"
+              className="p-2 border rounded w-full"
+            />
+            <button
+              onClick={addDateRange}
+              className="mt-4 bg-green-500 text-white py-2 px-4 rounded-full flex items-center space-x-2"
+            >
+              <span>Add</span>
+              <FaPlus />
+            </button>
+          </div>
         </div>
       </div>
     </div>
-    </div>
   );
 };
+
 
 export default function BasicDetails() {
 
@@ -506,7 +512,7 @@ export default function BasicDetails() {
   const [nonVegItems, setNonVegItems] = useState<string[]>([]);
   const [drinks, setDrinks] = useState<string[]>([]);
   // const [programs, setPrograms] = useState<string[]>([]);    
-  const [dateRanges, setDateRanges] = useState<DetailedDateRange[]>([]);
+  const [dateRanges, setDateRanges] = useState<Record<string, DetailedDateRange>>({});
   const [image, setImage] = useState<ImageObject[]>([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -518,6 +524,7 @@ export default function BasicDetails() {
   });
 
   const handleSubmit = () => {
+
     const food = {
   veg:vegItems,nonVeg:nonVegItems
     }
