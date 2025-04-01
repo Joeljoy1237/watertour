@@ -85,13 +85,7 @@ const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
       </section>
 
       <main className="max-w-7xl mx-auto p-6 flex flex-col-reverse md:flex-row-reverse gap-8 mt-6">
-        <BookOption
-          maxCapacity={parseInt(houseboat?.maxPeople || "0")}
-          totalBeds={parseInt(houseboat?.beds || "0")}
-          pricePerGuestDay={parseInt(houseboat?.price || "0")}
-          pricePerGuestNight={parseInt(houseboat?.price || "0")}
-          pricePerBedNight={500}
-          availability={{}} 
+        <BookOption houseboatId={houseboat!._id}
         />
 
         <div className="md:w-2/3 space-y-6">
