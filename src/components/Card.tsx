@@ -34,7 +34,7 @@ const Card: React.FC<CardProps> = ({ id, title, price, rating, imageUrl }) => {
     <Link href={`/boat/${id}`}>
     <div className="bg-white rounded-xl w-auto shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
       <div className="relative w-full h-48 md:h-56">
-        <Image src={imageUrl || "/boat.jpg"} alt={title} fill className="object-cover" />
+        <Image src={imageUrl || "/boat.jpg"} alt={title} fill={true} className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
       </div>
       <div className="p-5">
