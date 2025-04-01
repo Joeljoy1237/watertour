@@ -4,10 +4,17 @@ import io from "socket.io-client";
 import CalendarAvailabilityPicker from "@/components/CalendarAvailabilityPicker";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import toast from "react-hot-toast";
 
 interface AvailabilityData {
   dayCruiser: boolean;
   nightStay: boolean;
+}
+
+interface DatePricing {
+  pricePerDay: number;
+  pricePerNight: number;
+  extraPricePerBed: number;
 }
 
 interface HouseboatData {
@@ -16,36 +23,94 @@ interface HouseboatData {
   beds: number;
   maxPeople: number;
   price: number;
-  dates: Record<string, AvailabilityData & { pricePerDay: number; pricePerNight: number; extraPricePerBed: number }>;
+  dates: Record<string, AvailabilityData & DatePricing>;
 }
 
-const socket = io("http://localhost:3001"); // Update with your actual socket server URL
+interface HouseboatUpdate {
+  houseboatId: string;
+  updatedFields: Partial<
+    HouseboatData & {
+      dates: Record<string, Partial<AvailabilityData & DatePricing>>;
+    }
+  >;
+}
+
+const socket = io("http://localhost:3001"); // Update with actual socket server URL
 
 const BookOption: React.FC<{ houseboatId: string }> = ({ houseboatId }) => {
   const [houseboat, setHouseboat] = useState<HouseboatData | null>(null);
   const [selectedDate, setSelectedDate] = useState("");
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedType, setSelectedType] = useState<"" | "Day Cruiser" | "Night Stay">("");
   const [guests, setGuests] = useState(1);
   const [beds, setBeds] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     socket.emit("getHouseboat", houseboatId);
+
     socket.on("houseboatData", (data: HouseboatData) => {
       setHouseboat(data);
     });
 
+    socket.on("houseboatUpdated", (update: HouseboatUpdate) => {
+  console.log("Received update:", update);
+
+  if (update.houseboatId === houseboatId) {
+    console.log("Processing update...");
+
+    setHouseboat((prev) => {
+      if (!prev) return prev;
+
+      // Deep copy previous state
+      const updatedHouseboat: HouseboatData = {
+        ...prev,
+        dates: { ...prev.dates },
+      };
+
+      // Apply updates properly
+      Object.entries(update.updatedFields).forEach(([key, value]) => {
+        if (key.startsWith("dates.")) {
+          const [, date, field] = key.split(".");
+
+          if (!updatedHouseboat.dates[date]) {
+            updatedHouseboat.dates[date] = {
+              dayCruiser: true,
+              nightStay: true,
+              pricePerDay: 0,
+              pricePerNight: 0,
+              extraPricePerBed: 0,
+            };
+          }
+
+          // Apply the update only if the field exists in `AvailabilityData & DatePricing`
+          if (field && value !== undefined) {
+            updatedHouseboat.dates[date] = {
+              ...updatedHouseboat.dates[date],
+              [field]: value,
+            };
+          }
+        } else {
+          updatedHouseboat[key as keyof HouseboatData] = value as never;
+        }
+      });
+
+      return updatedHouseboat;
+    });
+
+    toast.success("Houseboat details updated!");
+  }
+});
+
+
     return () => {
       socket.off("houseboatData");
+      socket.off("houseboatUpdated");
     };
   }, [houseboatId]);
-
-  useEffect(() => {
-    calculatePrice();
-  }, [guests, beds, selectedType, selectedDate]);
-
-  const availableOptions = selectedDate && houseboat?.dates[selectedDate]
-    ? houseboat.dates[selectedDate]
+console.log(selectedType)
+  const availableOptions = selectedDate && houseboat?.dates[selectedDate] 
+    ? houseboat.dates[selectedDate] 
     : { dayCruiser: true, nightStay: true };
 
   const isFullyBooked = selectedDate && !availableOptions.dayCruiser && !availableOptions.nightStay;
@@ -63,21 +128,52 @@ const BookOption: React.FC<{ houseboatId: string }> = ({ houseboatId }) => {
     }
   };
 
-  const handleBooking = () => {
-    if (!selectedDate || !selectedType || isFullyBooked) return;
+  useEffect(() => {
+    calculatePrice();
+  }, [guests, beds, selectedType, selectedDate, houseboat]);
 
-    alert(
-      `Booking confirmed on ${selectedDate} for ${selectedType} with ${guests} guest(s) ` +
-      (selectedType === "Night Stay"
-        ? `and ${beds} bed(s). Total Price: ₹${totalPrice}`
-        : `. Total Price: ₹${totalPrice}`)
-    );
+  const handleBooking = async () => {
+    if (!selectedDate || !selectedType || isFullyBooked) {
+      toast.error("Invalid booking details. Please select date and type.");
+      return;
+    }
 
-    setSelectedDate("");
-    setSelectedType("");
-    setGuests(1);
-    setBeds(1);
-    setTotalPrice(0);
+    setIsLoading(true);
+    toast.loading("Processing your booking...");
+
+    try {
+      const response = await fetch("/api/houseboat/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          houseboatId,
+          date: selectedDate,
+          type: selectedType,
+          guests,
+          beds: selectedType === "Night Stay" ? beds : 0,
+          totalPrice,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Booking failed. Try again.");
+      }
+
+      toast.dismiss();
+      toast.success(result.message || "Booking confirmed!");
+      setSelectedDate("");
+      setSelectedType("");
+      setGuests(1);
+      setBeds(1);
+      setTotalPrice(0);
+    } catch (error: unknown) {
+      toast.dismiss();
+      toast.error(error instanceof Error ? error.message : "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

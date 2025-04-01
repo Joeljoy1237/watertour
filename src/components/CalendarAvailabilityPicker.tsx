@@ -63,7 +63,14 @@ const CalendarAvailabilityPicker: React.FC<CalendarAvailabilityPickerProps> = ({
     const isAvailable = avail.dayCruiser || avail.nightStay;
     const isSelected = selectedDate === dateStr;
 
-    const statusColor = isAvailable ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800";
+    const isDayCruiserAvailable = avail.dayCruiser;
+const isNightStayAvailable = avail.nightStay;
+
+const statusColor = isDayCruiserAvailable && isNightStayAvailable 
+    ? "bg-green-200 text-green-800" 
+    : (isDayCruiserAvailable || isNightStayAvailable 
+        ? "bg-yellow-200 text-yellow-800" 
+        : "bg-red-200 text-red-800");
 
     return (
       <button
