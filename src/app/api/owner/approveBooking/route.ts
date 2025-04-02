@@ -19,9 +19,12 @@ export async function POST(req: NextRequest) {
         // Find and update the booking status
         const updatedBooking = await Booking.findByIdAndUpdate(
             bookingId,
-            { status: "approve", updatedAt: new Date() },
+            { status: "approved", updatedAt: new Date() },
             { new: true }
         );
+        const user = await User.findById({ _id: userId }).select("revenue");
+        user.revenue = user.revenue + updatedBooking.totalPrice;
+        user.save();
         if (!updatedBooking) {
             return NextResponse.json({ error: "Booking not found" }, { status: 404 });
         }

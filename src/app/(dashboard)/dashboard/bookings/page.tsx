@@ -35,6 +35,7 @@ export default function BookingsPage() {
         if (!res.ok) throw new Error("Failed to fetch bookings");
 
         const data = await res.json();
+        console.log(data);
         setBookings(data);
       } catch (error) {
         toast.error("Error fetching bookings");

@@ -13,6 +13,7 @@ declare module "next-auth" {
             image: string; // Add image URL
             phone?: string; // Add phone number
             isAdmin: boolean;
+            isOwner: boolean;
         };
     }
     interface User {
@@ -69,6 +70,7 @@ const authOptions: NextAuthOptions = {
                 name: token.name ?? "",
                 image: token.image ?? "",
                 phone: token.phoneNumber,
+                isOwner: typeof token.isOwner === "boolean" ? token.isOwner : false,
                 isAdmin: token.isAdmin ?? false,
             };
             return session;

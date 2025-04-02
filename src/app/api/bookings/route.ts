@@ -12,6 +12,7 @@ export async function POST(req: Request) {
         await connectToDB();
 
         const bookings = await Booking.find({ userId }).sort({ createdAt: -1 }).populate("houseboatId", "name location images");
+        console.log("askdlaskjdlkasjdlak");
 
         return NextResponse.json(
             bookings.map((b) => ({
@@ -29,6 +30,7 @@ export async function POST(req: Request) {
                 totalPrice: b.totalPrice,
             })),
             { status: 200 }
+
         );
     } catch (error) {
         console.error("Error fetching bookings:", error);
