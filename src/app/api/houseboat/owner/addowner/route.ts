@@ -51,7 +51,7 @@ export const POST = async (req: Request) => {
     return new Response(
       JSON.stringify({
         message: "User updated to owner successfully",
-        redirectUrl: "/dashboard/profile",
+        redirectUrl: "/dashboard/owner",
       }),
       { status: 201 }
     );

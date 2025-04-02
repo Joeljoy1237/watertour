@@ -71,6 +71,8 @@ export default function BasicDetails() {
     } catch (error) {
       console.error("Error in form submission:", error);
       setError(error instanceof Error ? error.message : "Failed to submit form");
+    } finally{
+      router.push("dashboard/owner");
     }
   };
 
