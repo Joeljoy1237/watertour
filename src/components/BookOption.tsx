@@ -134,6 +134,11 @@ const BookOption: React.FC<{ houseboatId: string }> = ({ houseboatId }) => {
   }, [guests, beds, selectedType, selectedDate, houseboat]);
 
   const handleBooking = async () => {
+    if (!session?.user) {
+      toast.error("Login to continue!!");
+      return;
+}
+
     if (!selectedDate || !selectedType || isFullyBooked) {
       toast.error("Invalid booking details. Please select date and type.");
       return;

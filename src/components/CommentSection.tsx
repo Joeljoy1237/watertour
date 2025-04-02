@@ -98,6 +98,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ boatId }) => {
   };
 
   return (
+   
     <div className="bg-white shadow-md rounded-lg p-6 mt-8">
       <h2 className="text-2xl font-bold text-[#2ca01c] mb-4">Leave a Comment</h2>
 

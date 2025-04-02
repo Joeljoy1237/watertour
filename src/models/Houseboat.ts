@@ -14,6 +14,7 @@ const HouseboatSchema = new mongoose.Schema(
         maxPeople: { type: Number, required: true }, // Changed to Number
         price: { type: Number, required: true }, // Changed to Number
         rating: { type: Number, default: 3 },
+        rateCount: { type: Number, default: 0 },
         dates: {
             type: Map,
             of: new mongoose.Schema({

@@ -83,7 +83,7 @@ const statusColor = isDayCruiserAvailable && isNightStayAvailable
       >
         <div className="text-sm font-semibold">{cellDate.getDate()}</div>
         <div className={`text-xs mt-1 px-1 rounded ${statusColor}`}>
-          {isAvailable ? "Open" : ""}
+          {isAvailable ? "Open" : "Close"}
         </div>
       </button>
     );
