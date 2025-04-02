@@ -33,6 +33,7 @@ export const POST = async (req: Request) => {
 
     // Save the owner details in the Owner model
     const ownerDetails = {
+      userId: user._id,
       firstName,
       lastName,
       address,
