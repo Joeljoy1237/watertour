@@ -114,7 +114,7 @@ export default function MyHouseboats() {
                   <p className="text-gray-600">{boat.location}</p>
                   <p className="text-primary font-medium mt-2">₹{boat.price}</p>
                   <div className="mt-4 flex justify-between">
-                    <button onClick={() => router.push("/dashboard/owner/add-houseboat/basic-details?editing=true")} className="bg-gray-200 px-3 py-1 rounded flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition">
+                    <button onClick={() => router.push(`/dashboard/owner/add-houseboat/basic-details?editing=true&boatId=${boat._id}`)} className="bg-gray-200 px-3 py-1 rounded flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition">
                       <FiEdit /> Edit
                     </button>
                     <button onClick={() => handleDelete(boat._id)} className="bg-red-500 text-white px-3 py-1 rounded flex items-center gap-2 hover:bg-red-600 transition">

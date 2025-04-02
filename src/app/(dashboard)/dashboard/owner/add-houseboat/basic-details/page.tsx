@@ -557,6 +557,11 @@ export default function BasicDetails() {
   interface ImageObject {
     url: string;
     name: string;
+    alt: string;
+  }
+
+  interface UploadedImage {
+    url: string;
   }
 
   interface DateRange {
@@ -569,6 +574,9 @@ export default function BasicDetails() {
 
   const router = useRouter();
   const { data: session } = useSession();
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const isEditing = searchParams.get('editing') === 'true';
+  const boatId = searchParams.get('boatId');
 
   const [amenities, setAmenities] = useState<string[]>([]);
   const [vegItems, setVegItems] = useState<string[]>([]);
@@ -598,6 +606,54 @@ export default function BasicDetails() {
   useEffect(() => {
     localStorage.setItem("locations", JSON.stringify(Array.from(locations)));
   }, [locations]);
+
+  // Load existing houseboat data when editing
+  useEffect(() => {
+    const loadHouseboatData = async () => {
+      if (isEditing && boatId) {
+        try {
+          const response = await fetch(`/api/houseboat/${boatId}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch houseboat data');
+          }
+          
+          const data = await response.json();
+          if (data.error) {
+            throw new Error(data.error);
+          }
+
+          setFormData({
+            name: data.name || "",
+            description: data.description || "",
+            location: data.location || "",
+            beds: data.beds || 1,
+            maxPeople: data.maxPeople || 2,
+            price: (data.price || "").toString(),
+          });
+          
+          setAmenities(data.amenities || []);
+          setVegItems(data.food?.veg || []);
+          setNonVegItems(data.food?.nonVeg || []);
+          setDrinks(data.drinks || []);
+          setDateRanges(data.dates || {});
+          
+          // Convert image URLs to ImageObject array
+          const imageObjects = (data.images || []).map((url: string) => ({
+            url,
+            name: data.name || "Houseboat",
+            alt: `Image of ${data.name || "houseboat"}`
+          }));
+          setImage(imageObjects);
+          
+        } catch (error) {
+          console.error("Error loading houseboat:", error);
+          toast.error(error instanceof Error ? error.message : "Error loading houseboat data");
+        }
+      }
+    };
+
+    loadHouseboatData();
+  }, [isEditing, boatId]);
 
   // Form validation function
   const validateForm = () => {
@@ -637,25 +693,29 @@ export default function BasicDetails() {
       nonVeg: nonVegItems,
     };
 
+    const endpoint = isEditing ? "/api/houseboat/owner/update" : "/api/houseboat/owner/add";
+    const payload = {
+      userId: session?.user.id,
+      ...(isEditing && { boatId }),
+      ...formData,
+      amenities,
+      food,
+      drinks,
+      dateRanges,
+      images: image.map((img) => img.url),
+    };
+
     try {
-      fetch("/api/houseboat/owner/add", {
+      fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          userId: session?.user.id,
-          ...formData,
-          amenities,
-          food,
-          drinks,
-          dateRanges, // Optional field
-          images: image.map((img) => img.url),
-        }),
+        body: JSON.stringify(payload),
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Failed to add houseboat");
+            throw new Error(isEditing ? "Failed to update houseboat" : "Failed to add houseboat");
           }
           return response.json();
         })
@@ -663,16 +723,16 @@ export default function BasicDetails() {
           // Add the location to the locations set
           setLocations((prevLocations) => {
             const newLocations = new Set(prevLocations);
-            newLocations.add(formData.location); // Set automatically handles uniqueness
+            newLocations.add(formData.location);
             return newLocations;
           });
 
-          toast.success("Houseboat added successfully!");
+          toast.success(isEditing ? "Houseboat updated successfully!" : "Houseboat added successfully!");
           router.push("/dashboard/owner/houseboats");
         })
         .catch((error) => {
-          console.error("Error adding houseboat:", error);
-          toast.error("Failed to add houseboat!");
+          console.error(isEditing ? "Error updating houseboat:" : "Error adding houseboat:", error);
+          toast.error(isEditing ? "Failed to update houseboat!" : "Failed to add houseboat!");
         });
     } catch (error) {
       console.error("Error:", error);
@@ -685,22 +745,31 @@ export default function BasicDetails() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageUpdate = (images: UploadedImage[]) => {
+    setImage(images.map(img => ({
+      url: img.url,
+      name: formData.name || "Houseboat",
+      alt: `Image of ${formData.name || "houseboat"}`
+    })));
+  };
+
   return (
     <div className="flex">
       <Toaster /> {/* Add Toaster component for notifications */}
       <section className="bg-white mx-3 shadow-lg rounded-lg p-6 lg:flex flex-col w-1/2">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Add Image</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">{isEditing ? 'Edit' : 'Add'} Image</h1>
         <div className="flex items-center space-x-4">
-          <ImageUpload image={image} setImage={setImage} />
+          <ImageUpload image={image} setImage={handleImageUpdate} />
         </div>
       </section>
 
       <div className="max-w-3xl w-full bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Basic Details</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">{isEditing ? 'Edit' : 'Add'} Basic Details</h2>
         <div className="space-y-4">
           <input
             type="text"
             name="name"
+            value={formData.name}
             placeholder="Houseboat Name"
             className="w-full p-3 border rounded"
             onChange={handleChange}
@@ -708,6 +777,7 @@ export default function BasicDetails() {
 
           <textarea
             name="description"
+            value={formData.description}
             placeholder="Description"
             className="w-full p-3 border rounded"
             onChange={handleChange}
@@ -715,6 +785,7 @@ export default function BasicDetails() {
           <input
             type="text"
             name="location"
+            value={formData.location}
             placeholder="Location"
             className="w-full p-3 border rounded"
             onChange={handleChange}
@@ -724,6 +795,7 @@ export default function BasicDetails() {
             type="number"
             id="capacity"
             min="0"
+            value={formData.maxPeople}
             onInput={(e) => {
               const input = e.target as HTMLInputElement;
               if (Number(input.value) < 0) {
@@ -740,6 +812,7 @@ export default function BasicDetails() {
             type="number"
             id="numberInput"
             min="0"
+            value={formData.beds}
             onInput={(e) => {
               const input = e.target as HTMLInputElement;
               if (Number(input.value) < 0) {
@@ -756,6 +829,7 @@ export default function BasicDetails() {
             type="number"
             id="numberInput"
             min="0"
+            value={formData.price}
             onInput={(e) => {
               const input = e.target as HTMLInputElement;
               if (Number(input.value) < 0) {
@@ -789,7 +863,7 @@ export default function BasicDetails() {
           onClick={() => handleSubmit()}
           className="mt-4 bg-primary text-white p-3 rounded w-full"
         >
-          Submit
+          {isEditing ? 'Update' : 'Submit'}
         </button>
       </div>
     </div>
