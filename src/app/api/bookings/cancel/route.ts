@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDB } from "@/utils/database";
 import Booking from "@/models/Booking";
 
-export async function DELETE(req: Request) {
+export async function POST(req: Request) {
     try {
         const { userId, bookingId } = await req.json();
 
@@ -28,7 +28,6 @@ export async function DELETE(req: Request) {
         return NextResponse.json({ message: "Booking canceled successfully" }, { status: 200 });
     } catch (error) {
         console.error("Error canceling booking:", error);
-        console.log(error)
         return NextResponse.json({ message: "Something went wrong" }, { status: 500 });
     }
 }

@@ -51,7 +51,7 @@ export default function BookingsPage() {
     if (!cancelBookingId) return;
     try {
       const res = await fetch("/api/bookings/cancel", {
-        method: "DELETE",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: session?.user.id, bookingId: cancelBookingId }),
       });
