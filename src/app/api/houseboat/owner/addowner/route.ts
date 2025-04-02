@@ -44,7 +44,7 @@ export const POST = async (req: Request) => {
       licenseNumber,
     };
 
-    const owner = new Owner(ownerDetails);
+    const owner = await Owner.create(ownerDetails);
     await owner.save();
 
     // Respond with success and redirect URL
