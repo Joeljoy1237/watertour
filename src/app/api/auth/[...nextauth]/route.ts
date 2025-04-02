@@ -19,6 +19,7 @@ declare module "next-auth" {
     interface User {
         given_name?: string;
         family_name?: string;
+        isOwner: boolean;
         email: string;
         image?: string; // Add image URL
         picture?: string; // Add picture URL
@@ -33,6 +34,7 @@ declare module "next-auth/jwt" {
         lastName: string;
         image?: string; // Add image URL
         phoneNumber?: string; // Add phone number
+        isOwner: boolean;
         isAdmin?: boolean;
     }
 }
@@ -70,7 +72,7 @@ const authOptions: NextAuthOptions = {
                 name: token.name ?? "",
                 image: token.image ?? "",
                 phone: token.phoneNumber,
-                isOwner: typeof token.isOwner === "boolean" ? token.isOwner : false,
+                isOwner: sessionUser.isOwner,
                 isAdmin: token.isAdmin ?? false,
             };
             return session;
@@ -79,6 +81,7 @@ const authOptions: NextAuthOptions = {
             if (user) {
                 token.id = user.id;
                 token.email = user.email;
+                token.isOwner = user.isOwner;
                 token.nameame = user.name ?? "";
                 token.image = user.image;
 
