@@ -10,7 +10,7 @@ export const POST = async (req: Request) => {
         if (userId) {
             houseboats = await Houseboat.find({ userId }).select("location name price images _id");
         } else {
-            houseboats = await Houseboat.find().sort({ createdAt: -1 }).select("location name price rating images _id");
+            houseboats = await Houseboat.find().sort({ createdAt: -1 });
         }
         return new Response(JSON.stringify(houseboats), { status: 201 });
     } catch (error) {

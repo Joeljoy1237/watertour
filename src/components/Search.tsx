@@ -1,87 +1,227 @@
-"use client";
+"use client"
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { FaMapMarkerAlt } from "react-icons/fa"; // Importing location icon
-import Button from "@/components/Button"; // Ensure Button component exists and is correctly imported
+import Button from "@/components/Button"; // Importing Button component
+import {
+  FaMapMarkerAlt,
+  FaUserFriends,
+  FaBed,
+  FaCalendarAlt,
+} from "react-icons/fa"; // Importing icons
+import DatePicker from "react-datepicker"; // For date picker
+import "react-datepicker/dist/react-datepicker.css"; // Date picker styles
+import "rc-slider/assets/index.css"; // Slider styles
+import Slider from "rc-slider"; // For price range slider
+import { FaRupeeSign } from "react-icons/fa6";
 
-const SearchBar: React.FC = () => {
-  const [location, setLocation] = useState("");
-  interface SearchResult {
-    id: string;
-    houseboat: string;
-    location: string;
-    date: string;
-    status: string;
-  }
+interface SearchBarProps {
+  location: string;
+  setLocation: (location: string) => void;
+  searchDate: Date;
+  setSearchDate: (date: Date) => void;
+  person: number;
+  setPerson: (person: number) => void;
+  numBeds: number;
+  setNumBeds: (beds: number) => void;
+  priceRange: [number, number];
+  setPriceRange: (range: [number, number]) => void;
+}
 
-  const [results, setResults] = useState<SearchResult[]>([]); // State to store search results
-  const [loading, setLoading] = useState(false); // State to handle loading
+const SearchBar: React.FC<SearchBarProps> = ({
+  location,
+  setLocation,
+  searchDate,
+  setSearchDate,
+  person,
+  setPerson,
+  numBeds,
+  setNumBeds,
+  priceRange,
+  setPriceRange
+}) => {
+  const router = useRouter();
 
-  const handleSearch = async () => {
-    if (!location) {
-      alert("Please enter a location.");
+  // State variables
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!location.trim()) {
+      newErrors.location = "Location is required";
+    }
+
+    if (!searchDate) {
+      newErrors.date = "Date is required";
+    } else if (searchDate < new Date(new Date().setHours(0, 0, 0, 0))) {
+      newErrors.date = "Date cannot be in the past";
+    }
+
+    if (person < 1) {
+      newErrors.person = "At least 1 guest is required";
+    } else if (person > 10) {
+      newErrors.person = "Maximum 10 guests allowed";
+    }
+
+    if (numBeds < 1) {
+      newErrors.beds = "At least 1 bed is required";
+    } else if (numBeds > 5) {
+      newErrors.beds = "Maximum 5 beds allowed";
+    }
+
+    if (priceRange[0] < 0 || priceRange[1] > 5000) {
+      newErrors.price = "Price range must be between ₹0 and ₹5000";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSearch = () => {
+    if (!validateForm()) {
       return;
     }
 
-    setLoading(true);
+    const query = {
+      location,
+      date: searchDate!.toISOString().split("T")[0],
+      person,
+      minPrice: priceRange[0],
+      maxPrice: priceRange[1],
+      numBeds,
+    };
 
-    try {
-      // Fetch search results from the backend API
-      const response = await fetch(`/api/bookings/search?location=${encodeURIComponent(location)}`);
-      const data = await response.json();
-      setResults(data); // Update results state with the fetched data
-    } catch (error) {
-      console.error("Error fetching search results:", error);
-      alert("Failed to fetch search results. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    const queryString = Object.entries(query)
+      .map(
+        ([key, value]) =>
+          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+      )
+      .join("&");
+
+    router.push(`/search?${queryString}`);
   };
 
   return (
-    <div className="flex flex-col items-center w-full mx-6 p-4 bg-white shadow-lg rounded-lg">
-      {/* Location Input */}
-      <div className="flex items-center border max-w-xl w-full border-gray-300 rounded-md mb-4">
-        <FaMapMarkerAlt className="text-gray-400 ml-3 mr-3" />
-        <input
-          type="text"
-          placeholder="Where are you going?"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="w-full p-3 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-md"
-        />
-        {/* Search Button */}
-        <div className="flex items-center ml-3">
-          <Button
-            onClick={handleSearch}
-            title={loading ? "Searching..." : "Search"}
-            className="px-6 py-3 bg-primary-500 text-white rounded-md hover:bg-primary-600 focus:outline-none"
-            disabled={loading}
-          />
+    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Location Input */}
+        <div className="flex flex-col">
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
+            <FaMapMarkerAlt className="text-gray-400 mr-2" />
+            <input
+              type="text"
+              placeholder="Where are you going?"
+              value={location}
+              onChange={(e) => {
+                setLocation(e.target.value);
+                setErrors({ ...errors, location: "" });
+              }}
+              className={`w-full focus:outline-none ${errors.location ? 'border-red-500' : ''}`}
+            />
+          </div>
+          {errors.location && <span className="text-red-500 text-xs mt-1">{errors.location}</span>}
+        </div>
+
+        {/* Date Input */}
+        <div className="flex flex-col">
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
+            <FaCalendarAlt className="text-gray-400 mr-2" />
+            <DatePicker
+              selected={searchDate}
+              onChange={(date: Date | null) => {
+                if (date) {
+                  setSearchDate(date);
+                }
+                setErrors({ ...errors, date: "" });
+              }}
+              dateFormat="yyyy-MM-dd"
+              minDate={new Date()}
+              className={`w-full focus:outline-none ${errors.date ? 'border-red-500' : ''}`}
+              placeholderText="Select a date"
+            />
+          </div>
+          {errors.date && <span className="text-red-500 text-xs mt-1">{errors.date}</span>}
+        </div>
+
+        {/* Person Input */}
+        <div className="flex flex-col">
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
+            <FaUserFriends className="text-gray-400 mr-2" />
+            <input
+              type="number"
+              placeholder="Guests"
+              value={person}
+              onChange={(e) => {
+                setPerson(Math.max(1, Number(e.target.value)));
+                setErrors({ ...errors, person: "" });
+              }}
+              min="1"
+              max="10"
+              className={`w-full focus:outline-none ${errors.person ? 'border-red-500' : ''}`}
+            />
+          </div>
+          {errors.person && <span className="text-red-500 text-xs mt-1">{errors.person}</span>}
+        </div>
+
+        {/* Number of Beds Input */}
+        <div className="flex flex-col">
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
+            <FaBed className="text-gray-400 mr-2" />
+            <input
+              type="number"
+              placeholder="Beds"
+              value={numBeds}
+              onChange={(e) => {
+                setNumBeds(Math.max(1, Number(e.target.value)));
+                setErrors({ ...errors, beds: "" });
+              }}
+              min="1"
+              max="5"
+              className={`w-full focus:outline-none ${errors.beds ? 'border-red-500' : ''}`}
+            />
+          </div>
+          {errors.beds && <span className="text-red-500 text-xs mt-1">{errors.beds}</span>}
         </div>
       </div>
 
-      {/* Search Results */}
-      <div className="w-full max-w-4xl">
-        {results.length > 0 ? (
-          <div className="grid gap-4">
-            {results.map((result) => (
-              <div
-                key={result.id}
-                className="bg-white p-4 rounded-xl shadow-md flex items-center gap-4"
-              >
-                <div>
-                  <h3 className="text-lg font-bold">{result.houseboat}</h3>
-                  <p className="text-sm text-gray-600">{result.location}</p>
-                  <p className="text-sm text-gray-600">Date: {result.date}</p>
-                  <p className="text-sm text-gray-600">Status: {result.status}</p>
-                </div>
-              </div>
-            ))}
+      {/* Price Range Slider */}
+      <div className="mt-6">
+        <label className="font-semibold mb-2 flex items-center">
+          <FaRupeeSign className="text-gray-400 mr-2" />
+          Price Range
+        </label>
+        <div className="px-2">
+          <Slider
+            range
+            min={0}
+            max={5000}
+            step={50}
+            value={priceRange}
+            onChange={(values) => {
+              setPriceRange(values as [number, number]);
+              setErrors({ ...errors, price: "" });
+            }}
+            styles={{
+              track: { backgroundColor: "#5EBC67" },
+              handle: { borderColor: "#5EBC67", backgroundColor: "#5EBC67" },
+              rail: { backgroundColor: "#e5e7eb" }
+            }}
+          />
+          <div className="flex justify-between text-sm mt-2">
+            <span className="flex items-center">
+              <FaRupeeSign className="text-gray-400 mr-1" size={12} />
+              {priceRange[0]}
+            </span>
+            <span className="flex items-center">
+              <FaRupeeSign className="text-gray-400 mr-1" size={12} />
+              {priceRange[1]}
+            </span>
           </div>
-        ) : (
-          !loading && <p className="text-gray-500">No results found.</p>
-        )}
+          {errors.price && <span className="text-red-500 text-xs mt-1">{errors.price}</span>}
+        </div>
       </div>
+
+      
     </div>
   );
 };

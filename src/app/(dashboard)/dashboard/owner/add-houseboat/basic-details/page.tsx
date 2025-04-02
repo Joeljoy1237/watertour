@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/dashboaord/ImageUploader";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { Toaster, toast } from 'react-hot-toast';
-
+import { useLocationContext } from "@/components/LocationContext"; // Adjust the path if needed
 // Amenities Selector Component
 const AmenitiesSelector: React.FC<{ amenities: string[]; setAmenities: React.Dispatch<React.SetStateAction<string[]>> }> = ({ amenities, setAmenities }) => {
   
@@ -582,32 +582,52 @@ export default function BasicDetails() {
     price: "",
   });
 
-  const handleSubmit = () => {
-    // Validate required fields
+  // Define locations state
+  const [locations, setLocations] = useState<Set<string>>(new Set());
+  
+  // Load locations from localStorage on component mount
+  useEffect(() => {
+    const savedLocations = JSON.parse(localStorage.getItem("locations") || "[]");
+    setLocations(new Set(savedLocations));
+  }, []);
+
+  // Save locations to localStorage whenever the list changes
+  useEffect(() => {
+    localStorage.setItem("locations", JSON.stringify(Array.from(locations)));
+  }, [locations]);
+
+  // Form validation function
+  const validateForm = () => {
     if (!formData.name.trim()) {
       toast.error("Houseboat name is required!");
-      return;
+      return false;
     }
     if (!formData.description.trim()) {
       toast.error("Description is required!");
-      return;
+      return false;
     }
     if (!formData.location.trim()) {
       toast.error("Location is required!");
-      return;
+      return false;
     }
     if (!formData.maxPeople) {
       toast.error("Maximum capacity is required!");
-      return;
+      return false;
     }
     if (!formData.price.trim()) {
       toast.error("Base price is required!");
-      return;
+      return false;
     }
     if (image.length === 0) {
       toast.error("At least one image is required!");
-      return;
+      return false;
     }
+    return true;
+  };
+
+  // Handle form submission
+  const handleSubmit = () => {
+    if (!validateForm()) return;
 
     const food = {
       veg: vegItems,
@@ -637,6 +657,13 @@ export default function BasicDetails() {
           return response.json();
         })
         .then((data) => {
+          // Add the location to the locations set
+          setLocations((prevLocations) => {
+            const newLocations = new Set(prevLocations);
+            newLocations.add(formData.location); // Set automatically handles uniqueness
+            return newLocations;
+          });
+
           toast.success("Houseboat added successfully!");
           router.push("/dashboard/owner/houseboats");
         })
@@ -649,7 +676,6 @@ export default function BasicDetails() {
       toast.error("An unexpected error occurred!");
     }
   };
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
