@@ -194,8 +194,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <Slider
             range
             min={0}
-            max={5000}
-            step={50}
+            max={30000}
+            step={500}
             value={priceRange}
             onChange={(values) => {
               setPriceRange(values as [number, number]);

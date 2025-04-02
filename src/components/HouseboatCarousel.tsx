@@ -19,7 +19,7 @@ export default function HouseboatCarousel({ images }: { images: ImageType[] }) {
     stopAutoSlide(); // Reset timer
     intervalRef.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % totalSlides);
-    }, 5000);
+    }, 3000);
   };
 
   // Stop auto-slide
