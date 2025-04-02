@@ -277,7 +277,7 @@ const FoodSelector: React.FC<{ vegItems: string[]; setVegItems: React.Dispatch<R
   );
 };
 
-{/*drinks */}
+{/*
 const DrinksSelector: React.FC<{ drinks: string[]; setDrinks: React.Dispatch<React.SetStateAction<string[]>> }> = ({ drinks, setDrinks }) => {
 
   const [newItem, setNewItem] = useState("");
@@ -375,10 +375,13 @@ const DrinksSelector: React.FC<{ drinks: string[]; setDrinks: React.Dispatch<Rea
           )}
         </div>
       </details>
-      <Toaster /> {/* Toaster component to display toast notifications */}
+      <Toaster />
     </div>
   );
 };
+*/}
+
+
 
 {/* DateRangePicker */}
 
@@ -775,8 +778,8 @@ export default function BasicDetails() {
             setNonVegItems={setNonVegItems}
           />
 
-          {/* Drinks Selector Component */}
-          <DrinksSelector drinks={drinks} setDrinks={setDrinks} />
+         {/* 
+          <DrinksSelector drinks={drinks} setDrinks={setDrinks} /> */}
 
           {/* Date Range Picker Component */}
           <DateRangeComponent dateRanges={dateRanges} setDateRanges={setDateRanges} />
