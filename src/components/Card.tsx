@@ -27,6 +27,13 @@ const Card = ({ houseboats }: CardProps) => {
     });
   };
 
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-5">
       {houseboats.map((boat) => (
@@ -40,7 +47,7 @@ const Card = ({ houseboats }: CardProps) => {
               <h3 className="text-black text-lg font-bold mb-2 truncate">{boat.name}</h3>
               <div className="flex items-center mb-4">{renderStars(boat.rating)}</div>
               <div className="flex items-center justify-between">
-                <span className="text-black text-xl font-semibold">₹{boat.price.toLocaleString("en-IN")}</span>
+                <span className="text-black text-xl font-semibold">₹{formatPrice(boat.price)}</span>
                 <Button title="Book Now" />
               </div>
             </div>
