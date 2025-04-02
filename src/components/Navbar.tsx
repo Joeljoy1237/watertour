@@ -38,17 +38,42 @@ const Navbar = () => {
 
       {/* Desktop Navigation */}
       <ul className="hidden lg:flex space-x-12">
-        {navLinks.map((link) => (
-          <li key={link.key}>
-            <Link
-              href={link.href}
-              className="text-primary text-lg font-medium hover:text-[#499954] transition-colors duration-200"
-            >
-              {link.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
+    {navLinks.map((link) => {
+        // Check if the session is present
+        const isSessionPresent = !!session;
+
+        // Render the dashboard link only if the session is present
+        if ( isSessionPresent) {
+            return (
+                <li key={link.key}>
+                    <Link
+                        href={link.href}
+                        className="text-primary text-lg font-medium hover:text-[#499954] transition-colors duration-200"
+                    >
+                        {link.label}
+                    </Link>
+                </li>
+            );
+        }
+
+        // Render other links only if the session is present
+        if (link.key !== "dashboard" && !isSessionPresent) {
+            return (
+                <li key={link.key}>
+                    <Link
+                        href={link.href}
+                        className="text-primary text-lg font-medium hover:text-[#499954] transition-colors duration-200"
+                    >
+                        {link.label}
+                    </Link>
+                </li>
+            );
+        }
+
+        // Return null for links that should not be rendered
+        return null;
+    })}
+</ul>
 
       {/* User Actions */}
       <div className="flex items-center space-x-4">
