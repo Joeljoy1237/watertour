@@ -5,6 +5,7 @@ import CalendarAvailabilityPicker from "@/components/CalendarAvailabilityPicker"
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 interface AvailabilityData {
   dayCruiser: boolean;
@@ -38,6 +39,7 @@ interface HouseboatUpdate {
 const socket = io("http://localhost:3001"); // Update with actual socket server URL
 
 const BookOption: React.FC<{ houseboatId: string }> = ({ houseboatId }) => {
+  const {data:session} = useSession()
   const [houseboat, setHouseboat] = useState<HouseboatData | null>(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedType, setSelectedType] = useState<"" | "Day Cruiser" | "Night Stay">("");
@@ -108,7 +110,6 @@ const BookOption: React.FC<{ houseboatId: string }> = ({ houseboatId }) => {
       socket.off("houseboatUpdated");
     };
   }, [houseboatId]);
-console.log(selectedType)
   const availableOptions = selectedDate && houseboat?.dates[selectedDate] 
     ? houseboat.dates[selectedDate] 
     : { dayCruiser: true, nightStay: true };
@@ -146,6 +147,7 @@ console.log(selectedType)
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          userId:session?.user.id,
           houseboatId,
           date: selectedDate,
           type: selectedType,

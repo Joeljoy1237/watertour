@@ -5,7 +5,7 @@ import Booking from "@/models/Booking";
 
 export async function POST(req: Request) {
   try {
-    const { houseboatId, date, type, guests, beds: clientBeds, totalPrice } = await req.json();
+    const { houseboatId, userId, date, type, guests, beds: clientBeds, totalPrice } = await req.json();
 
     if (!houseboatId || !date || !type || guests < 1 || totalPrice < 1) {
       return NextResponse.json({ message: "Invalid booking details" }, { status: 400 });
@@ -44,6 +44,7 @@ export async function POST(req: Request) {
       // Create a new booking
       const booking = new Booking({
         houseboatId,
+        userId,
         ownerId: houseboat.userId, // Store houseboat owner ID
         date,
         type,

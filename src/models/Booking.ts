@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 interface IBooking extends Document {
     houseboatId: mongoose.Types.ObjectId;
+    userId: mongoose.Types.ObjectId;
     ownerId: mongoose.Types.ObjectId;
     date: string;
     type: "Day Cruiser" | "Night Stay";
@@ -16,6 +17,7 @@ interface IBooking extends Document {
 const BookingSchema = new Schema<IBooking>(
     {
         houseboatId: { type: Schema.Types.ObjectId, ref: "Houseboat", required: true },
+        userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
         ownerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
         date: { type: String, required: true },
         type: { type: String, enum: ["Day Cruiser", "Night Stay"], required: true },

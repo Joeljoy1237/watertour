@@ -55,7 +55,8 @@ const authOptions: NextAuthOptions = {
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             authorization: {
                 params: {
-                    scope: "openid profile email https://www.googleapis.com/auth/user.phonenumbers.read",
+                    access_type: "offline",
+                    scope: "openid profile email https://www.googleapis.com/user",
                 },
             },
         }),
