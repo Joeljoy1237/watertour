@@ -70,38 +70,61 @@ const CalendarAvailabilityPicker: React.FC<CalendarAvailabilityPickerProps> = ({
     const isDayCruiserBooked = avail.dayCruiserBooked;
     const isNightStayBooked = avail.nightStayBooked;
 
-    const statusColor = isDayCruiserBooked && isNightStayBooked 
-        ? "bg-red-200 text-red-800" 
-        : (isDayCruiserBooked || isNightStayBooked)
-            ? "bg-orange-200 text-orange-800"
-            : isDayCruiserAvailable && isNightStayAvailable 
-                ? "bg-green-200 text-green-800" 
-                : (isDayCruiserAvailable || isNightStayAvailable 
-                    ? "bg-yellow-200 text-yellow-800" 
-                    : "bg-gray-200 text-gray-800");
+    const getStatusInfo = () => {
+      if (isDayCruiserBooked && isNightStayBooked) {
+        return {
+          color: "bg-red-100 border-red-400",
+          textColor: "text-red-800",
+          icon: "🚫",
+          text: "Booked"
+        };
+      }
+      if (isDayCruiserBooked || isNightStayBooked) {
+        const availableType = isDayCruiserBooked ? "Night Stay" : "Day Cruise";
+        return {
+          color: "bg-orange-100 border-orange-400",
+          textColor: "text-orange-800",
+          icon: isDayCruiserBooked ? "🌙" : "🚤",
+          text: availableType
+        };
+      }
+      if (isDayCruiserAvailable && isNightStayAvailable) {
+        return {
+          color: "bg-green-100 border-green-400",
+          textColor: "text-green-800",
+          text: "Open"
+        };
+      }
+      if (isDayCruiserAvailable || isNightStayAvailable) {
+        const availableType = isDayCruiserAvailable ? "Day Cruise" : "Night Stay";
+        return {
+          color: "bg-blue-100 border-blue-400",
+          textColor: "text-blue-800",
+          text: availableType
+        };
+      }
+      return {
+        color: "bg-gray-100 border-gray-400",
+        textColor: "text-gray-800",
+        text: "Closed"
+      };
+    };
 
-    const statusText = isDayCruiserBooked && isNightStayBooked 
-        ? "Fully Booked" 
-        : (isDayCruiserBooked || isNightStayBooked)
-            ? "Partially Booked"
-            : isDayCruiserAvailable && isNightStayAvailable
-                ? "Available"
-                : (isDayCruiserAvailable || isNightStayAvailable
-                    ? "Partially Available"
-                    : "Unavailable");
+    const statusInfo = getStatusInfo();
 
     return (
       <button
         key={dateStr}
         onClick={() => isAvailable && onSelectDate(dateStr)}
         disabled={!isAvailable || isPast}
-        className={`p-2 border rounded-md h-16 flex flex-col items-center justify-center  transition ${
-          isSelected ? "border-primary bg-primary text-white" : "border-gray-300 hover:bg-gray-50 hover:text-black"
-        } ${!isAvailable || isPast ? "opacity-50 cursor-not-allowed" : ""}`}
+        className={`relative p-2 border rounded-md h-16 flex flex-col items-center justify-center transition
+          ${isSelected ? "border-primary bg-primary text-white" : `${statusInfo.color} hover:bg-opacity-75`}
+          ${!isAvailable || isPast ? "opacity-50 cursor-not-allowed" : ""}`}
       >
         <div className="text-sm font-semibold">{cellDate.getDate()}</div>
-        <div className={`text-xs mt-1 px-1 rounded ${statusColor}`}>
-          {statusText}
+        <div className={`text-xs flex items-center gap-1 mt-1 ${statusInfo.textColor}`}>
+          <span className="text-sm">{statusInfo.icon}</span>
+          <span className="font-medium">{statusInfo.text}</span>
         </div>
       </button>
     );
