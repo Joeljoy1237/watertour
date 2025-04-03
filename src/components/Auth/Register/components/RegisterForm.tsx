@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/components/Button";
-
+import { toast } from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -36,12 +36,40 @@ export default function RegisterForm() {
   ) => {
     event.preventDefault();
 
+    // Validate required fields
+    if (!firstName || !lastName || !email || !mobile || !password || !confirmPassword) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    // Validate mobile number (10 digits)
+    const mobileRegex = /^\d{10}$/;
+    if (!mobileRegex.test(mobile)) {
+      toast.error("Please enter a valid 10-digit mobile number");
+      return;
+    }
+
+    // Validate password match
     if (password !== confirmPassword) {
-     
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    // Validate password strength (at least 8 characters)
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
       return;
     }
 
     setIsSubmitting(true);
+    const loadingToast = toast.loading("Creating your account...");
 
     try {
       const response = await fetch("/api/register", {
@@ -60,18 +88,23 @@ export default function RegisterForm() {
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
+        toast.dismiss(loadingToast);
+        toast.success("Registration successful! Redirecting to login...");
         setTimeout(() => {
           router.push("/login");
         }, 1000);
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed", {
-          cause: errorData.desc,
+        toast.dismiss(loadingToast);
+        throw new Error(data.message || "Registration failed", {
+          cause: data.desc,
         });
       }
     } catch (error: any) {
+      toast.dismiss(loadingToast);
+      toast.error(error.message || "An error occurred during registration");
     } finally {
       setIsSubmitting(false);
     }
@@ -202,18 +235,15 @@ export default function RegisterForm() {
           </div>
           <Button
             type="submit"
-            title="Signup"
+            title={isSubmitting ? "Submitting..." : "Signup"}
             disabled={isSubmitting}
             onClick={handleSignUp}
-            className="w-full bg-primary-700 text-white p-3 rounded-md"
+            className={`w-full bg-primary-700 text-white p-3 rounded-md ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
           />
         </div>
         <div className="flex flex-col md:flex-row lg:flex-row items-center justify-between mt-4">
           <Link href="/login" className="text-sm text-primary-700">
               <span className="text-black">Already have an account?</span> Login
-          </Link>
-          <Link href="/support" className="text-sm text-primary-700 underline">
-              Get Support
           </Link>
         </div>
       </div>

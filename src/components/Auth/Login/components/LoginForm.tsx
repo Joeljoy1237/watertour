@@ -1,5 +1,6 @@
 "use client";
 import { signIn, useSession } from "next-auth/react";
+import { toast } from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -37,32 +38,27 @@ export default function RegisterForm() {
       | React.KeyboardEvent<HTMLDivElement>
   ) => {
     event.preventDefault();
+    
+    // Validate required fields
+    if (!email && !password) {
+      toast.error("Email and password are required");
+      return;
+    }
+
+    if (!email) {
+      toast.error("Email is required");
+      return;
+    }
+
+    if (!password) {
+      toast.error("Password is required");
+      return;
+    }
+
     setIsSubmitting(true);
+    const loadingToast = toast.loading("Signing in...");
 
     try {
-      if (!email && !password) {
-        throw new Error(
-          JSON.stringify({
-            message: "Please fill the required fields",
-            desc: "Email and password are required",
-          })
-        );
-      }
-
-      if (!email) {
-        throw new Error(
-          JSON.stringify({
-            message: "Email is required",
-          })
-        );
-      } else if (!password) {
-        throw new Error(
-          JSON.stringify({
-            message: "Password is required",
-          })
-        );
-      }
-
       const response = await signIn("credentials", {
         email: email,
         password: password,
@@ -70,16 +66,13 @@ export default function RegisterForm() {
       });
 
       if (response?.ok) {
-        const data = response?.error
-          ? JSON.parse(response.error)
-          : { message: "Login Successfully", desc: "Redirecting to home page" };
-
-       
-
+        toast.dismiss(loadingToast);
+        toast.success("Login successful! Redirecting...");
         setTimeout(() => {
           router.push("/");
         }, 1000);
       } else {
+        toast.dismiss(loadingToast);
         throw new Error(
           JSON.stringify({
             message: "Login Failed",
@@ -88,8 +81,10 @@ export default function RegisterForm() {
         );
       }
     } catch (err: any) {
+      toast.dismiss(loadingToast);
       const error = JSON.parse(err.message || "{}");
-
+      toast.error(error.message || "Login failed");
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -183,15 +178,6 @@ export default function RegisterForm() {
           </div>
         </div>
       </div>
-      <span className=" absolute text-sm bottom-4">
-        For technical assistance.{" "}
-        <Link
-          href={"/support"}
-          className="font-semibold text-primary-700"
-        >
-          Get Support
-        </Link>{" "}
-      </span>
     </div>
   );
 }
