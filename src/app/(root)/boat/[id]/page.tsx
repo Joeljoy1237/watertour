@@ -7,6 +7,7 @@ import FoodMenu from "@/components/FoodMenu";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
+
 interface HouseboatData {
   food: {
     veg: [string];
@@ -120,6 +121,10 @@ const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
           <div className="bg-white p-6 rounded-md shadow-md">
             <h3 className="text-xl font-semibold text-primary-600">Food</h3>
             <FoodMenu vegItems={houseboat!.food.veg} nonVegItems={houseboat!.food.nonVeg} /> 
+
+
+
+
           <CommentSection boatId={resolvedParams.current || ""} />
 
       
