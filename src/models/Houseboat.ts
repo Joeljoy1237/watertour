@@ -22,6 +22,8 @@ const HouseboatSchema = new mongoose.Schema(
                 available: Boolean,
                 dayCruiser: Boolean,
                 nightStay: Boolean,
+                dayCruiserBooked: { type: Boolean, default: false },
+                nightStayBooked: { type: Boolean, default: false },
                 pricePerDay: Number,
                 pricePerNight: Number,
                 extraPricePerBed: Number,

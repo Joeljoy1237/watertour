@@ -36,8 +36,16 @@ export async function POST(req: Request) {
       existingBooking.guests = guests;
       existingBooking.beds = beds;
       existingBooking.totalPrice = totalPrice;
-      existingBooking.status = "pending"; // Ensure it's still pending
+      existingBooking.status = "pending";
       await existingBooking.save();
+
+      // Update the houseboat's date booking status
+      if (type === "Day Cruiser") {
+        houseboat.dates.get(date).dayCruiserBooked = true;
+      } else {
+        houseboat.dates.get(date).nightStayBooked = true;
+      }
+      await houseboat.save();
 
       return NextResponse.json({ message: "Booking updated successfully!" }, { status: 200 });
     } else {
@@ -45,7 +53,7 @@ export async function POST(req: Request) {
       const booking = new Booking({
         houseboatId,
         userId,
-        ownerId: houseboat.userId, // Store houseboat owner ID
+        ownerId: houseboat.userId,
         date,
         type,
         guests,
@@ -55,6 +63,14 @@ export async function POST(req: Request) {
       });
 
       await booking.save();
+
+      // Update the houseboat's date booking status
+      if (type === "Day Cruiser") {
+        houseboat.dates.get(date).dayCruiserBooked = true;
+      } else {
+        houseboat.dates.get(date).nightStayBooked = true;
+      }
+      await houseboat.save();
     }
 
     return NextResponse.json({ message: "Booking request sent! Awaiting approval." }, { status: 201 });

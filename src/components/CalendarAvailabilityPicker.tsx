@@ -3,6 +3,8 @@ import { useState } from "react";
 interface Availability {
   dayCruiser: boolean;
   nightStay: boolean;
+  dayCruiserBooked?: boolean;
+  nightStayBooked?: boolean;
 }
 
 interface CalendarAvailabilityPickerProps {
@@ -64,13 +66,29 @@ const CalendarAvailabilityPicker: React.FC<CalendarAvailabilityPickerProps> = ({
     const isSelected = selectedDate === dateStr;
 
     const isDayCruiserAvailable = avail.dayCruiser;
-const isNightStayAvailable = avail.nightStay;
+    const isNightStayAvailable = avail.nightStay;
+    const isDayCruiserBooked = avail.dayCruiserBooked;
+    const isNightStayBooked = avail.nightStayBooked;
 
-const statusColor = isDayCruiserAvailable && isNightStayAvailable 
-    ? "bg-green-200 text-green-800" 
-    : (isDayCruiserAvailable || isNightStayAvailable 
-        ? "bg-yellow-200 text-yellow-800" 
-        : "bg-red-200 text-red-800");
+    const statusColor = isDayCruiserBooked && isNightStayBooked 
+        ? "bg-red-200 text-red-800" 
+        : (isDayCruiserBooked || isNightStayBooked)
+            ? "bg-orange-200 text-orange-800"
+            : isDayCruiserAvailable && isNightStayAvailable 
+                ? "bg-green-200 text-green-800" 
+                : (isDayCruiserAvailable || isNightStayAvailable 
+                    ? "bg-yellow-200 text-yellow-800" 
+                    : "bg-gray-200 text-gray-800");
+
+    const statusText = isDayCruiserBooked && isNightStayBooked 
+        ? "Fully Booked" 
+        : (isDayCruiserBooked || isNightStayBooked)
+            ? "Partially Booked"
+            : isDayCruiserAvailable && isNightStayAvailable
+                ? "Available"
+                : (isDayCruiserAvailable || isNightStayAvailable
+                    ? "Partially Available"
+                    : "Unavailable");
 
     return (
       <button
@@ -83,7 +101,7 @@ const statusColor = isDayCruiserAvailable && isNightStayAvailable
       >
         <div className="text-sm font-semibold">{cellDate.getDate()}</div>
         <div className={`text-xs mt-1 px-1 rounded ${statusColor}`}>
-          {isAvailable ? "Open" : "Close"}
+          {statusText}
         </div>
       </button>
     );

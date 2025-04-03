@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDB } from "@/utils/database";
 import Booking from "@/models/Booking";
+import Houseboat from "@/models/Houseboat";
 
 export async function POST(req: Request) {
     try {
@@ -21,9 +22,20 @@ export async function POST(req: Request) {
         if (booking.status !== "pending") {
             return NextResponse.json({ message: "Only pending bookings can be canceled" }, { status: 400 });
         }
-        booking.status = "cancelled"
-        booking.save();
-        // await Booking.deleteOne({ _id: bookingId });
+
+        // Update the houseboat's date booking status
+        const houseboat = await Houseboat.findById(booking.houseboatId);
+        if (houseboat) {
+            if (booking.type === "Day Cruiser") {
+                houseboat.dates.get(booking.date).dayCruiserBooked = false;
+            } else {
+                houseboat.dates.get(booking.date).nightStayBooked = false;
+            }
+            await houseboat.save();
+        }
+
+        booking.status = "cancelled";
+        await booking.save();
 
         return NextResponse.json({ message: "Booking canceled successfully" }, { status: 200 });
     } catch (error) {
