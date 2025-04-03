@@ -58,7 +58,7 @@ export const POST = async (request: any) => {
         const newUser = new User({
             name: editName,
             email,
-            mobile,
+            phone:mobile,
             password: encryptedData,
         });
         await newUser.save();

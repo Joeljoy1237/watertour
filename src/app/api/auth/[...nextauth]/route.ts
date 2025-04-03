@@ -34,7 +34,7 @@ declare module "next-auth/jwt" {
         firstName: string;
         lastName: string;
         image?: string; // Add image URL
-        phoneNumber?: string; // Add phone number
+        phone?: string; // Add phone number
         isOwner: boolean;
         isAdmin?: boolean;
     }
