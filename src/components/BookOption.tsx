@@ -100,7 +100,7 @@ const BookOption: React.FC<{ houseboatId: string }> = ({ houseboatId }) => {
       return updatedHouseboat;
     });
 
-    toast.success("Houseboat details updated!");
+    setSelectedDate("")
   }
 });
 
@@ -123,9 +123,9 @@ const BookOption: React.FC<{ houseboatId: string }> = ({ houseboatId }) => {
     if (!dateData) return;
 
     if (selectedType === "Day Cruiser") {
-      setTotalPrice(guests * dateData.pricePerDay);
+      setTotalPrice(guests > 3 ? houseboat.price + (guests * dateData.pricePerDay) : houseboat.price);
     } else if (selectedType === "Night Stay") {
-      setTotalPrice(guests * dateData.pricePerNight + beds * dateData.extraPricePerBed);
+      setTotalPrice(guests<3?houseboat.price:houseboat.price+(guests * dateData.pricePerNight) + (beds * dateData.extraPricePerBed));
     }
   };
 
