@@ -84,7 +84,7 @@ const Navbar = () => {
               onClick={() => signIn(provider.id)}
               className="bg-primary text-white px-5 py-2 rounded-lg shadow hover:bg-[#499954] transition-colors duration-200"
             >
-              Sign in with {provider.name}
+              Sign in
             </button>
           ))
         ) : (
