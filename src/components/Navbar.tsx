@@ -5,12 +5,13 @@ import { navLinks } from "@/constants";
 import Image from "next/image";
 import { getProviders, signIn, signOut, useSession, ClientSafeProvider } from "next-auth/react";
 import { FiMenu, FiX } from "react-icons/fi"; // Importing modern icons
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const { data: session } = useSession();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [providers, setProviders] = useState<Record<string, ClientSafeProvider> | null>(null);
-
+  const router = useRouter();
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -78,15 +79,12 @@ const Navbar = () => {
       {/* User Actions */}
       <div className="flex items-center space-x-4">
         {!session ? (
-          providers && Object.values(providers).map((provider) => (
-            <button
-              key={provider.name}
-              onClick={() => signIn(provider.id)}
-              className="bg-primary text-white px-5 py-2 rounded-lg shadow hover:bg-[#499954] transition-colors duration-200"
-            >
-              Sign in
-            </button>
-          ))
+          <button
+          onClick={() => router.push("/login")}
+          className="bg-primary text-white px-5 py-2 rounded-lg shadow hover:bg-[#499954] transition-colors duration-200"
+        >
+          Sign in
+        </button>
         ) : (
           <>
             <button

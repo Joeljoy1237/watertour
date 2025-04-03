@@ -1,28 +1,34 @@
 import React from "react";
 
 interface ButtonProps {
+  disabled?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
   title: string;
-  onClick?: () => void;
-  type?: "button" | "submit" | "reset";
-  disabled?: boolean;
-  style?: React.CSSProperties;
+  icon?: React.ReactNode; // Use React.ReactNode for icon to support various icon types
+  position?: "left" | "right";
+  type?: "submit" | "reset" | "button";
 }
 
-const Button: React.FC<ButtonProps> = (props: ButtonProps) => {
-  const { className, title, onClick, type = "button", disabled, style } = props;
-
+export default function Button({
+  disabled,
+  className,
+  onClick,
+  title,
+  icon,
+  type = "button",
+  position = "right", // Default position is now "right"
+}: ButtonProps) {
   return (
     <button
-      type={type || "button"}
-      onClick={onClick}
       disabled={disabled}
-      className={`${className} bg-primary text-white px-4 py-2 rounded-lg hover:bg-[#4A9453] transition `}
-      style={style}
+      className={className}
+      type={type}
+      onClick={onClick}
     >
+      {position === "left" && icon}
       {title}
+      {position === "right" && icon}
     </button>
   );
-};
-
-export default Button;
+}

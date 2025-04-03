@@ -3,6 +3,7 @@
 import { useState } from "react";
 import ImageUpload from "@/components/dashboaord/ImageUploader";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 export default function BasicDetails() {
   const router = useRouter();
@@ -25,30 +26,29 @@ export default function BasicDetails() {
     setError("");
     setLoading(true);
 
-    // Validate all required fields
-    const requiredFields = ["firstName", "lastName", "address", "city", "pincode", "email", "phone", "licenseNumber"];
-    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    
-    if (missingFields.length > 0) {
-      setError(`Please fill in all required fields: ${missingFields.join(", ")}`);
-      setLoading(false);
-      return;
-    }
-
-    // Validate email format
-  if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    setError("Please enter a valid email address");
-    setLoading(false);
-    return;
-  }
-
-    if (image.length === 0) {
-      setError("Please upload a government ID");
-      setLoading(false);
-      return;
-    }
-
     try {
+      // Validate all required fields
+      const requiredFields = ["firstName", "lastName", "address", "city", "pincode", "email", "phone", "licenseNumber"];
+      const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+      
+      if (missingFields.length > 0) {
+        toast.error(`Please fill in all required fields: ${missingFields.join(", ")}`);
+        return;
+      }
+
+      // Validate email format
+      if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        toast.error("Please enter a valid email address");
+        return;
+      }
+
+      if (image.length === 0) {
+        toast.error("Please upload a government ID");
+        return;
+      }
+
+      toast.loading("Submitting your application...");
+
       const response = await fetch("/api/houseboat/owner/addowner", {
         method: "POST",
         headers: {
@@ -65,14 +65,21 @@ export default function BasicDetails() {
       if (!response.ok) {
         throw new Error(data.message || "Failed to submit form");
       }
-    
-      console.log("Redirecting to:", data.redirectUrl);
-      router.push(data.redirectUrl); // Use the redirect URL from the backend
+
+      toast.dismiss();
+      toast.success("Application submitted successfully!");
+      
+      // Wait for toast to be shown before redirecting
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1000);
+
     } catch (error) {
+      toast.dismiss();
+      toast.error(error instanceof Error ? error.message : "Failed to submit form");
       console.error("Error in form submission:", error);
-      setError(error instanceof Error ? error.message : "Failed to submit form");
-    } finally{
-      router.push("dashboard/owner");
+    } finally {
+      setLoading(false);
     }
   };
 

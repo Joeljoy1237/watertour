@@ -4,7 +4,7 @@ const UserSchema = new mongoose.Schema(
     {
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
-        password: { type: String, required: false, select: false }, // Select false to hide password by default
+        password: { type: String, required: false }, // Select false to hide password by default
         image: { type: String }, // Field for storing user profile image URL
         phoneNumber: { type: String }, // Field for storing user's phone number
         isOwner: { type: Boolean, default: false },

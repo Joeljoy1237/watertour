@@ -1,8 +1,9 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CryptoJS from "crypto-js";
 import User from "@/models/User"; // Adjust the path based on your User model location
 import { connectToDB } from "@/utils/database"; // Adjust the path based on your DB connection utility
-
+import Credentials from "next-auth/providers/credentials";
 // Extend NextAuth Session & JWT Types
 declare module "next-auth" {
     interface Session {
@@ -62,6 +63,62 @@ const authOptions: NextAuthOptions = {
                 },
             },
         }),
+        Credentials({
+            credentials: {
+              email: { label: "Email", type: "text" },
+              password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                await connectToDB();
+            
+                if (!credentials) {
+                    throw new Error(JSON.stringify({ message: "Credentials not provided", desc: "Please provide both email and password" }));
+                }
+            
+                try {
+                    const userExist = await User.findOne({ email: credentials.email });
+            
+                    if (!userExist) {
+                        console.log("User does not exist");
+                        throw new Error(JSON.stringify({ message: "User does not exist", desc: "Please check the email and try again" }));
+                    }
+                    console.log(userExist);
+
+                    // Check if the password exists before attempting to decrypt it
+                    if (!userExist.password) {
+                        throw new Error(JSON.stringify({ message: "Password is missing", desc: "The password is not available for this user" }));
+                    }
+            
+                    const bytes = CryptoJS.AES.decrypt(userExist.password, process.env.CRYPTO_SECRET_KEY!);
+            
+                    // Check if decryption was successful
+                    const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+            
+                    if (!decryptedData) {
+                        console.log("Decryption failed or the password is incorrect");
+                        throw new Error(JSON.stringify({ message: "Email or Password is not correct", desc: "Please check your credentials and try again" }));
+                    }
+            
+                    const isMatch = decryptedData === credentials.password;
+                    console.log(isMatch);
+            
+                    if (isMatch) {
+                        console.log(userExist);
+                        return userExist; // Return user object if authentication is successful
+                    } else {
+                        console.log("Email or Password is not correct");
+                        throw new Error(JSON.stringify({ message: "Email or Password is not correct", desc: "Please check your credentials and try again" }));
+                    }
+                } catch (err: any) {
+                    console.log(err);
+                    throw new Error(JSON.stringify({ message: "Internal Server Error", desc: "An unexpected error occurred. Please try again later." }));
+                }
+            }
+            ,
+          }),
+      
+        
+
     ],
     callbacks: {
         async session({ session, token }) {
@@ -71,7 +128,7 @@ const authOptions: NextAuthOptions = {
                 email: token.email,
                 name: token.name ?? "",
                 image: token.image ?? "",
-                phone: token.phoneNumber,
+                phone: sessionUser.phone,
                 isOwner: sessionUser.isOwner,
                 isAdmin: token.isAdmin ?? false,
             };
