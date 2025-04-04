@@ -482,8 +482,8 @@ export default function BasicDetails() {
     name: "",
     description: "",
     location: "",
-    beds: 1,
-    maxPeople: 2,
+    beds: "",
+    maxPeople: "",
     price: "",
   });
 

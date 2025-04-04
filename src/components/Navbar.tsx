@@ -80,6 +80,7 @@ const Navbar = () => {
       <div className="flex items-center space-x-4">
         {!session ? (
           <button
+          id="loginButton"
           onClick={() => router.push("/login")}
           className="bg-primary text-white px-5 py-2 rounded-lg shadow hover:bg-[#499954] transition-colors duration-200"
         >
