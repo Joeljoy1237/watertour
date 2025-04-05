@@ -80,9 +80,11 @@ export default function RegisterForm() {
           })
         );
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.dismiss(loadingToast);
-      const error = JSON.parse(err.message || "{}");
+      const error = JSON.parse(
+        (err instanceof Error ? err.message : "{}")
+      );
       toast.error(error.message || "Login failed");
     } finally {
       setIsSubmitting(false);
