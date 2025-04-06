@@ -6,6 +6,7 @@ export interface Houseboat {
   location: string;
   beds: number;
   maxPeople: number;
+  cutPrice: number;
   price: number;
   rating: number;
   images: string[];

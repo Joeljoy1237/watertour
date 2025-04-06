@@ -47,7 +47,10 @@ const Card = ({ houseboats }: CardProps) => {
               <h3 className="text-black text-lg font-bold mb-2 truncate">{boat.name}</h3>
               <div className="flex items-center mb-4">{renderStars(boat.rating)}</div>
               <div className="flex items-center justify-between">
-                <span className="text-black text-xl font-semibold">₹{formatPrice(boat.price)}</span>
+                <div className="flex flex-col">
+                  <span className="text-gray-500 line-through text-sm">₹{formatPrice(boat.cutPrice)}</span>
+                  <span className="text-black text-xl font-semibold">₹{formatPrice(boat.price)}</span>
+                </div>
                 <Button title="Book Now" />
               </div>
             </div>

@@ -484,6 +484,7 @@ export default function BasicDetails() {
     location: "",
     beds: "",
     maxPeople: "",
+    cutPrice: "",
     price: "",
   });
 
@@ -522,6 +523,7 @@ export default function BasicDetails() {
             location: data.location || "",
             beds: data.beds || 1,
             maxPeople: data.maxPeople || 2,
+            cutPrice: (data.cutPrice || "").toString(),
             price: (data.price || "").toString(),
           });
           
@@ -566,10 +568,19 @@ export default function BasicDetails() {
       toast.error("Maximum capacity is required!");
       return false;
     }
-    if (!formData.price.trim()) {
-      toast.error("Base price is required!");
-      return false;
-    }
+
+      if (!formData.cutPrice.trim()) {
+        toast.error("Original price is required!");
+        return false;
+      }
+      if (Number(formData.cutPrice) <= Number(formData.price)) {
+        toast.error("Original price must be greater than discounted price!");
+        return false;
+      }
+      if (!formData.price.trim()) {
+        toast.error("Discounted price is required!");
+        return false;
+      }
     if (image.length === 0) {
       toast.error("At least one image is required!");
       return false;
@@ -717,6 +728,23 @@ export default function BasicDetails() {
             onChange={handleChange}
           />
 
+<input
+            type="number"
+            id="numberInput"
+            min="0"
+            value={formData.cutPrice}
+            onInput={(e) => {
+              const input = e.target as HTMLInputElement;
+              if (Number(input.value) < 0) {
+                input.value = "0";
+              }
+            }}
+            name="cutPrice"
+            placeholder="Original Price"
+            className="w-full p-3 border rounded"
+            onChange={handleChange}
+          />
+
           <input
             type="number"
             id="numberInput"
@@ -729,7 +757,7 @@ export default function BasicDetails() {
               }
             }}
             name="price"
-            placeholder="Base Price"
+            placeholder="Discounted Price"  // Changed placeholder
             className="w-full p-3 border rounded"
             onChange={handleChange}
           />
