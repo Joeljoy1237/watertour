@@ -102,7 +102,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className="container mx-auto -mt-48  z-10 p-6 bg-white/30 backdrop-blur-sm shadow-lg rounded-lg">
+    <div className="container mx-auto -mt-48  z-10 p-6 bg-white backdrop-blur-sm shadow-lg rounded-lg">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 bg-opacity-50 gap-4">
         {/* Location Input */}
         <div className="flex flex-col">
