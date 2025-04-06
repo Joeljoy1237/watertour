@@ -523,8 +523,8 @@ export default function BasicDetails() {
             location: data.location || "",
             beds: data.beds || 1,
             maxPeople: data.maxPeople || 2,
-            cutPrice: (data.cutPrice || "").toString(),
-            price: (data.price || "").toString(),
+            cutPrice: data.cutPrice || "",
+            price: data.price || "",
           });
           
           setAmenities(data.amenities || []);
