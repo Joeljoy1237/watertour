@@ -669,31 +669,43 @@ export default function BasicDetails() {
       <div className="max-w-3xl w-full bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">{isEditing ? 'Edit' : 'Add'} Basic Details</h2>
         <div className="space-y-4">
+        <label className="">
+          <p className="text-gray-900  text-sm font-semibold">Houseboat Name</p>
           <input
             type="text"
             name="name"
             value={formData.name}
-            placeholder="Houseboat Name"
-            className="w-full p-3 border rounded"
+            className="w-full p-3 mb-6 border rounded"
             onChange={handleChange}
           />
+          </label>
 
+
+          <label className="">
+          <p className="text-gray-900 text-sm font-semibold">Description</p>
           <textarea
             name="description"
             value={formData.description}
-            placeholder="Description"
-            className="w-full p-3 border rounded"
+            className="w-full p-3 mb-6 border rounded"
             onChange={handleChange}
           ></textarea>
+          </label>
+
+
+          <label className="">
+          <p className="text-gray-900 text-sm font-semibold">Location</p>
           <input
             type="text"
             name="location"
             value={formData.location}
-            placeholder="Location"
-            className="w-full p-3 border rounded"
+            className="w-full p-3 mb-6 border rounded"
             onChange={handleChange}
           />
+          </label>
 
+
+          <label className="">
+          <p className="text-gray-900 text-sm font-semibold">Total Capacity</p>
           <input
             type="number"
             id="capacity"
@@ -706,11 +718,13 @@ export default function BasicDetails() {
               }
             }}
             name="maxPeople"
-            placeholder="Total Capacity"
-            className="w-full p-3 border rounded"
+            className="w-full p-3 mb-6 border rounded"
             onChange={handleChange}
           />
+          </label>
 
+          <label >
+          <p className="text-gray-900 text-sm font-semibold">No of Beds</p>
           <input
             type="number"
             id="numberInput"
@@ -723,12 +737,14 @@ export default function BasicDetails() {
               }
             }}
             name="beds"
-            placeholder="No of beds"
-            className="w-full p-3 border rounded"
+            className="w-full p-3 mb-6 border rounded"
             onChange={handleChange}
           />
+          </label>
 
-<input
+          <label >
+          <p className="text-gray-900 text-sm font-semibold">Original Price</p>
+          <input
             type="number"
             id="numberInput"
             min="0"
@@ -740,11 +756,13 @@ export default function BasicDetails() {
               }
             }}
             name="cutPrice"
-            placeholder="Original Price"
-            className="w-full p-3 border rounded"
+            className="w-full p-3 mb-6 border rounded"
             onChange={handleChange}
           />
+          </label>
 
+          <label className="" >
+          <p className="text-gray-900 text-sm font-semibold">Discounted Price</p>
           <input
             type="number"
             id="numberInput"
@@ -756,12 +774,11 @@ export default function BasicDetails() {
                 input.value = "0";
               }
             }}
-            name="price"
-            placeholder="Discounted Price"  // Changed placeholder
-            className="w-full p-3 border rounded"
+            name="price" // Changed placeholder
+            className="w-full p-3 mb-6 border rounded"
             onChange={handleChange}
           />
-
+          </label>
           {/* Amenities Selector Component */}
           <AmenitiesSelector amenities={amenities} setAmenities={setAmenities} />
 
