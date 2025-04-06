@@ -129,7 +129,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         {/* Date Input */}
         <div className="flex flex-col">
-          <div className={`flex items-center rounded-md px-3 py-2 bg-white ${errors.date ? 'border-red-500' : 'border-gray-300'}`}>
+          <div className={`flex items-center border border-gray-300 rounded-md px-3 py-2  bg-white ${errors.date ? 'border-red-500' : 'border-gray-300'}`}>
             <FaCalendarAlt className="text-gray-400 mr-2" />
             <DatePicker
               selected={searchDate}
@@ -153,7 +153,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         {/* Person Input */}
         <div className="flex flex-col">
-          <div className={`flex items-center rounded-md px-3 py-2 bg-white ${errors.person ? 'border-red-500' : 'border-gray-300'}`}>
+          <div className={`flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white ${errors.person ? 'border-red-500' : 'border-gray-300'}`}>
             <FaUserFriends className="text-gray-400 mr-2" />
             <input
               type="number"
@@ -176,7 +176,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         {/* Number of Beds Input */}
         <div className="flex flex-col">
-          <div className={`flex items-center rounded-md px-3 py-2 bg-white ${errors.beds ? 'border-red-500' : 'border-gray-300'}`}>
+          <div className={`flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white ${errors.beds ? 'border-red-500' : 'border-gray-300'}`}>
             <FaBed className="text-gray-400 mr-2" />
             <input
               type="number"

@@ -75,7 +75,7 @@ const CalendarAvailabilityPicker: React.FC<CalendarAvailabilityPickerProps> = ({
         return {
           color: "bg-red-100 border-red-400",
           textColor: "text-red-800",
-          icon: "🚫",
+          icon: "",
           text: "Booked"
         };
       }
@@ -84,7 +84,7 @@ const CalendarAvailabilityPicker: React.FC<CalendarAvailabilityPickerProps> = ({
         return {
           color: "bg-orange-100 border-orange-400",
           textColor: "text-orange-800",
-          icon: isDayCruiserBooked ? "🌙" : "🚤",
+          icon: isDayCruiserBooked ? "" : "",
           text: availableType
         };
       }

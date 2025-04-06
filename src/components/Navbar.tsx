@@ -38,7 +38,7 @@ const Navbar = () => {
       </Link>
 
       {/* Desktop Navigation */}
-      <ul className="hidden lg:flex space-x-12">
+      <ul className="lg:flex space-x-12">
     {navLinks.map((link) => {
         // Check if the session is present
         const isSessionPresent = !!session;
