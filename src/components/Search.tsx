@@ -102,11 +102,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="container mx-auto -mt-48  z-10 p-6 bg-white/30 backdrop-blur-sm shadow-lg rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 bg-opacity-50 gap-4">
         {/* Location Input */}
         <div className="flex flex-col">
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white">
             <FaMapMarkerAlt className="text-gray-400 mr-2" />
             <input
               type="text"
@@ -116,15 +116,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 setLocation(e.target.value);
                 setErrors({ ...errors, location: "" });
               }}
-              className={`w-full focus:outline-none ${errors.location ? 'border-red-500' : ''}`}
+              className={`w-full bg-white text-black placeholder-gray-500 focus:outline-none ${
+                errors.location ? 'border-red-500' : ''
+              }`}
             />
           </div>
-          {errors.location && <span className="text-red-500 text-xs mt-1">{errors.location}</span>}
+          {errors.location && (
+            <span className="text-red-500 text-xs mt-1">{errors.location}</span>
+          )}
         </div>
+
 
         {/* Date Input */}
         <div className="flex flex-col">
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
+          <div className={`flex items-center rounded-md px-3 py-2 bg-white ${errors.date ? 'border-red-500' : 'border-gray-300'}`}>
             <FaCalendarAlt className="text-gray-400 mr-2" />
             <DatePicker
               selected={searchDate}
@@ -136,16 +141,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
               }}
               dateFormat="yyyy-MM-dd"
               minDate={new Date()}
-              className={`w-full focus:outline-none ${errors.date ? 'border-red-500' : ''}`}
+              className="w-full bg-white text-black placeholder-gray-500 focus:outline-none"
               placeholderText="Select a date"
             />
           </div>
-          {errors.date && <span className="text-red-500 text-xs mt-1">{errors.date}</span>}
+          {errors.date && (
+            <span className="text-red-500 text-xs mt-1">{errors.date}</span>
+          )}
         </div>
+
 
         {/* Person Input */}
         <div className="flex flex-col">
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
+          <div className={`flex items-center rounded-md px-3 py-2 bg-white ${errors.person ? 'border-red-500' : 'border-gray-300'}`}>
             <FaUserFriends className="text-gray-400 mr-2" />
             <input
               type="number"
@@ -157,15 +165,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
               }}
               min="1"
               max="10"
-              className={`w-full focus:outline-none ${errors.person ? 'border-red-500' : ''}`}
+              className="w-full bg-white text-black placeholder-gray-500 focus:outline-none"
             />
           </div>
-          {errors.person && <span className="text-red-500 text-xs mt-1">{errors.person}</span>}
+          {errors.person && (
+            <span className="text-red-500 text-xs mt-1">{errors.person}</span>
+          )}
         </div>
+
 
         {/* Number of Beds Input */}
         <div className="flex flex-col">
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
+          <div className={`flex items-center rounded-md px-3 py-2 bg-white ${errors.beds ? 'border-red-500' : 'border-gray-300'}`}>
             <FaBed className="text-gray-400 mr-2" />
             <input
               type="number"
@@ -177,49 +188,64 @@ const SearchBar: React.FC<SearchBarProps> = ({
               }}
               min="1"
               max="5"
-              className={`w-full focus:outline-none ${errors.beds ? 'border-red-500' : ''}`}
+              className="w-full bg-white text-black placeholder-gray-500 focus:outline-none"
             />
           </div>
-          {errors.beds && <span className="text-red-500 text-xs mt-1">{errors.beds}</span>}
+          {errors.beds && (
+            <span className="text-red-500 text-xs mt-1">{errors.beds}</span>
+          )}
         </div>
-      </div>
+        </div>
 
       {/* Price Range Slider */}
-      <div className="mt-6">
-        <label className="font-semibold mb-2 flex items-center">
-          <FaRupeeSign className="text-gray-400 mr-2" />
-          Price Range
-        </label>
-        <div className="px-2">
-          <Slider
-            range
-            min={0}
-            max={30000}
-            step={500}
-            value={priceRange}
-            onChange={(values) => {
-              setPriceRange(values as [number, number]);
-              setErrors({ ...errors, price: "" });
-            }}
-            styles={{
-              track: { backgroundColor: "#5EBC67" },
-              handle: { borderColor: "#5EBC67", backgroundColor: "#5EBC67" },
-              rail: { backgroundColor: "#e5e7eb" }
-            }}
-          />
-          <div className="flex justify-between text-sm mt-2">
-            <span className="flex items-center">
-              <FaRupeeSign className="text-gray-400 mr-1" size={12} />
-              {priceRange[0]}
-            </span>
-            <span className="flex items-center">
-              <FaRupeeSign className="text-gray-400 mr-1" size={12} />
-              {priceRange[1]}
-            </span>
-          </div>
-          {errors.price && <span className="text-red-500 text-xs mt-1">{errors.price}</span>}
-        </div>
-      </div>
+      <div className="mt-4">
+  <label className="font-semibold mb-2 flex items-center text-gray-700">
+    <span className="text-black">Price Range</span>
+  </label>
+
+  <div className="px-4 py-3 bg-white rounded-xl shadow-md">
+    
+  <div className="flex justify-between text-sm font-medium text-gray-600">
+      <span className="flex items-center">
+        <FaRupeeSign className="text-black-200 mr-1" size={12} />
+        {priceRange[0]}
+      </span>
+      <span className="flex items-center">
+        <FaRupeeSign className="text-black-200 mr-1" size={12} />
+        {priceRange[1]}
+      </span>
+    </div>
+
+    <Slider
+      range
+      min={0}
+      max={30000}
+      step={500}
+      value={priceRange}
+      onChange={(values) => {
+        setPriceRange(values as [number, number]);
+        setErrors({ ...errors, price: "" });
+      }}
+      styles={{
+        track: { backgroundColor: "#4ade80", height: 3 },
+        handle: {
+          borderColor: "#4ade80",
+          backgroundColor: "#4ade80",
+          height: 15,
+          width: 15,
+          
+        },
+        rail: { backgroundColor: "#e5e7eb", height: 4 },
+      }}
+    />
+
+    {errors.price && (
+      <span className="text-red-500 text-xs mt-2 block">{errors.price}</span>
+    )}
+  </div>
+</div>
+
+
 
       
     </div>

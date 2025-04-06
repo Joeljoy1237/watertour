@@ -39,7 +39,7 @@ const Card = ({ houseboats }: CardProps) => {
       {houseboats.map((boat) => (
         <Link key={boat._id} href={`/boat/${boat._id}`}>
           <div className="bg-white rounded-xl w-auto shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
-            <div className="relative w-full h-48 md:h-56">
+            <div className="relative w-full  h-48 md:h-56">
               <Image src={boat.images[0] || "/boat.jpg"} alt={boat.name} fill={true} className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
             </div>
