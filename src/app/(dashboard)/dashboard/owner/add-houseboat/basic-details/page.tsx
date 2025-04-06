@@ -564,33 +564,48 @@ export default function BasicDetails() {
       toast.error("Location is required!");
       return false;
     }
-    if (!formData.maxPeople) {
-      toast.error("Maximum capacity is required!");
+    if (!formData.maxPeople || Number(formData.maxPeople) <= 0) {
+      toast.error("Maximum capacity must be greater than 0!");
       return false;
     }
-
-      if (!formData.cutPrice.trim()) {
-        toast.error("Original price is required!");
-        return false;
-      }
-      if (Number(formData.cutPrice) <= Number(formData.price)) {
-        toast.error("Original price must be greater than discounted price!");
-        return false;
-      }
-      if (!formData.price.trim()) {
-        toast.error("Discounted price is required!");
-        return false;
-      }
+    if (!formData.beds || Number(formData.beds) <= 0) {
+      toast.error("Number of beds must be greater than 0!");
+      return false;
+    }
+    if (!formData.cutPrice || Number(formData.cutPrice) <= 0) {
+      toast.error("Original price must be greater than 0!");
+      return false;
+    }
+    if (!formData.price || Number(formData.price) <= 0) {
+      toast.error("Discounted price must be greater than 0!");
+      return false;
+    }
+    if (Number(formData.cutPrice) <= Number(formData.price)) {
+      toast.error("Original price must be greater than discounted price!");
+      return false;
+    }
     if (image.length === 0) {
       toast.error("At least one image is required!");
+      return false;
+    }
+    if (amenities.length === 0) {
+      toast.error("At least one amenity is required!");
+      return false;
+    }
+    if (vegItems.length === 0 && nonVegItems.length === 0) {
+      toast.error("At least one food item is required!");
       return false;
     }
     return true;
   };
 
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) return;
+    if (!session?.user?.id) {
+      toast.error("Please log in to continue!");
+      return;
+    }
 
     const food = {
       veg: vegItems,
@@ -599,7 +614,7 @@ export default function BasicDetails() {
 
     const endpoint = isEditing ? "/api/houseboat/owner/update" : "/api/houseboat/owner/add";
     const payload = {
-      userId: session?.user.id,
+      userId: session.user.id,
       ...(isEditing && { boatId }),
       ...formData,
       amenities,
@@ -609,37 +624,36 @@ export default function BasicDetails() {
     };
 
     try {
-      fetch(endpoint, {
+      toast.loading(isEditing ? "Updating houseboat..." : "Adding houseboat...");
+      
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(isEditing ? "Failed to update houseboat" : "Failed to add houseboat");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          // Add the location to the locations set
-          setLocations((prevLocations) => {
-            const newLocations = new Set(prevLocations);
-            newLocations.add(formData.location);
-            return newLocations;
-          });
+      });
 
-          toast.success(isEditing ? "Houseboat updated successfully!" : "Houseboat added successfully!");
-          router.push("/dashboard/owner/houseboats");
-        })
-        .catch((error) => {
-          console.error(isEditing ? "Error updating houseboat:" : "Error adding houseboat:", error);
-          toast.error(isEditing ? "Failed to update houseboat!" : "Failed to add houseboat!");
-        });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || (isEditing ? "Failed to update houseboat" : "Failed to add houseboat"));
+      }
+
+      // Add the location to the locations set
+      setLocations((prevLocations) => {
+        const newLocations = new Set(prevLocations);
+        newLocations.add(formData.location);
+        return newLocations;
+      });
+
+      toast.dismiss();
+      toast.success(data.message || (isEditing ? "Houseboat updated successfully!" : "Houseboat added successfully!"));
+      router.push("/dashboard/owner/houseboats");
     } catch (error) {
+      toast.dismiss();
       console.error("Error:", error);
-      toast.error("An unexpected error occurred!");
+      toast.error(error instanceof Error ? error.message : "An unexpected error occurred!");
     }
   };
   const handleChange = (
