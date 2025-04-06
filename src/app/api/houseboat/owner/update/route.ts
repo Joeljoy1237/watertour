@@ -3,7 +3,7 @@ import { connectToDB } from "@/utils/database";
 
 export const POST = async (req: Request) => {
     try {
-        const { userId, boatId, name, description, location, beds, maxPeople, price, drinks, dateRanges, amenities, food, images } = await req.json();
+        const { userId, boatId, name, description, location, beds, maxPeople, cutPrice, price, drinks, dateRanges, amenities, food, images } = await req.json();
 
         await connectToDB();
 
@@ -18,6 +18,7 @@ export const POST = async (req: Request) => {
                 location,
                 beds,
                 maxPeople,
+                cutPrice,
                 price,
                 amenities,
                 drinks,

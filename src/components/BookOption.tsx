@@ -23,6 +23,7 @@ interface HouseboatData {
   name: string;
   beds: number;
   maxPeople: number;
+  cutPrice: number;
   price: number;
   dates: Record<string, AvailabilityData & DatePricing>;
 }

@@ -19,6 +19,7 @@ interface HouseboatData {
   location: string;
   beds: string;
   maxPeople: string;
+  cutPrice: string;
   price: string;
   rating: number;
   specialPrice: { date: string; price: number }[];
@@ -121,6 +122,9 @@ const HouseboatDetails = ({ params }: { params: Promise<{ id: string }> }) => {
             </p>
             <p className="text-gray-600">
               <strong>base Price:</strong> {houseboat?.price}
+            </p>
+            <p className="text-gray-600">
+              <strong>Original Price:</strong> <span className="line-through">₹{houseboat?.cutPrice}</span>
             </p>
           </div>
 

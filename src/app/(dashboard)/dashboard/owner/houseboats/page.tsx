@@ -11,6 +11,7 @@ interface Houseboat {
   _id: string;
   name: string;
   location: string;
+  cutPrice: string;
   price: string;
   images: string[];
 }
@@ -112,7 +113,8 @@ export default function MyHouseboats() {
                 <div className="p-4">
                   <h2 className="text-xl font-semibold text-gray-900">{boat.name}</h2>
                   <p className="text-gray-600">{boat.location}</p>
-                  <p className="text-primary font-medium mt-2">₹{boat.price}</p>
+                  <p className="text-gray-500 line-through">₹{boat.cutPrice}</p>
+                  <p className="text-primary font-medium">₹{boat.price}</p>
                   <div className="mt-4 flex justify-between">
                     <button onClick={() => router.push(`/dashboard/owner/add-houseboat/basic-details?editing=true&boatId=${boat._id}`)} className="bg-gray-200 px-3 py-1 rounded flex items-center gap-2 text-gray-700 hover:bg-gray-300 transition">
                       <FiEdit /> Edit

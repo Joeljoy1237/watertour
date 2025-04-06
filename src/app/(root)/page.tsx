@@ -50,7 +50,7 @@ export default function Home() {
                           houseboat.location.toLowerCase().includes(location.toLowerCase());
       
       // Filter by price range
-      const priceMatch = houseboat.price >= priceRange[0] && houseboat.price <= priceRange[1];
+      const priceMatch = Number(houseboat.price) >= priceRange[0] && Number(houseboat.price) <= priceRange[1];
 
       // Filter by beds
       const bedsMatch = houseboat.beds >= numBeds;
