@@ -102,9 +102,13 @@ export default function RegisterForm() {
           cause: data.desc,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.dismiss(loadingToast);
-      toast.error(error.message || "An error occurred during registration");
+      if (error instanceof Error) {
+        toast.error(error.message || "An error occurred during registration");
+      } else {
+        toast.error("An unexpected error occurred during registration");
+      }
     } finally {
       setIsSubmitting(false);
     }

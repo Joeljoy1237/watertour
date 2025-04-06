@@ -4,7 +4,7 @@ import nodemailer, { Transporter } from "nodemailer";
 import { connectToDB } from "@/utils/database";
 import CryptoJS from "crypto-js";
 
-export const POST = async (request: any) => {
+export const POST = async (request: Request) => {
 
     const { firstName, lastName, email, mobile, password } = await request.json();
 
@@ -67,7 +67,7 @@ export const POST = async (request: any) => {
             JSON.stringify({ message: "Registered successfully", desc: "Redirecting to login page", user: newUser }),
             { status: 201 }
         );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.log(err);
         return new Response(JSON.stringify({ message: "Internal Server Error" }), { status: 500 });
     }
