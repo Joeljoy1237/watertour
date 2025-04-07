@@ -124,7 +124,7 @@ const CalendarAvailabilityPicker: React.FC<CalendarAvailabilityPickerProps> = ({
         <div className="text-sm font-semibold">{cellDate.getDate()}</div>
         <div className={`text-xs flex items-center gap-1 mt-1 ${statusInfo.textColor}`}>
           <span className="text-sm">{statusInfo.icon}</span>
-          <span className="font-medium">{statusInfo.text}</span>
+          <span className={`font-medium ${isSelected?"text-white":""}`}>{statusInfo.text}</span>
         </div>
       </button>
     );

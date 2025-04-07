@@ -12,7 +12,7 @@ const HouseboatSchema = new mongoose.Schema(
         location: { type: String, required: true },
         beds: { type: Number, required: true }, // Changed to Number
         maxPeople: { type: Number, required: true }, // Changed to Number
-        cutPrice: { type: Number, required: true }, // Original price
+        cutPrice: { type: Number }, // Original price
         price: { type: Number, required: true }, // Discounted price
         rating: { type: Number, default: 3 },
         rateCount: { type: Number, default: 0 },

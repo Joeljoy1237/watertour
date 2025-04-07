@@ -174,7 +174,7 @@ export default function BasicDetails() {
         </section>
         <button
           type="submit"
-          className="w-full p-3 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+          className="w-full p-3 bg-primary-500 text-white rounded hover:bg-primary-600 transition-colors"
           >
           {loading ? "Submitting..." : "Submit"}
         </button>

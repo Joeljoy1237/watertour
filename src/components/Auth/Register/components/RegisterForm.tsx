@@ -166,6 +166,7 @@ export default function RegisterForm() {
                   type="email"
                   className="w-full p-3 rounded-md bg-black-300 outline-none border-none"
                   placeholder="johndoe@gmail.com"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -179,6 +180,8 @@ export default function RegisterForm() {
                 </span>
                 <input
                   type="text"
+                  autoComplete="tel"
+                  maxLength={10}
                   className="w-full p-3 rounded-md bg-black-300 outline-none border-none fontNormal"
                   placeholder="9876543210"
                   value={mobile}
