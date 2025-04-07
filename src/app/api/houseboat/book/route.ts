@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDB } from "@/utils/database";
 import Houseboat from "@/models/Houseboat";
 import Booking from "@/models/Booking";
+import Subscription from "@/models/Subscription";
 
 export async function POST(req: Request) {
   try {
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
       existingBooking.totalPrice = totalPrice;
       existingBooking.status = "pending";
       await existingBooking.save();
-
+      const boatOwnerId = houseboat.ownerId;
       // Update the houseboat's date booking status
       if (type === "Day Cruiser") {
         houseboat.dates.get(date).dayCruiserBooked = true;
@@ -46,6 +47,13 @@ export async function POST(req: Request) {
         houseboat.dates.get(date).nightStayBooked = true;
       }
       await houseboat.save();
+      const subscription = await Subscription.findOne({ userId: boatOwnerId });
+      await fetch("http://localhost:3001/api/push/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subscription, userId: houseboat.ownerId }),
+      });
+
 
       return NextResponse.json({ message: "Booking updated successfully!" }, { status: 200 });
     } else {

@@ -24,6 +24,51 @@ const Navbar = () => {
     fetchProviders();
   }, []);
 
+  useEffect(() => {
+    const subscribeForPush = async () => {
+      if (!session) return;
+      if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
+
+      try {
+        const reg = await navigator.serviceWorker.register("/sw.js");
+        console.log("Service Worker registered:", reg);
+
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+          console.log("Notification permission denied");
+          return;
+        }
+
+        const subscription = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
+        });
+
+        const response = await fetch("/api/save-subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            endpoint: subscription.endpoint,
+            keys: subscription.toJSON().keys,
+            userId: session!.user.id || null,
+          }),
+        });
+
+        if (!response.ok) {
+          console.error("Failed to save subscription");
+        } else {
+          console.log("Push subscription saved successfully");
+        }
+      } catch (error) {
+        console.error("Error during push subscription:", error);
+      }
+    };
+
+    subscribeForPush();
+  }, [session]);
+
+
+
   return (
     <nav className="flex items-center justify-between px-6 md:px-20 py-4 bg-white shadow-md relative z-50">
       {/* Logo */}
@@ -168,6 +213,18 @@ const Navbar = () => {
       )}
     </nav>
   );
+};
+
+interface UrlBase64ToUint8Array {
+  (base64String: string): Uint8Array;
+}
+
+const urlBase64ToUint8Array: UrlBase64ToUint8Array = (base64String) => {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
+
+  const rawData = atob(base64);
+  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 };
 
 export default Navbar;
