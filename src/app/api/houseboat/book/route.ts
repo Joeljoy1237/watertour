@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       existingBooking.totalPrice = totalPrice;
       existingBooking.status = "pending";
       await existingBooking.save();
-      const boatOwnerId = houseboat.ownerId;
+      const boatOwnerId = houseboat.userId;
       // Update the houseboat's date booking status
       if (type === "Day Cruiser") {
         houseboat.dates.get(date).dayCruiserBooked = true;
@@ -48,12 +48,22 @@ export async function POST(req: Request) {
       }
       await houseboat.save();
       const subscription = await Subscription.findOne({ userId: boatOwnerId });
-      await fetch("http://localhost:3001/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subscription, userId: houseboat.ownerId }),
-      });
-
+      const payload = {
+        title: "🚤 New Booking!",
+        body: "Someone just booked your houseboat!",
+        url: "https://your-site.com/bookings",
+        icon: "https://your-site.com/logo.png"
+      }
+      if (subscription) {
+        await fetch("http://localhost:3001/push/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subscription, payload }),
+        });
+        console.log("Notification send");
+      } else {
+        console.log("Notification error", subscription);
+      }
 
       return NextResponse.json({ message: "Booking updated successfully!" }, { status: 200 });
     } else {
