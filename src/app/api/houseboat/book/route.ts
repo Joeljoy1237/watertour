@@ -51,7 +51,7 @@ export async function POST(req: Request) {
       const payload = {
         title: "🚤 New Booking!",
         body: "Someone just booked your houseboat!",
-        url: "https://your-site.com/bookings",
+        url: "http://localhost:3000/dashboard/owner/bookings",
         icon: "https://your-site.com/logo.png"
       }
       console.log("Subscription", subscription);
