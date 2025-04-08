@@ -28,32 +28,42 @@ const Navbar = () => {
     const subscribeForPush = async () => {
       if (!session) return;
       if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
-
+  
       try {
         const reg = await navigator.serviceWorker.register("/sw.js");
         console.log("Service Worker registered:", reg);
-
+  
         const permission = await Notification.requestPermission();
         if (permission !== "granted") {
           console.log("Notification permission denied");
           return;
         }
-
-        const subscription = await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
-        });
-
+  
+        let subscription = await reg.pushManager.getSubscription();
+        const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
+  
+        // If no existing subscription, create a new one
+        if (!subscription) {
+          subscription = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(publicKey),
+          });
+          console.log("New push subscription created.");
+        } else {
+          console.log("Existing subscription found.");
+        }
+  
+        // Send subscription to server every time, server can check for duplicates
         const response = await fetch("/api/save-subscription", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             endpoint: subscription.endpoint,
             keys: subscription.toJSON().keys,
-            userId: session!.user.id || null,
+            userId: session.user.id,
           }),
         });
-
+  
         if (!response.ok) {
           console.error("Failed to save subscription");
         } else {
@@ -63,9 +73,9 @@ const Navbar = () => {
         console.error("Error during push subscription:", error);
       }
     };
-
+  
     subscribeForPush();
-  }, [session]);
+  }, [session]);  
 
 
 

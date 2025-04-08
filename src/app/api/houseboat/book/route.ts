@@ -47,7 +47,7 @@ export async function POST(req: Request) {
         houseboat.dates.get(date).nightStayBooked = true;
       }
       await houseboat.save();
-      const subscription = await Subscription.findOne({ userId: boatOwnerId });
+      const subscription = await Subscription.find({ userId: boatOwnerId });
       const payload = {
         title: "🚤 New Booking!",
         body: "Someone just booked your houseboat!",
@@ -55,12 +55,14 @@ export async function POST(req: Request) {
         icon: "https://your-site.com/logo.png"
       }
       if (subscription) {
-        await fetch("http://localhost:3001/push/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ subscription, payload }),
-        });
-        console.log("Notification send");
+        subscription.forEach(async (sub) => {
+          await fetch("http://localhost:3001/push/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ subscription: sub, payload }),
+          });
+        })
+        console.log("Notification send to owner");
       } else {
         console.log("Notification error", subscription);
       }
