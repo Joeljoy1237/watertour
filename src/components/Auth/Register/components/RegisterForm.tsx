@@ -179,7 +179,7 @@ export default function RegisterForm() {
                   *
                 </span>
                 <input
-                  type="text"
+                  type="tel"
                   autoComplete="tel"
                   maxLength={10}
                   className="w-full p-3 rounded-md bg-black-300 outline-none border-none fontNormal"
