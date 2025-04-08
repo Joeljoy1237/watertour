@@ -24,10 +24,14 @@ export const POST = async (req: Request): Promise<Response> => {
             return new Response(JSON.stringify({ error: "Invalid subscription" }), { status: 400 });
         }
 
-        const existing = await Subscription.findOne({ endpoint });
+        const existing = await Subscription.findOne({ userId });
 
         if (!existing) {
             await Subscription.create({ endpoint, keys, userId: userId || null });
+        } else {
+            existing.endpoint = endpoint;
+            existing.keys = keys;
+            existing.save();
         }
 
         return new Response(JSON.stringify({ message: "Subscription saved" }), { status: 201 });
