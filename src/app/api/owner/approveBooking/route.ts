@@ -4,6 +4,7 @@ import Booking from "@/models/Booking";
 import User from "@/models/User";
 import Houseboat from "@/models/Houseboat";
 import nodemailer from "nodemailer";
+import Subscription from "@/models/Subscription";
 export async function POST(req: NextRequest) {
   try {
     const { userId, bookingId } = await req.json();
@@ -48,8 +49,27 @@ export async function POST(req: NextRequest) {
     user.revenue = user.revenue + updatedBooking.totalPrice;
     await user.save();
 
-        
-    
+    const subscription = await Subscription.find({ userId: updatedBooking.userId });
+    const payload = {
+      title: "Your booking is confirmed!",
+      body: "Your booking has been approved.",
+      url: "http://localhost:3000/dashboard/owner/bookings",
+      icon: "https://your-site.com/logo.png"
+    }
+    console.log("Starting to send notification to owner...");
+    // Send notification to the owner
+    if (subscription) {
+      subscription.forEach(async (sub) => {
+        await fetch("http://localhost:3001/push/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subscription: sub, payload }),
+        });
+      })
+      console.log("Notification send to owner");
+    } else {
+      console.log("Notification error", subscription);
+    }    
 
     // // const transporter = nodemailer.createTransport({
     // //   service: "Gmail",

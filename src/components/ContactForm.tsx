@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import toast, { Toaster } from "react-hot-toast";
 
 const ContactUsForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -8,21 +9,55 @@ const ContactUsForm: React.FC = () => {
     email: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
-    // You can send the form data to an API or handle the form submission as needed.
+
+    // Basic validation
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const response = await fetch("/api/contactus", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.success("Failed to submit the form.");
+        throw new Error(errorData.message || "Failed to submit the form.");
+      }
+
+      toast.success("Message sent successfully!");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message || "Something went wrong.");
+      } else {
+        toast.error("Something went wrong.");
+      }
+      console.error("Submission error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -100,9 +135,14 @@ const ContactUsForm: React.FC = () => {
             <div className="text-center">
               <button
                 type="submit"
-                className="bg-[#5EBC67] text-white px-8 py-3 rounded-full hover:bg-[#4A9453] transition-all duration-300 transform hover:scale-105 focus:outline-none"
+                disabled={isSubmitting}
+                className={`${
+                  isSubmitting
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-primary hover:bg-primary-700"
+                } text-white px-8 py-3 rounded-full transition-all duration-200 transform hover:scale-105 focus:outline-none`}
               >
-                Send Message
+                {isSubmitting ? "Sending..." : "Send Message"}
               </button>
             </div>
           </form>

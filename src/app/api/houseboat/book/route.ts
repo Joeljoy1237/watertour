@@ -54,7 +54,7 @@ export async function POST(req: Request) {
         url: "http://localhost:3000/dashboard/owner/bookings",
         icon: "https://your-site.com/logo.png"
       }
-      console.log("Subscription", subscription);
+      console.log("Starting to send notification to owner...");
       // Send notification to the owner
       if (subscription) {
         subscription.forEach(async (sub) => {
