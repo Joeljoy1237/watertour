@@ -167,7 +167,7 @@ export default function BasicDetails() {
           required
         />
         <section className="bg-white mx-3 shadow-lg rounded-lg p-6 lg:flex flex-col w-1/2">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Upload any Govt. ID (Aadhar card, Driving Licence) *</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Upload any valid Document *</h1>
           <div className="flex items-center ">
             <ImageUpload image={image} setImage={setImage} />
           </div>
